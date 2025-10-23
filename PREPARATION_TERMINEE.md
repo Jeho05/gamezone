@@ -67,7 +67,7 @@ projet ismo/
    - Dans InfinityFree → MySQL Databases
    - Créer base : `gamezone`
    - Ouvrir phpMyAdmin
-   - Importer : `api/database/schema.sql`
+   - Importer : `api/schema.sql`
 
 3. **Configurer le backend**
    - Dans `backend_infinityfree/api/`

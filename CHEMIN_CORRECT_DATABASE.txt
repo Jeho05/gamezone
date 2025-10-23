@@ -1,0 +1,67 @@
+╔═══════════════════════════════════════════════════════════════╗
+║                                                               ║
+║         ✅ CHEMIN CORRECT DE LA BASE DE DONNÉES              ║
+║                                                               ║
+╚═══════════════════════════════════════════════════════════════╝
+
+
+📍 CHEMIN EXACT DU FICHIER SQL (POUR INFINITYFREE) :
+
+   C:\xampp\htdocs\projet ismo\schema_infinityfree.sql
+
+⚠️ IMPORTANT : 
+   - Pour InfinityFree : schema_infinityfree.sql ✅
+   - Pour XAMPP local : api\schema.sql
+
+
+📂 NAVIGATION WINDOWS :
+
+   1. Ouvrir l'Explorateur Windows
+   2. Aller dans la barre d'adresse (en haut)
+   3. Copier-coller ce chemin :
+      
+      C:\xampp\htdocs\projet ismo
+      
+   4. Appuyer sur Entrée
+   5. Vous voyez le fichier : schema_infinityfree.sql ✅
+
+
+🖱️ OU NAVIGATION MANUELLE :
+
+   Ce PC → C: → xampp → htdocs → projet ismo → schema_infinityfree.sql
+
+
+📋 C'EST CE FICHIER QUE VOUS IMPORTEREZ DANS PHPMYADMIN !
+
+   (Version spéciale InfinityFree sans CREATE DATABASE)
+
+
+═══════════════════════════════════════════════════════════════
+
+💡 NOTE IMPORTANTE :
+
+Pour InfinityFree, utilisez la version SPECIALE qui n'a pas
+les commandes CREATE DATABASE et USE.
+
+Fichier correct InfinityFree : schema_infinityfree.sql ✅
+Fichier local XAMPP : api\schema.sql
+
+═══════════════════════════════════════════════════════════════
+
+
+🎯 ÉTAPE DANS PHPMYADMIN :
+
+1. Ouvrir phpMyAdmin
+2. Sélectionner votre base : epiz_XXXXXXXX_gamezone
+3. Onglet "Import"
+4. "Choose File" → Naviguer vers :
+   C:\xampp\htdocs\projet ismo\schema_infinityfree.sql
+5. Cliquer "Import"
+
+⚠️ Si erreur "#1044 - Accès refusé", lisez : SOLUTION_ERREUR_IMPORT.md
+
+
+✅ BASE DE DONNÉES CRÉÉE AVEC SUCCÈS !
+
+
+═══════════════════════════════════════════════════════════════

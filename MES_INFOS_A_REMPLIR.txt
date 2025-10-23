@@ -1,0 +1,103 @@
+╔═══════════════════════════════════════════════════════════════╗
+║                                                               ║
+║         📋 FORMULAIRE À REMPLIR - MES INFORMATIONS           ║
+║                                                               ║
+╚═══════════════════════════════════════════════════════════════╝
+
+⚠️ INSTRUCTIONS :
+   - Remplissez ce formulaire au fur et à mesure
+   - Copiez-collez ces infos et envoyez-les moi
+   - Je m'occuperai de la configuration !
+
+
+═══════════════════════════════════════════════════════════════
+📍 ÉTAPE 1 : INFINITYFREE (remplir après l'Étape 1.3)
+═══════════════════════════════════════════════════════════════
+
+Mon site InfinityFree :
+URL : https:// ismo.gamer.gd
+
+Identifiants FTP :
+FTP Host     : ftpupload.net
+FTP Username : if0_40238088
+FTP Password : OTnlRESWse7lVB
+
+Identifiants MySQL :
+MySQL Host     :  sql308.infinityfree.com 
+MySQL Database :  if0_40238088_gamezone 
+MySQL Username : if0_40238088
+MySQL Password : OTnlRESWse7lVB
+
+
+═══════════════════════════════════════════════════════════════
+📍 ÉTAPE 2 : GITHUB (remplir après l'Étape 2.2)
+═══════════════════════════════════════════════════════════════
+
+Mon compte GitHub :
+Username :Jeho05
+
+Mon repository :
+URL : https://github.com/Jeho05/gamezone.git
+
+
+═══════════════════════════════════════════════════════════════
+📍 ÉTAPE 3 : VERCEL (remplir après l'Étape 2.5)
+═══════════════════════════════════════════════════════════════
+
+Mon site Vercel :
+URL : https://gamezone-steel-eta.vercel.app/
+
+
+═══════════════════════════════════════════════════════════════
+📍 KKIAPAY (optionnel si vous avez votre clé)
+═══════════════════════════════════════════════════════════════
+
+Clé publique : 072b361d25546db0aee3d69bf07b15331c51e39f (déjà incluse)
+Clé privée : _________________________________ (si vous l'avez)
+
+
+═══════════════════════════════════════════════════════════════
+
+💡 COMMENT M'ENVOYER CES INFOS :
+
+1. Remplissez les champs ci-dessus
+2. Copiez TOUT ce fichier (Ctrl+A puis Ctrl+C)
+3. Collez-le dans le chat
+4. Je m'occupe de créer les bons fichiers de configuration !
+
+═══════════════════════════════════════════════════════════════
+
+
+📌 AIDE-MÉMOIRE RAPIDE
+
+Où trouver ces infos ?
+
+✅ Infos FTP/MySQL :
+   → InfinityFree → Votre site → Control Panel
+   → Menu gauche : "FTP Accounts" et "MySQL Databases"
+
+✅ URL InfinityFree :
+   → Celle que vous avez choisie à la création
+   → Ex: gamezone-api.infinityfreeapp.com
+
+✅ GitHub Username :
+   → Dans GitHub, en haut à droite, votre profil
+   → C'est votre @username
+
+✅ URL Vercel :
+   → Après le déploiement, Vercel vous donne l'URL
+   → Ex: gamezone-abc123.vercel.app
+
+
+═══════════════════════════════════════════════════════════════
+
+🆘 SI VOUS ÊTES BLOQUÉ
+
+Envoyez-moi :
+- À quelle étape vous êtes
+- Quel message d'erreur vous voyez (si erreur)
+- Une capture d'écran si possible
+
+Je vous aide immédiatement !
+
+═══════════════════════════════════════════════════════════════

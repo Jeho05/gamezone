@@ -62,7 +62,7 @@
 1. Dans InfinityFree → **MySQL Databases**
 2. Créer : `gamezone`
 3. Accéder à **phpMyAdmin**
-4. Importer : `api/database/schema.sql`
+4. Importer : `api/schema.sql`
 
 ### Étape 1.3 : Configurer le Backend
 
