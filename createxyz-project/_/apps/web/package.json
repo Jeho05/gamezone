@@ -67,15 +67,16 @@
 		"vite-tsconfig-paths": "^5.1.4",
 		"ws": "^8.18.2",
 		"yup": "^1.6.1",
-		"zustand": "^5.0.3"
-	},
-	"devDependencies": {
+		"zustand": "^5.0.3",
 		"@babel/core": "^7.27.1",
 		"@babel/plugin-transform-react-jsx": "^7.27.1",
 		"@babel/preset-react": "^7.27.1",
 		"@babel/preset-typescript": "^7.27.1",
 		"@babel/traverse": "^7.27.1",
 		"@babel/types": "^7.27.1",
+		"babel-plugin-react-require": "^4.0.3"
+	},
+	"devDependencies": {
 		"@react-router/dev": "^7.6.0",
 		"@tailwindcss/vite": "^4.1.4",
 		"@testing-library/jest-dom": "^6.6.4",
@@ -86,7 +87,6 @@
 		"@types/react-dom": "^18.3.1",
 		"@types/ws": "^8.18.1",
 		"autoprefixer": "^10.4.21",
-		"babel-plugin-react-require": "^4.0.3",
 		"fast-glob": "^3.3.3",
 		"jsdom": "^26.1.0",
 		"micromatch": "^4.0.8",
