@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Dashboard - Chargement des Données</title>
+    <link rel="stylesheet" href="help-widget.css">
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .success { color: #10b981; font-weight: bold; }
+        .error { color: #ef4444; font-weight: bold; }
+        .info { color: #3b82f6; font-weight: bold; }
+        pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        button {
+            background: #6366f1;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #4f46e5;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Test de Chargement du Dashboard</h1>
+    <p>Ce script va tester exactement comment le dashboard charge les données.</p>
+
+    <div class="test-section">
+        <h2>Test 1: Vérifier les Chemins d'API</h2>
+        <button onclick="testAPIPaths()">Tester les Chemins</button>
+        <div id="result1"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 2: Charger les Statistiques (comme le dashboard)</h2>
+        <button onclick="loadStatistics()">Charger Statistics API</button>
+        <div id="result2"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 3: Simuler le loadDashboard()</h2>
+        <button onclick="simulateDashboard()">Simuler Dashboard</button>
+        <div id="result3"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 4: Vérifier la Session Admin</h2>
+        <button onclick="checkSession()">Vérifier Session</button>
+        <div id="result4"></div>
+    </div>
+
+    <script>
+        const API_PATHS = [
+            '/api/admin/statistics.php',
+            '../api/admin/statistics.php',
+            '/projet%20ismo/api/admin/statistics.php',
+            'http://localhost/projet%20ismo/api/admin/statistics.php'
+        ];
+
+        async function testAPIPaths() {
+            const result = document.getElementById('result1');
+            result.innerHTML = '<p class="info">Test des chemins en cours...</p>';
+            
+            let html = '<h3>Résultats:</h3>';
+            
+            for (const path of API_PATHS) {
+                try {
+                    const response = await fetch(path, { credentials: 'include' });
+                    const status = response.status;
+                    const ok = response.ok;
+                    
+                    html += `<p class="${ok ? 'success' : 'error'}">`;
+                    html += `${ok ? '✓' : '✗'} <code>${path}</code> → ${status} ${response.statusText}`;
+                    html += `</p>`;
+                    
+                } catch (error) {
+                    html += `<p class="error">✗ <code>${path}</code> → ${error.message}</p>`;
+                }
+            }
+            
+            result.innerHTML = html;
+        }
+
+        async function loadStatistics() {
+            const result = document.getElementById('result2');
+            result.innerHTML = '<p class="info">Chargement...</p>';
+            
+            const API_BASE = '/projet%20ismo/api';
+            const ADMIN_API = `${API_BASE}/admin`;
+            
+            try {
+                console.log('Fetching:', `${ADMIN_API}/statistics.php`);
+                
+                const response = await fetch(`${ADMIN_API}/statistics.php`, {
+                    credentials: 'include'
+                });
+                
+                console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    const text = await response.text();
+                    result.innerHTML = `
+                        <p class="error">❌ Erreur ${response.status}</p>
+                        <pre>${text.substring(0, 500)}</pre>
+                    `;
+                    return;
+                }
+                
+                const data = await response.json();
+                console.log('Data received:', data);
+                
+                if (data.success) {
+                    const stats = data.statistics;
+                    
+                    result.innerHTML = `
+                        <p class="success">✅ API fonctionne!</p>
+                        <h3>Données reçues:</h3>
+                        <ul>
+                            <li><strong>Total Utilisateurs:</strong> ${stats.users.total}</li>
+                            <li><strong>Utilisateurs Actifs:</strong> ${stats.users.active}</li>
+                            <li><strong>Nouveaux Utilisateurs:</strong> ${stats.users.new}</li>
+                            <li><strong>Total Événements:</strong> ${stats.events.total}</li>
+                            <li><strong>Points Distribués:</strong> ${stats.gamification.totalPointsDistributed}</li>
+                            <li><strong>Récompenses Réclamées:</strong> ${stats.gamification.rewardsClaimed}</li>
+                            <li><strong>Sanctions Actives:</strong> ${stats.gamification.activeSanctions}</li>
+                        </ul>
+                        <h3>Top Users (${data.topUsers.length}):</h3>
+                        <pre>${JSON.stringify(data.topUsers, null, 2)}</pre>
+                        <h3>JSON Complet:</h3>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    result.innerHTML = `
+                        <p class="error">❌ Erreur: ${data.error}</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+                
+            } catch (error) {
+                result.innerHTML = `
+                    <p class="error">❌ Exception: ${error.message}</p>
+                    <p>Vérifiez la console pour plus de détails.</p>
+                `;
+                console.error('Error:', error);
+            }
+        }
+
+        async function simulateDashboard() {
+            const result = document.getElementById('result3');
+            result.innerHTML = '<p class="info">Simulation du dashboard...</p>';
+            
+            // Utilise le même code que admin.js
+            const API_BASE = '/api';  // ← Comme dans admin.js
+            const ADMIN_API = `${API_BASE}/admin`;
+            
+            let html = `<p class="info">Chemin utilisé: <code>${ADMIN_API}/statistics.php</code></p>`;
+            
+            try {
+                const statsRes = await fetch(`${ADMIN_API}/statistics.php`, { credentials: 'include' });
+                
+                html += `<p class="${statsRes.ok ? 'success' : 'error'}">Status: ${statsRes.status} ${statsRes.statusText}</p>`;
+                
+                const statsData = await statsRes.json();
+                
+                if (statsData.success) {
+                    const stats = statsData.statistics;
+                    
+                    html += `
+                        <h3>✅ Données chargées avec succès!</h3>
+                        <p>Ce qui serait affiché dans le dashboard:</p>
+                        <ul>
+                            <li><strong>Total Utilisateurs:</strong> ${stats.users.total}</li>
+                            <li><strong>Actifs:</strong> ${stats.users.active}</li>
+                            <li><strong>Événements:</strong> ${stats.events.total}</li>
+                            <li><strong>Points:</strong> ${stats.gamification.totalPointsDistributed}</li>
+                        </ul>
+                        <h3>Top Users:</h3>
+                        <pre>${JSON.stringify(statsData.topUsers, null, 2)}</pre>
+                    `;
+                } else {
+                    html += `<p class="error">❌ Erreur API: ${statsData.error || 'Inconnue'}</p>`;
+                }
+                
+            } catch (error) {
+                html += `<p class="error">❌ Erreur: ${error.message}</p>`;
+                html += `<p class="info">Le chemin <code>/api/admin/statistics.php</code> ne fonctionne probablement pas depuis ce contexte.</p>`;
+                html += `<p class="info">Essayez de corriger le chemin dans admin.js</p>`;
+            }
+            
+            result.innerHTML = html;
+        }
+
+        async function checkSession() {
+            const result = document.getElementById('result4');
+            result.innerHTML = '<p class="info">Vérification...</p>';
+            
+            const paths = [
+                '/api/auth/check.php',
+                '/projet%20ismo/api/auth/check.php'
+            ];
+            
+            let html = '';
+            
+            for (const path of paths) {
+                try {
+                    const response = await fetch(path, { credentials: 'include' });
+                    const data = await response.json();
+                    
+                    html += `<h3>Chemin: <code>${path}</code></h3>`;
+                    html += `<p class="${response.ok ? 'success' : 'error'}">Status: ${response.status}</p>`;
+                    
+                    if (response.ok) {
+                        html += `
+                            <ul>
+                                <li><strong>Username:</strong> ${data.username}</li>
+                                <li><strong>Email:</strong> ${data.email}</li>
+                                <li><strong>Role:</strong> ${data.role}</li>
+                                <li><strong>ID:</strong> ${data.id}</li>
+                            </ul>
+                        `;
+                        if (data.role === 'admin') {
+                            html += `<p class="success">✅ Vous êtes bien connecté en tant qu'admin!</p>`;
+                        } else {
+                            html += `<p class="error">⚠ Vous n'êtes PAS admin (role: ${data.role})</p>`;
+                        }
+                    } else {
+                        html += `<p class="error">Non connecté ou session expirée</p>`;
+                    }
+                    
+                    html += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+                    
+                } catch (error) {
+                    html += `<p class="error">❌ ${path}: ${error.message}</p>`;
+                }
+            }
+            
+            result.innerHTML = html;
+        }
+
+        // Auto-run
+        window.addEventListener('load', () => {
+            console.log('Page chargée. Prêt pour les tests.');
+            console.log('Chemin actuel:', window.location.href);
+        });
+    </script>
+    <script src="help-widget.js"></script>
+</body>
+</html>

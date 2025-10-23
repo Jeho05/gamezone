@@ -1,0 +1,63 @@
+╔══════════════════════════════════════════════════════════════╗
+║          Test depuis la console du navigateur                 ║
+╚══════════════════════════════════════════════════════════════╝
+
+1. Ouvrez http://localhost:4000
+2. Appuyez sur F12 (ouvrir la console)
+3. Collez ce code dans la console et appuyez sur Entrée:
+
+───────────────────────────────────────────────────────────────
+
+// Test 1: CORS simple
+fetch('http://localhost/projet%20ismo/api/cors-test.php')
+  .then(r => r.json())
+  .then(d => console.log('✓ Test 1 OK:', d))
+  .catch(e => console.error('✗ Test 1 ERREUR:', e));
+
+───────────────────────────────────────────────────────────────
+
+4. Si ça fonctionne, testez l'inscription:
+
+───────────────────────────────────────────────────────────────
+
+// Test 2: Inscription
+fetch('http://localhost/projet%20ismo/api/auth/register.php', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  credentials: 'include',
+  body: JSON.stringify({
+    username: 'ConsoleTest',
+    email: 'console' + Date.now() + '@test.com',
+    password: 'test1234'
+  })
+})
+.then(r => r.text())
+.then(t => { console.log('Reponse brute:', t); return JSON.parse(t); })
+.then(d => console.log('✓ Inscription OK:', d))
+.catch(e => console.error('✗ Inscription ERREUR:', e));
+
+───────────────────────────────────────────────────────────────
+
+5. Regardez aussi l'onglet "Réseau" (Network):
+   - Trouvez la requête vers register.php
+   - Cliquez dessus
+   - Regardez les Headers (En-têtes)
+   - Copiez les "Response Headers" et envoyez-les moi
+
+───────────────────────────────────────────────────────────────
+
+DIAGNOSTIC:
+
+Si Test 1 échoue avec "NetworkError":
+  → Problème CORS ou Apache
+
+Si Test 1 OK mais Test 2 échoue:
+  → Problème spécifique à register.php
+
+Si les deux échouent:
+  → Vérifiez qu'Apache est bien démarré dans XAMPP
+
+Si "CORS policy" dans l'erreur:
+  → Les headers CORS ne sont pas corrects
+
+───────────────────────────────────────────────────────────────

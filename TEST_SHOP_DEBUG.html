@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔧 Test Boutique & Diagnostic</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 5px;
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: scale(1.05);
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .result {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        .success {
+            border-left-color: #28a745;
+            background: #d4edda;
+        }
+        .error {
+            border-left-color: #dc3545;
+            background: #f8d7da;
+        }
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-size: 0.9em;
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            vertical-align: middle;
+            margin-left: 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .info {
+            background: #d1ecf1;
+            border-left-color: #17a2b8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Diagnostic Boutique de Jeux</h1>
+
+        <!-- Test Connexion DB -->
+        <div class="card">
+            <h2>1️⃣ Test de Connexion Base de Données</h2>
+            <button onclick="testDatabase()">🔍 Vérifier la DB</button>
+            <div id="db-result"></div>
+        </div>
+
+        <!-- Test API Games -->
+        <div class="card">
+            <h2>2️⃣ Test API Games</h2>
+            <button onclick="testGamesAPI()">📋 Charger les Jeux</button>
+            <button onclick="testGameDetail(1)">🎮 Détails Jeu #1</button>
+            <div id="games-result"></div>
+        </div>
+
+        <!-- Test API Purchases -->
+        <div class="card">
+            <h2>3️⃣ Test API Mes Achats</h2>
+            <button onclick="testPurchasesAPI()">🛍️ Charger Mes Achats</button>
+            <div id="purchases-result"></div>
+        </div>
+
+        <!-- Seed Data -->
+        <div class="card">
+            <h2>4️⃣ Insérer Données de Test</h2>
+            <p style="color: #666; margin-bottom: 10px;">
+                ⚠️ Vous devez être connecté en tant qu'admin pour exécuter ceci.
+            </p>
+            <button onclick="seedTestData()">🌱 Insérer Données de Test</button>
+            <div id="seed-result"></div>
+        </div>
+
+        <!-- Test Session -->
+        <div class="card">
+            <h2>5️⃣ Informations de Session</h2>
+            <button onclick="checkSession()">👤 Vérifier Session</button>
+            <div id="session-result"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost/projet%20ismo/api';
+
+        function showLoading(elementId) {
+            document.getElementById(elementId).innerHTML = '<div class="result info">⏳ Chargement en cours...</div>';
+        }
+
+        function showResult(elementId, data, isError = false) {
+            const resultDiv = document.getElementById(elementId);
+            const className = isError ? 'error' : 'success';
+            resultDiv.innerHTML = `
+                <div class="result ${className}">
+                    <strong>${isError ? '❌ Erreur' : '✅ Succès'}</strong>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                </div>
+            `;
+        }
+
+        async function testDatabase() {
+            showLoading('db-result');
+            try {
+                const response = await fetch(`${API_BASE}/test_db.php`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                showResult('db-result', data, !data.success);
+            } catch (error) {
+                showResult('db-result', { error: error.message }, true);
+            }
+        }
+
+        async function testGamesAPI() {
+            showLoading('games-result');
+            try {
+                const response = await fetch(`${API_BASE}/shop/games.php`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                
+                if (data.games) {
+                    showResult('games-result', {
+                        success: true,
+                        count: data.games.length,
+                        games: data.games
+                    }, false);
+                } else {
+                    showResult('games-result', data, true);
+                }
+            } catch (error) {
+                showResult('games-result', { error: error.message }, true);
+            }
+        }
+
+        async function testGameDetail(gameId) {
+            showLoading('games-result');
+            try {
+                const response = await fetch(`${API_BASE}/shop/games.php?id=${gameId}`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                showResult('games-result', data, !data.game);
+            } catch (error) {
+                showResult('games-result', { error: error.message }, true);
+            }
+        }
+
+        async function testPurchasesAPI() {
+            showLoading('purchases-result');
+            try {
+                const response = await fetch(`${API_BASE}/shop/my_purchases.php`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                
+                if (response.status === 401) {
+                    showResult('purchases-result', {
+                        error: 'Non authentifié',
+                        message: 'Vous devez être connecté pour voir vos achats'
+                    }, true);
+                } else if (data.purchases) {
+                    showResult('purchases-result', {
+                        success: true,
+                        count: data.purchases.length,
+                        purchases: data.purchases
+                    }, false);
+                } else {
+                    showResult('purchases-result', data, true);
+                }
+            } catch (error) {
+                showResult('purchases-result', { error: error.message }, true);
+            }
+        }
+
+        async function seedTestData() {
+            showLoading('seed-result');
+            try {
+                const response = await fetch(`${API_BASE}/shop/seed_test_data.php`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                showResult('seed-result', data, !data.success);
+            } catch (error) {
+                showResult('seed-result', { error: error.message }, true);
+            }
+        }
+
+        async function checkSession() {
+            showLoading('session-result');
+            try {
+                const response = await fetch(`${API_BASE}/auth/check.php`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                showResult('session-result', data, !data.authenticated);
+            } catch (error) {
+                showResult('session-result', { error: error.message }, true);
+            }
+        }
+
+        // Auto-run tests on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            console.log('🔧 Page de diagnostic chargée');
+            console.log('API Base:', API_BASE);
+        });
+    </script>
+</body>
+</html>

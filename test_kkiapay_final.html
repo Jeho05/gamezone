@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✅ Test Final Kkiapay - Configuration Correcte</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+        .config {
+            background: #2d3748;
+            color: #48bb78;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            font-size: 0.95em;
+        }
+        .test-box {
+            background: #f8f9fa;
+            border: 3px solid #667eea;
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            margin: 15px 0;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 1.05em;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 8px;
+            transition: all 0.3s;
+        }
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(102, 126, 234, 0.5);
+        }
+        .log {
+            background: #2d3748;
+            color: #48bb78;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            max-height: 350px;
+            overflow-y: auto;
+            margin: 15px 0;
+            font-size: 0.9em;
+        }
+        .log-entry {
+            padding: 4px 0;
+            border-bottom: 1px solid #4a5568;
+        }
+        .success { color: #48bb78; font-weight: bold; }
+        .error { color: #fc8181; font-weight: bold; }
+        .warning { color: #f6ad55; }
+        .info { color: #63b3ed; }
+        .status {
+            padding: 12px;
+            border-radius: 8px;
+            margin: 12px 0;
+            font-weight: bold;
+            font-size: 1.05em;
+        }
+        .status.success { background: #d4edda; color: #155724; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        .status.warning { background: #fff3cd; color: #856404; }
+        .highlight {
+            background: #dbeafe;
+            padding: 15px;
+            border-left: 4px solid #3b82f6;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .success-box {
+            background: #d1fae5;
+            padding: 15px;
+            border-left: 4px solid #10b981;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✅ Test Final Kkiapay</h1>
+        
+        <!-- Configuration FINALE -->
+        <div class="card">
+            <h2>🎯 Configuration FINALE et CORRECTE</h2>
+            <div class="config">
+KEY: 072b361d25546db0aee3d69bf07b15331c51e39f
+SANDBOX: true
+CALLBACK: https://kkiapay-redirect.com
+SCRIPT: https://cdn.kkiapay.me/k.js
+ATTRIBUTS: Anglais (amount, key)
+            </div>
+            <div class="success-box">
+                <strong>✅ Configuration exacte fournie par l'utilisateur:</strong><br>
+                • Attributs en ANGLAIS (amount, key)<br>
+                • sandbox="true" explicite<br>
+                • Clé corrigée: 072b361d25546db0<strong>a</strong>ee3d69bf07b15331c51e39f
+            </div>
+        </div>
+
+        <!-- Test 1: Widget 100 XOF -->
+        <div class="card">
+            <h2>Test 1️⃣: Widget 100 XOF</h2>
+            <p>Widget avec attributs anglais: <code>amount</code> et <code>key</code></p>
+            <div class="test-box">
+                <p style="margin-bottom: 15px;"><strong>Cliquez sur le widget ci-dessous:</strong></p>
+                <kkiapay-widget 
+                    sandbox="true"
+                    amount="100"
+                    key="072b361d25546db0aee3d69bf07b15331c51e39f"
+                    callback="https://kkiapay-redirect.com">
+                </kkiapay-widget>
+            </div>
+            <div id="test1-status"></div>
+        </div>
+
+        <!-- Test 2: Widget 500 XOF -->
+        <div class="card">
+            <h2>Test 2️⃣: Widget 500 XOF</h2>
+            <p>Test avec montant différent</p>
+            <div class="test-box">
+                <p style="margin-bottom: 15px;"><strong>Widget 500 XOF:</strong></p>
+                <kkiapay-widget 
+                    sandbox="true"
+                    amount="500"
+                    key="072b361d25546db0aee3d69bf07b15331c51e39f"
+                    callback="https://kkiapay-redirect.com">
+                </kkiapay-widget>
+            </div>
+            <div id="test2-status"></div>
+        </div>
+
+        <!-- Test 3: API JavaScript -->
+        <div class="card">
+            <h2>Test 3️⃣: API JavaScript</h2>
+            <p>Test programmatique avec <code>window.openKkiapayWidget()</code></p>
+            <button onclick="testJsApi()">💳 Tester API (1000 XOF)</button>
+            <div id="test3-status"></div>
+        </div>
+
+        <!-- Test 4: Vérification Script -->
+        <div class="card">
+            <h2>Test 4️⃣: Vérification Script</h2>
+            <button onclick="checkScript()">🔍 Vérifier k.js</button>
+            <div id="test4-status"></div>
+        </div>
+
+        <!-- Logs -->
+        <div class="card">
+            <h2>📊 Logs Console</h2>
+            <div class="log" id="console-log">
+                <div class="log-entry info">⏳ En attente des tests...</div>
+            </div>
+            <button onclick="clearLog()">🗑️ Effacer Logs</button>
+        </div>
+
+        <!-- Résultats Attendus -->
+        <div class="card">
+            <h2>✅ Résultats Attendus</h2>
+            <div class="highlight">
+                <strong>Si TOUT fonctionne:</strong><br>
+                • ✅ Widgets s'affichent correctement<br>
+                • ✅ Popup Kkiapay s'ouvre au clic<br>
+                • ✅ <strong>PAS d'erreur "Votre clé d'api est incorrecte"</strong><br>
+                • ✅ Mode sandbox actif (numéros test acceptés)<br><br>
+                
+                <strong>Numéros de test (sandbox):</strong><br>
+                • ✅ Succès: 97000000 ou 97xxxxxxxx<br>
+                • ❌ Échec: 96000000 ou 96xxxxxxxx<br>
+                • 🔑 Code OTP: 123456
+            </div>
+        </div>
+
+        <!-- Fichiers Mis à Jour -->
+        <div class="card">
+            <h2>📁 Fichiers Mis à Jour</h2>
+            <ul style="margin-left: 20px; line-height: 2;">
+                <li><strong>shop.html</strong> - Widget et JS avec attributs anglais</li>
+                <li><strong>setup_kkiapay_complet.php</strong> - Clé mise à jour</li>
+                <li><strong>test_kkiapay_final.html</strong> - Cette page (configuration finale)</li>
+            </ul>
+            <div class="success-box" style="margin-top: 15px;">
+                <strong>🎯 Configuration appliquée partout:</strong><br>
+                • Attributs: amount, key (anglais)<br>
+                • Clé: 072b361d25546db0aee3d69bf07b15331c51e39f<br>
+                • Sandbox: true<br>
+                • Callback: https://kkiapay-redirect.com
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.kkiapay.me/k.js"></script>
+    <script>
+        const FINAL_KEY = '072b361d25546db0aee3d69bf07b15331c51e39f';
+        const CALLBACK = 'https://kkiapay-redirect.com';
+
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('console-log');
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = 'log-entry ' + type;
+            entry.textContent = `[${timestamp}] ${message}`;
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(`[${type.toUpperCase()}]`, message);
+        }
+
+        function clearLog() {
+            document.getElementById('console-log').innerHTML = '<div class="log-entry info">🗑️ Logs effacés</div>';
+        }
+
+        function showStatus(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.innerHTML = `<div class="status ${type}">${message}</div>`;
+            }
+        }
+
+        // Vérifier Script
+        function checkScript() {
+            log('🔍 Vérification du script k.js...');
+            if (typeof window.openKkiapayWidget === 'function') {
+                log('✅ Script k.js chargé avec succès!', 'success');
+                log('✅ Fonction openKkiapayWidget() disponible', 'success');
+                showStatus('test4-status', '✅ Script k.js chargé! Fonction disponible.', 'success');
+            } else {
+                log('❌ Script k.js NON chargé!', 'error');
+                showStatus('test4-status', '❌ Script k.js non chargé. Vérifiez votre connexion.', 'error');
+            }
+        }
+
+        // Test API JavaScript
+        function testJsApi() {
+            log('🧪 Test 3: API JavaScript avec configuration finale');
+            if (!window.openKkiapayWidget) {
+                log('❌ openKkiapayWidget non disponible', 'error');
+                showStatus('test3-status', '❌ Fonction non disponible. Script k.js non chargé.', 'error');
+                return;
+            }
+
+            try {
+                log('Configuration: amount=1000, api_key=' + FINAL_KEY.substring(0, 15) + '...');
+                log('Sandbox: true, Attributs: anglais (amount, key)');
+                
+                window.openKkiapayWidget({
+                    amount: 1000,
+                    api_key: FINAL_KEY,
+                    sandbox: true,
+                    phone: '',
+                    name: 'Test Final',
+                    
+                    successCallback: function(response) {
+                        log('🎉 PAIEMENT RÉUSSI!', 'success');
+                        log('Transaction ID: ' + response.transactionId, 'success');
+                        showStatus('test3-status', 
+                            '✅ Paiement réussi! Transaction: ' + response.transactionId, 
+                            'success'
+                        );
+                    },
+                    
+                    failedCallback: function(error) {
+                        log('❌ PAIEMENT ÉCHOUÉ!', 'error');
+                        log('Erreur: ' + JSON.stringify(error), 'error');
+                        showStatus('test3-status', 
+                            '❌ Paiement échoué: ' + (error.message || 'Erreur inconnue'), 
+                            'error'
+                        );
+                    }
+                });
+                
+                log('✅ Widget ouvert avec succès!', 'success');
+                showStatus('test3-status', '⏳ Widget ouvert. Complétez le paiement.', 'warning');
+                
+            } catch (error) {
+                log('❌ ERREUR: ' + error.message, 'error');
+                showStatus('test3-status', '❌ Erreur: ' + error.message, 'error');
+            }
+        }
+
+        // Auto-vérification
+        window.addEventListener('load', function() {
+            log('🚀 Page de test FINALE chargée');
+            log('📌 Clé: ' + FINAL_KEY.substring(0, 20) + '...', 'info');
+            log('📌 Attributs: ANGLAIS (amount, key)', 'info');
+            log('📌 Sandbox: true', 'info');
+            log('⏳ Attente de 1 seconde pour vérifier le script...');
+            
+            setTimeout(() => {
+                checkScript();
+                log('💡 Testez les 4 widgets/boutons ci-dessus', 'info');
+                log('💡 Vérifiez qu\'il n\'y a PAS d\'erreur "clé incorrecte"', 'warning');
+            }, 1000);
+        });
+
+        // Détecter clics sur widgets
+        setTimeout(() => {
+            const widgets = document.querySelectorAll('kkiapay-widget');
+            widgets.forEach((widget, index) => {
+                widget.addEventListener('click', function() {
+                    log('👆 Widget ' + (index + 1) + ' cliqué!', 'info');
+                    const amount = widget.getAttribute('amount');
+                    log('   Amount: ' + amount + ' XOF', 'info');
+                    log('   Key: ' + FINAL_KEY.substring(0, 15) + '...', 'info');
+                });
+            });
+        }, 2000);
+
+        // Intercepter erreurs
+        window.addEventListener('error', function(e) {
+            log('❌ ERREUR GLOBALE: ' + e.message, 'error');
+        });
+
+        const originalConsoleError = console.error;
+        console.error = function(...args) {
+            log('🔴 Console Error: ' + args.join(' '), 'error');
+            originalConsoleError.apply(console, args);
+        };
+    </script>
+</body>
+</html>

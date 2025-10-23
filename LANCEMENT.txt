@@ -1,0 +1,80 @@
+╔══════════════════════════════════════════════════════════════╗
+║                  GameZone - Comment demarrer                  ║
+╚══════════════════════════════════════════════════════════════╝
+
+METHODE AUTOMATIQUE (RECOMMANDEE):
+═══════════════════════════════════
+
+1. Ouvrez PowerShell dans ce dossier
+2. Executez:   .\START.ps1
+3. Attendez que tout se lance automatiquement
+4. Ouvrez http://localhost:4000 dans votre navigateur
+
+
+METHODE MANUELLE:
+═══════════════════
+
+1. XAMPP Control Panel > Demarrer Apache + MySQL
+
+2. Ouvrir dans le navigateur:
+   http://localhost/projet%20ismo/api/install.php
+
+3. PowerShell:
+   cd "c:\xampp\htdocs\projet ismo\createxyz-project\_\apps\web"
+   npm run dev
+
+4. Ouvrir dans le navigateur:
+   http://localhost:4000
+
+
+COMPTES DE TEST:
+═══════════════
+
+Admin:
+  Email:    admin@gamezone.fr
+  Password: demo123
+
+Joueur:
+  Creez un compte via http://localhost:4000/auth/register
+
+
+PROBLEMES COURANTS:
+══════════════════
+
+"Method Not Allowed" ou "JSON.parse error":
+  > Redemarrez le serveur dev (Ctrl+C puis npm run dev)
+  > Verifiez Apache et MySQL dans XAMPP
+
+"Port 4000 deja utilise":
+  > Changez le port dans vite.config.ts (ligne 84)
+
+"Email deja utilise":
+  > Utilisez un autre email OU
+  > Connectez-vous avec l'email existant
+
+
+VERIFICATION:
+════════════
+
+Pour verifier que tout fonctionne:
+  .\verifier.ps1
+
+
+AIDE:
+═════
+
+Documentation complete: README.md
+Guide rapide:          GUIDE_RAPIDE.md
+Corrections:           CORRECTIONS.md
+
+
+CONTACTS API:
+════════════
+
+Backend: http://localhost/projet%20ismo/api
+Test:    http://localhost/projet%20ismo/api/test.php
+
+
+═══════════════════════════════════════════════════════════════
+
+Fait avec ❤ pour GameZone

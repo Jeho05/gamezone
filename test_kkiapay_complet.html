@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✅ Test Complet Kkiapay - Vérification Fonctionnelle</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 5px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            border-left: 4px solid #ffc107;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-left: 4px solid #17a2b8;
+        }
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            margin: 10px 0;
+        }
+        .log-entry {
+            padding: 5px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+        .widget-container {
+            background: #f8f9fa;
+            border: 2px dashed #667eea;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            margin: 15px 0;
+        }
+        .test-section {
+            border-top: 2px solid #e9ecef;
+            padding-top: 20px;
+            margin-top: 20px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin: 5px;
+        }
+        .badge-success { background: #28a745; color: white; }
+        .badge-danger { background: #dc3545; color: white; }
+        .badge-warning { background: #ffc107; color: #212529; }
+        .badge-info { background: #17a2b8; color: white; }
+        code {
+            background: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #e83e8c;
+        }
+        .config-box {
+            background: #2d3748;
+            color: #48bb78;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+        }
+        .progress {
+            width: 100%;
+            height: 30px;
+            background: #e9ecef;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✅ Test Complet Kkiapay</h1>
+        
+        <!-- Configuration -->
+        <div class="card">
+            <h2>📋 Configuration Actuelle</h2>
+            <div class="config-box">
+key: "b2f64170af2111f093307bbda24d6bac"
+callback: "https://kkiapay-redirect.com"
+script: "https://cdn.kkiapay.me/k.js"
+amount: 500 XOF (test standard)
+            </div>
+            <div class="info status">
+                <strong>ℹ️ Mode:</strong> Production (utilise la vraie clé fournie)
+            </div>
+        </div>
+
+        <!-- Test 1: Vérification du Script -->
+        <div class="card">
+            <h2>1️⃣ Vérification du Chargement du Script</h2>
+            <p>Teste si le script <code>https://cdn.kkiapay.me/k.js</code> est bien chargé.</p>
+            <button onclick="testScriptLoaded()">🔍 Vérifier le Script</button>
+            <div id="script-status"></div>
+        </div>
+
+        <!-- Test 2: Widget Officiel -->
+        <div class="card">
+            <h2>2️⃣ Widget Officiel (Balise HTML)</h2>
+            <p>Test du widget en utilisant la balise <code>&lt;kkiapay-widget&gt;</code> exacte fournie.</p>
+            <div class="widget-container">
+                <p><strong>Widget ci-dessous (cliquez pour payer 1 XOF):</strong></p>
+                <kkiapay-widget 
+                    amount="1" 
+                    key="b2f64170af2111f093307bbda24d6bac" 
+                    callback="https://kkiapay-redirect.com">
+                </kkiapay-widget>
+            </div>
+            <div id="widget-status"></div>
+        </div>
+
+        <!-- Test 3: API JavaScript -->
+        <div class="card">
+            <h2>3️⃣ API JavaScript (openKkiapayWidget)</h2>
+            <p>Test d'ouverture programmatique du widget avec montant de 500 XOF.</p>
+            <button onclick="testJavaScriptAPI()">💳 Ouvrir Widget (500 XOF)</button>
+            <button onclick="testJavaScriptAPI(1000)">💳 Ouvrir Widget (1000 XOF)</button>
+            <div id="api-status"></div>
+        </div>
+
+        <!-- Test 4: Intégration Backend -->
+        <div class="card">
+            <h2>4️⃣ Intégration avec Backend</h2>
+            <p>Vérifie que le backend reconnaît la méthode de paiement Kkiapay.</p>
+            <button onclick="testBackendIntegration()">🔗 Vérifier Backend</button>
+            <div id="backend-status"></div>
+        </div>
+
+        <!-- Test 5: Flow Complet -->
+        <div class="card">
+            <h2>5️⃣ Simulation Flow d'Achat Complet</h2>
+            <p>Simule un achat complet depuis la boutique.</p>
+            <button onclick="testCompleteFlow()">🎮 Simuler Achat Complet</button>
+            <div id="flow-status"></div>
+        </div>
+
+        <!-- Logs -->
+        <div class="card">
+            <h2>📊 Logs en Temps Réel</h2>
+            <div class="log" id="log-container">
+                <div class="log-entry">⏳ En attente des tests...</div>
+            </div>
+            <button onclick="clearLogs()">🗑️ Effacer les Logs</button>
+        </div>
+
+        <!-- Résumé des Tests -->
+        <div class="card">
+            <h2>📈 Résumé des Tests</h2>
+            <div class="progress">
+                <div class="progress-bar" id="progress-bar" style="width: 0%">0/5 Tests</div>
+            </div>
+            <div id="test-summary"></div>
+        </div>
+
+        <!-- Numéros de Test -->
+        <div class="card">
+            <h2>📱 Numéros de Test (si mode sandbox)</h2>
+            <div class="info status">
+                <strong>✅ Succès:</strong> 97000000<br>
+                <strong>❌ Échec:</strong> 96000000<br>
+                <strong>🔑 Code OTP:</strong> 123456
+            </div>
+            <p><small>Note: Si la clé est en mode production, utilisez de vraies informations.</small></p>
+        </div>
+    </div>
+
+    <!-- Script Kkiapay -->
+    <script src="https://cdn.kkiapay.me/k.js"></script>
+
+    <script>
+        const API_BASE = 'http://localhost/projet%20ismo/api';
+        const KKIAPAY_KEY = 'b2f64170af2111f093307bbda24d6bac';
+        const KKIAPAY_CALLBACK = 'https://kkiapay-redirect.com';
+        
+        let testsCompleted = 0;
+        let testResults = {
+            script: false,
+            widget: false,
+            api: false,
+            backend: false,
+            flow: false
+        };
+
+        // Fonction de logging
+        function log(message, type = 'info') {
+            const logContainer = document.getElementById('log-container');
+            const timestamp = new Date().toLocaleTimeString();
+            const icons = {
+                'info': 'ℹ️',
+                'success': '✅',
+                'error': '❌',
+                'warning': '⚠️'
+            };
+            const icon = icons[type] || 'ℹ️';
+            
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.innerHTML = `<strong>[${timestamp}]</strong> ${icon} ${message}`;
+            logContainer.appendChild(entry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+            
+            console.log(`[${type.toUpperCase()}]`, message);
+        }
+
+        function clearLogs() {
+            document.getElementById('log-container').innerHTML = '<div class="log-entry">🗑️ Logs effacés</div>';
+        }
+
+        function showStatus(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+
+        function updateProgress() {
+            const total = Object.keys(testResults).length;
+            const completed = Object.values(testResults).filter(v => v).length;
+            const percentage = (completed / total) * 100;
+            
+            const progressBar = document.getElementById('progress-bar');
+            progressBar.style.width = percentage + '%';
+            progressBar.textContent = `${completed}/${total} Tests`;
+            
+            // Mettre à jour le résumé
+            const summary = document.getElementById('test-summary');
+            let html = '<div style="margin-top: 15px;">';
+            for (const [test, passed] of Object.entries(testResults)) {
+                const badge = passed ? 'badge-success' : 'badge-danger';
+                const status = passed ? '✅' : '❌';
+                html += `<span class="badge ${badge}">${status} ${test.toUpperCase()}</span>`;
+            }
+            html += '</div>';
+            summary.innerHTML = html;
+        }
+
+        // Test 1: Vérification du script
+        function testScriptLoaded() {
+            log('🔍 Test 1: Vérification du chargement du script k.js...');
+            
+            if (typeof window.openKkiapayWidget === 'function') {
+                log('✅ Script k.js chargé avec succès!', 'success');
+                log('✅ Fonction openKkiapayWidget disponible', 'success');
+                showStatus('script-status', '✅ Script chargé correctement! La fonction openKkiapayWidget() est disponible.', 'success');
+                testResults.script = true;
+            } else {
+                log('❌ Script k.js NON chargé!', 'error');
+                showStatus('script-status', '❌ Erreur: Le script k.js n\'est pas chargé. Vérifiez votre connexion internet.', 'error');
+                testResults.script = false;
+            }
+            
+            updateProgress();
+        }
+
+        // Test 2: Widget officiel (vérifié visuellement par l'utilisateur)
+        function markWidgetTested(success) {
+            testResults.widget = success;
+            updateProgress();
+            if (success) {
+                showStatus('widget-status', '✅ Widget affiché et fonctionnel!', 'success');
+                log('✅ Widget officiel fonctionne correctement', 'success');
+            }
+        }
+
+        // Test 3: API JavaScript
+        function testJavaScriptAPI(amount = 500) {
+            log(`🔍 Test 3: Ouverture du widget via API JavaScript (${amount} XOF)...`);
+            
+            if (!window.openKkiapayWidget) {
+                log('❌ openKkiapayWidget n\'existe pas!', 'error');
+                showStatus('api-status', '❌ Erreur: La fonction openKkiapayWidget n\'est pas disponible.', 'error');
+                testResults.api = false;
+                updateProgress();
+                return;
+            }
+
+            try {
+                log(`Configuration: amount=${amount}, key=${KKIAPAY_KEY.substring(0, 10)}...`);
+                
+                window.openKkiapayWidget({
+                    amount: amount,
+                    api_key: KKIAPAY_KEY,
+                    phone: '',
+                    name: 'Test User',
+                    
+                    successCallback: function(response) {
+                        log('🎉 PAIEMENT RÉUSSI!', 'success');
+                        log(`Transaction ID: ${response.transactionId}`, 'success');
+                        showStatus('api-status', 
+                            `✅ Paiement réussi! Transaction: ${response.transactionId}`, 
+                            'success'
+                        );
+                        testResults.api = true;
+                        updateProgress();
+                    },
+                    
+                    failedCallback: function(error) {
+                        log('❌ PAIEMENT ÉCHOUÉ!', 'error');
+                        log(`Erreur: ${JSON.stringify(error)}`, 'error');
+                        showStatus('api-status', 
+                            `❌ Paiement échoué: ${error.message || 'Erreur inconnue'}`, 
+                            'error'
+                        );
+                    }
+                });
+                
+                log('🚀 Widget ouvert avec succès!', 'success');
+                showStatus('api-status', 
+                    '⏳ Widget ouvert. Complétez le paiement pour continuer le test.', 
+                    'info'
+                );
+                
+            } catch (error) {
+                log(`❌ ERREUR: ${error.message}`, 'error');
+                showStatus('api-status', `❌ Erreur: ${error.message}`, 'error');
+                testResults.api = false;
+                updateProgress();
+            }
+        }
+
+        // Test 4: Intégration backend
+        async function testBackendIntegration() {
+            log('🔍 Test 4: Vérification de l\'intégration backend...');
+            showStatus('backend-status', '⏳ Vérification en cours...', 'info');
+            
+            try {
+                // Vérifier les méthodes de paiement
+                const response = await fetch(`${API_BASE}/shop/payment_methods.php`, {
+                    credentials: 'include'
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                log(`📊 ${data.payment_methods.length} méthodes de paiement trouvées`);
+                
+                // Chercher Kkiapay
+                const kkiapayMethod = data.payment_methods.find(m => 
+                    m.provider === 'kkiapay' || m.slug === 'kkiapay'
+                );
+                
+                if (kkiapayMethod) {
+                    log('✅ Méthode Kkiapay trouvée!', 'success');
+                    log(`   - ID: ${kkiapayMethod.id}`, 'info');
+                    log(`   - Nom: ${kkiapayMethod.name}`, 'info');
+                    log(`   - Active: ${kkiapayMethod.is_active ? 'Oui' : 'Non'}`, 'info');
+                    log(`   - Paiement en ligne: ${kkiapayMethod.requires_online_payment ? 'Oui' : 'Non'}`, 'info');
+                    
+                    showStatus('backend-status', 
+                        `✅ Backend configuré! Méthode Kkiapay (ID: ${kkiapayMethod.id}) active et prête.`, 
+                        'success'
+                    );
+                    testResults.backend = true;
+                } else {
+                    log('⚠️ Méthode Kkiapay non trouvée', 'warning');
+                    log('💡 Exécutez setup_kkiapay_complet.php pour créer la méthode', 'info');
+                    showStatus('backend-status', 
+                        '⚠️ Méthode Kkiapay non trouvée. Exécutez setup_kkiapay_complet.php', 
+                        'warning'
+                    );
+                    testResults.backend = false;
+                }
+                
+            } catch (error) {
+                log(`❌ Erreur backend: ${error.message}`, 'error');
+                showStatus('backend-status', `❌ Erreur: ${error.message}`, 'error');
+                testResults.backend = false;
+            }
+            
+            updateProgress();
+        }
+
+        // Test 5: Flow complet
+        async function testCompleteFlow() {
+            log('🔍 Test 5: Simulation d\'un flow d\'achat complet...');
+            showStatus('flow-status', '⏳ Simulation en cours...', 'info');
+            
+            try {
+                // 1. Charger les jeux
+                log('1️⃣ Chargement des jeux...');
+                const gamesResponse = await fetch(`${API_BASE}/shop/games.php`, {
+                    credentials: 'include'
+                });
+                const gamesData = await gamesResponse.json();
+                
+                if (!gamesData.games || gamesData.games.length === 0) {
+                    throw new Error('Aucun jeu disponible');
+                }
+                log(`✅ ${gamesData.games.length} jeux trouvés`, 'success');
+                
+                // 2. Sélectionner un jeu avec packages
+                const game = gamesData.games[0];
+                log(`2️⃣ Jeu sélectionné: ${game.name}`);
+                
+                const gameDetailResponse = await fetch(`${API_BASE}/shop/games.php?id=${game.id}`, {
+                    credentials: 'include'
+                });
+                const gameDetail = await gameDetailResponse.json();
+                
+                if (!gameDetail.game.packages || gameDetail.game.packages.length === 0) {
+                    throw new Error('Aucun package disponible pour ce jeu');
+                }
+                
+                const package = gameDetail.game.packages[0];
+                log(`✅ Package sélectionné: ${package.name} - ${package.price} XOF`, 'success');
+                
+                // 3. Vérifier méthode Kkiapay
+                log('3️⃣ Vérification méthode de paiement...');
+                const methodsResponse = await fetch(`${API_BASE}/shop/payment_methods.php`, {
+                    credentials: 'include'
+                });
+                const methodsData = await methodsResponse.json();
+                
+                const kkiapayMethod = methodsData.payment_methods.find(m => 
+                    m.provider === 'kkiapay' || m.slug === 'kkiapay'
+                );
+                
+                if (!kkiapayMethod) {
+                    throw new Error('Méthode Kkiapay non configurée');
+                }
+                log(`✅ Méthode Kkiapay trouvée (ID: ${kkiapayMethod.id})`, 'success');
+                
+                // 4. Résumé du flow
+                log('4️⃣ Résumé du flow simulé:', 'success');
+                log(`   ✓ Jeu: ${game.name}`, 'success');
+                log(`   ✓ Package: ${package.name}`, 'success');
+                log(`   ✓ Montant: ${package.price} XOF`, 'success');
+                log(`   ✓ Méthode: ${kkiapayMethod.name}`, 'success');
+                log(`   ✓ Widget: Prêt à afficher`, 'success');
+                
+                showStatus('flow-status', 
+                    `✅ Flow complet validé! Tout est prêt pour ${game.name} (${package.price} XOF)`, 
+                    'success'
+                );
+                testResults.flow = true;
+                
+                log('🎉 Tous les composants du flow sont opérationnels!', 'success');
+                
+            } catch (error) {
+                log(`❌ Erreur dans le flow: ${error.message}`, 'error');
+                showStatus('flow-status', `❌ Erreur: ${error.message}`, 'error');
+                testResults.flow = false;
+            }
+            
+            updateProgress();
+        }
+
+        // Auto-vérification au chargement
+        window.addEventListener('load', function() {
+            log('🚀 Page de test chargée');
+            log('⏳ Attente de 1 seconde pour vérifier le script...');
+            
+            setTimeout(() => {
+                testScriptLoaded();
+                
+                // Si le script est chargé, afficher un message d'aide
+                if (testResults.script) {
+                    log('💡 Vous pouvez maintenant tester le widget officiel (Test 2)', 'info');
+                    log('💡 Cliquez sur le bouton "Widget ci-dessous" pour tester', 'info');
+                }
+            }, 1000);
+        });
+
+        // Détecter si le widget officiel est cliqué
+        setTimeout(() => {
+            const widget = document.querySelector('kkiapay-widget');
+            if (widget) {
+                widget.addEventListener('click', function() {
+                    log('👆 Widget officiel cliqué!', 'info');
+                    markWidgetTested(true);
+                });
+            }
+        }, 2000);
+    </script>
+</body>
+</html>

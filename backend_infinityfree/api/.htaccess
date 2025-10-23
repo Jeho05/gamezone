@@ -1,0 +1,20 @@
+# CORS handled entirely by PHP (config.php)
+# Let PHP send headers for all requests including OPTIONS
+
+# Ensure PHP files are processed
+<FilesMatch "\.php$">
+    SetHandler application/x-httpd-php
+</FilesMatch>
+
+# Environment variables for PHP (accessible via getenv())
+<IfModule mod_env.c>
+    SetEnv APP_ENV development
+    SetEnv SESSION_SAMESITE Lax
+    SetEnv SESSION_SECURE 0
+    SetEnv CRON_SECRET DEV_CHANGE_ME
+    # Base URL of the site, used to build absolute callback URLs
+    SetEnv APP_BASE_URL http://localhost/projet%20ismo
+    # Kkiapay placeholders (backend)
+    SetEnv KKIAPAY_PUBLIC_KEY CHANGE_ME
+    SetEnv KKIAPAY_SANDBOX 1
+</IfModule>

@@ -1,0 +1,290 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.header {
+    background: white;
+    padding: 20px 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    margin-bottom: 30px;
+}
+
+.header h1 {
+    color: #333;
+    font-size: 28px;
+    margin-bottom: 5px;
+}
+
+.header p {
+    color: #666;
+    font-size: 14px;
+}
+
+.scanner-card {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    margin-bottom: 20px;
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: all 0.3s;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.btn {
+    padding: 15px 30px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    width: 100%;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+}
+
+.btn-success {
+    background: #10b981;
+    color: white;
+    margin-right: 10px;
+}
+
+.btn-danger {
+    background: #ef4444;
+    color: white;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.result-card {
+    margin-top: 30px;
+    padding: 20px;
+    border-radius: 10px;
+    display: none;
+}
+
+.result-card.success {
+    background: #d1fae5;
+    border: 2px solid #10b981;
+    display: block;
+}
+
+.result-card.error {
+    background: #fee2e2;
+    border: 2px solid #ef4444;
+    display: block;
+}
+
+.invoice-details {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 15px;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+}
+
+.detail-label {
+    font-weight: 600;
+    color: #666;
+}
+
+.detail-value {
+    color: #333;
+    font-weight: 500;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.status-active {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.status-ready {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.actions {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.loading {
+    display: none;
+    text-align: center;
+    padding: 20px;
+}
+
+.loading.active {
+    display: block;
+}
+
+.spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.scan-history {
+    margin-top: 30px;
+    display: none;
+}
+
+.history-item {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.history-code {
+    font-family: monospace;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.history-time {
+    color: #666;
+    font-size: 12px;
+}
+
+@media (max-width: 640px) {
+    body {
+      padding: 12px;
+    }
+    .container {
+      max-width: 100%;
+    }
+    .header {
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .header h1 {
+      font-size: 22px;
+    }
+    .scanner-card {
+      padding: 16px;
+    }
+    .input-group label {
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+    .input-group input {
+      padding: 12px;
+      font-size: 16px;
+      letter-spacing: 1.5px;
+    }
+    .btn {
+      padding: 12px 16px;
+      font-size: 15px;
+    }
+    .actions {
+      flex-direction: column;
+    }
+    .actions .btn {
+      width: 100%;
+    }
+    .result-card {
+      padding: 16px;
+    }
+    .invoice-details {
+      padding: 12px;
+    }
+    .detail-row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+    }
+}

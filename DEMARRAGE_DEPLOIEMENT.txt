@@ -1,0 +1,65 @@
+╔═══════════════════════════════════════════════════════════════╗
+║                                                               ║
+║         🚀 DÉPLOIEMENT GAMEZONE SUR INFINITYFREE 🚀         ║
+║                     Version Simplifiée                        ║
+║                                                               ║
+╚═══════════════════════════════════════════════════════════════╝
+
+📋 3 COMMANDES ESSENTIELLES :
+
+1️⃣  BUILD DE L'APPLICATION
+   .\BUILD_PRODUCTION.ps1
+
+2️⃣  PUSH SUR GITHUB  
+   .\INIT_GITHUB.ps1
+
+3️⃣  UPLOAD SUR INFINITYFREE
+   → Utilisez FileZilla (ftpupload.net)
+   → Uploadez le dossier "production_build" vers /htdocs/
+
+
+📚 DOCUMENTATIONS DISPONIBLES :
+
+✅ DEPLOIEMENT_ETAPES.md
+   → Guide pas-à-pas avec timing (85 minutes total)
+   → Explications détaillées de chaque étape
+   
+✅ DEPLOIEMENT_INFINITYFREE.md
+   → Documentation technique complète
+   → Troubleshooting et solutions
+   
+✅ README.md
+   → Documentation générale du projet
+
+
+🎯 ORDRE RECOMMANDÉ :
+
+1. Lisez DEPLOIEMENT_ETAPES.md en entier
+2. Créez votre compte InfinityFree
+3. Exécutez BUILD_PRODUCTION.ps1
+4. Uploadez via FTP
+5. Testez votre site
+6. Exécutez INIT_GITHUB.ps1
+
+
+⚡ LIENS UTILES :
+
+InfinityFree : https://infinityfree.net
+FileZilla : https://filezilla-project.org
+GitHub : https://github.com
+
+
+📞 EN CAS DE PROBLÈME :
+
+→ Ouvrez F12 dans le navigateur (Console + Network)
+→ Vérifiez api/.env (infos base de données)
+→ Consultez le forum InfinityFree
+
+
+💡 CONSEIL :
+
+Prenez votre temps, suivez le guide étape par étape.
+Chaque étape est documentée et testée !
+
+
+Bon déploiement ! 🎉

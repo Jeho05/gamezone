@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Player Endpoints</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        label {
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9em;
+        }
+
+        select, input {
+            padding: 10px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            align-self: flex-end;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .status.loading {
+            background: #fff3cd;
+            color: #856404;
+            border-left: 5px solid #ffc107;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 5px solid #28a745;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 5px solid #dc3545;
+        }
+
+        .response {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            overflow-x: auto;
+        }
+
+        pre {
+            margin: 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .summary {
+            background: #e7f3ff;
+            border-left: 5px solid #2196F3;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .summary h3 {
+            color: #1976D2;
+            margin-bottom: 10px;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .summary-item {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .summary-item strong {
+            display: block;
+            color: #1976D2;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .summary-item span {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+            }
+            
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Test des Endpoints Player</h1>
+
+        <!-- LEADERBOARD SECTION -->
+        <div class="section">
+            <h2>📊 Leaderboard</h2>
+            
+            <div class="controls">
+                <div class="control-group">
+                    <label for="period">Période:</label>
+                    <select id="period">
+                        <option value="weekly" selected>Hebdomadaire</option>
+                        <option value="monthly">Mensuel</option>
+                        <option value="all">Tout le temps</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <label for="limit">Limite:</label>
+                    <select id="limit">
+                        <option value="10">Top 10</option>
+                        <option value="25">Top 25</option>
+                        <option value="50" selected>Top 50</option>
+                        <option value="100">Top 100</option>
+                    </select>
+                </div>
+                
+                <button onclick="testLeaderboard()">🚀 Tester</button>
+            </div>
+
+            <div id="leaderboardStatus" class="hidden"></div>
+            <div id="leaderboardSummary" class="hidden"></div>
+            <div id="leaderboardResponse" class="hidden"></div>
+        </div>
+
+        <!-- GAMIFICATION SECTION -->
+        <div class="section">
+            <h2>🎯 Gamification</h2>
+            
+            <div class="controls">
+                <div class="control-group">
+                    <label for="userId">User ID (optionnel):</label>
+                    <input type="number" id="userId" placeholder="Laissez vide pour utilisateur connecté" min="1">
+                </div>
+                
+                <button onclick="testGamification()">🚀 Tester</button>
+            </div>
+
+            <div id="gamificationStatus" class="hidden"></div>
+            <div id="gamificationSummary" class="hidden"></div>
+            <div id="gamificationResponse" class="hidden"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost/projet%20ismo/api/player';
+
+        function showStatus(elementId, message, type) {
+            const el = document.getElementById(elementId);
+            el.className = `status ${type}`;
+            el.textContent = message;
+            el.classList.remove('hidden');
+        }
+
+        function hideElement(elementId) {
+            document.getElementById(elementId).classList.add('hidden');
+        }
+
+        function showElement(elementId) {
+            document.getElementById(elementId).classList.remove('hidden');
+        }
+
+        async function testLeaderboard() {
+            const period = document.getElementById('period').value;
+            const limit = document.getElementById('limit').value;
+            
+            const statusEl = 'leaderboardStatus';
+            const summaryEl = 'leaderboardSummary';
+            const responseEl = 'leaderboardResponse';
+
+            showStatus(statusEl, '⏳ Chargement du leaderboard...', 'loading');
+            hideElement(summaryEl);
+            hideElement(responseEl);
+
+            try {
+                const response = await fetch(`${API_BASE}/leaderboard.php?period=${period}&limit=${limit}`, {
+                    credentials: 'include'
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    showStatus(statusEl, '✅ Leaderboard chargé avec succès!', 'success');
+
+                    // Show summary
+                    const summary = document.getElementById(summaryEl);
+                    summary.innerHTML = `
+                        <div class="summary">
+                            <h3>📈 Résumé</h3>
+                            <div class="summary-grid">
+                                <div class="summary-item">
+                                    <strong>Période</strong>
+                                    <span>${data.leaderboard.period_label}</span>
+                                </div>
+                                <div class="summary-item">
+                                    <strong>Joueurs actifs</strong>
+                                    <span>${data.leaderboard.total_players}</span>
+                                </div>
+                                <div class="summary-item">
+                                    <strong>Points distribués</strong>
+                                    <span>${data.leaderboard.total_points_distributed.toLocaleString()}</span>
+                                </div>
+                                <div class="summary-item">
+                                    <strong>Top affiché</strong>
+                                    <span>${data.leaderboard.showing_top}</span>
+                                </div>
+                                ${data.current_user ? `
+                                <div class="summary-item">
+                                    <strong>Votre rang</strong>
+                                    <span>${data.current_user.rank}</span>
+                                </div>
+                                <div class="summary-item">
+                                    <strong>Vos points</strong>
+                                    <span>${data.current_user.points.toLocaleString()}</span>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `;
+                    showElement(summaryEl);
+                } else {
+                    showStatus(statusEl, `❌ Erreur: ${data.error || 'Erreur inconnue'}`, 'error');
+                }
+
+                // Show full response
+                const responseDiv = document.getElementById(responseEl);
+                responseDiv.innerHTML = `<div class="response"><pre>${JSON.stringify(data, null, 2)}</pre></div>`;
+                showElement(responseEl);
+
+            } catch (error) {
+                showStatus(statusEl, `❌ Erreur réseau: ${error.message}`, 'error');
+                console.error('Error:', error);
+            }
+        }
+
+        async function testGamification() {
+            const userId = document.getElementById('userId').value;
+            
+            const statusEl = 'gamificationStatus';
+            const summaryEl = 'gamificationSummary';
+            const responseEl = 'gamificationResponse';
+
+            showStatus(statusEl, '⏳ Chargement des données de gamification...', 'loading');
+            hideElement(summaryEl);
+            hideElement(responseEl);
+
+            try {
+                const url = userId 
+                    ? `${API_BASE}/gamification.php?user_id=${userId}`
+                    : `${API_BASE}/gamification.php`;
+
+                const response = await fetch(url, {
+                    credentials: 'include'
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    showStatus(statusEl, '✅ Données de gamification chargées avec succès!', 'success');
+
+                    // Show summary
+                    const summary = document.getElementById(summaryEl);
+                    summary.innerHTML = `
+                        <div class="summary">
+                            <h3>🎮 Profil de ${data.user.username}</h3>
+                            <div class="summary-grid">
+                                <div class="summary-item">
+                                    <strong>Points</strong>
+                                    <span>${data.user.points.toLocaleString()}</span>
+                                </div>
+                                <div class="summary-item">
+                                    <strong>Niveau</strong>
+                                    <span>${data.user.level} ${data.level_progression.current ? `(${data.level_progression.current.name})` : ''}</span>
+                                </div>
+                                <div class="summary-item">
+                                    <strong>Rang global</strong>
+                                    <span>#${data.leaderboard.global_rank}</span>
+                                </div>
+                                <div class="summary-item">
+                                    <strong>Badges</strong>
+                                    <span>${data.badges.total_earned}/${data.badges.total_available}</span>
+                                </div>
+                                <div class="summary-item">
+                                    <strong>Série actuelle</strong>
+                                    <span>${data.streak.current} jours</span>
+                                </div>
+                                <div class="summary-item">
+                                    <strong>Jeux joués</strong>
+                                    <span>${data.statistics.games_played}</span>
+                                </div>
+                                <div class="summary-item">
+                                    <strong>Points (7j)</strong>
+                                    <span>${data.activity.points_last_7_days.toLocaleString()}</span>
+                                </div>
+                                <div class="summary-item">
+                                    <strong>Progression</strong>
+                                    <span>${data.level_progression.progress_percentage}%</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    showElement(summaryEl);
+                } else {
+                    showStatus(statusEl, `❌ Erreur: ${data.error || 'Erreur inconnue'}`, 'error');
+                }
+
+                // Show full response
+                const responseDiv = document.getElementById(responseEl);
+                responseDiv.innerHTML = `<div class="response"><pre>${JSON.stringify(data, null, 2)}</pre></div>`;
+                showElement(responseEl);
+
+            } catch (error) {
+                showStatus(statusEl, `❌ Erreur réseau: ${error.message}`, 'error');
+                console.error('Error:', error);
+            }
+        }
+
+        // Auto-test on page load (optional)
+        window.addEventListener('load', () => {
+            console.log('Page loaded. Ready to test endpoints.');
+            console.log('Endpoints available:');
+            console.log('- GET', API_BASE + '/leaderboard.php');
+            console.log('- GET', API_BASE + '/gamification.php');
+        });
+    </script>
+</body>
+</html>

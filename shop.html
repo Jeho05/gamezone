@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boutique de Jeux - GameZone</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .game-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        .promo-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 12px;
+            z-index: 10;
+        }
+        .featured-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 12px;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-purple-900 via-indigo-900 to-blue-900 min-h-screen text-white">
+    <!-- Navigation -->
+    <nav class="bg-black bg-opacity-50 backdrop-blur-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <h1 class="text-2xl font-bold">🎮 GameZone Shop</h1>
+                <div class="flex items-center gap-4">
+                    <button onclick="showMyPurchases()" class="bg-purple-600 px-4 py-2 rounded-lg hover:bg-purple-700">Mes Achats</button>
+                    <div id="user-points" class="bg-yellow-500 text-black px-4 py-2 rounded-lg font-bold">0 pts</div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-8">
+        <!-- Hero Section -->
+        <div class="text-center mb-12">
+            <h2 class="text-5xl font-bold mb-4">Achetez du Temps de Jeu</h2>
+            <p class="text-xl text-gray-300">Choisissez votre jeu préféré et gagnez des points !</p>
+        </div>
+
+        <!-- Filters -->
+        <div class="mb-8 flex flex-wrap gap-4 justify-center">
+            <button onclick="filterGames('')" class="filter-btn px-6 py-2 rounded-full bg-white text-purple-900 font-semibold hover:bg-gray-200">Tous</button>
+            <button onclick="filterGames('action')" class="filter-btn px-6 py-2 rounded-full bg-purple-700 hover:bg-purple-600">Action</button>
+            <button onclick="filterGames('sports')" class="filter-btn px-6 py-2 rounded-full bg-purple-700 hover:bg-purple-600">Sports</button>
+            <button onclick="filterGames('racing')" class="filter-btn px-6 py-2 rounded-full bg-purple-700 hover:bg-purple-600">Course</button>
+            <button onclick="filterGames('fighting')" class="filter-btn px-6 py-2 rounded-full bg-purple-700 hover:bg-purple-600">Combat</button>
+            <button onclick="filterGames('vr')" class="filter-btn px-6 py-2 rounded-full bg-purple-700 hover:bg-purple-600">VR</button>
+            <button onclick="filterGames('retro')" class="filter-btn px-6 py-2 rounded-full bg-purple-700 hover:bg-purple-600">Rétro</button>
+        </div>
+
+        <!-- Games Grid -->
+        <div id="games-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"></div>
+
+        <!-- Loading -->
+        <div id="loading" class="text-center py-20 hidden">
+            <div class="inline-block animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-purple-500"></div>
+            <p class="mt-4 text-xl">Chargement...</p>
+        </div>
+    </div>
+
+    <!-- Modal: Game Details & Packages -->
+    <div id="game-modal" class="fixed inset-0 bg-black bg-opacity-75 z-50 hidden overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl max-w-4xl w-full shadow-2xl overflow-hidden">
+                <!-- Header -->
+                <div class="relative h-64">
+                    <img id="modal-game-image" src="" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent"></div>
+                    <button onclick="closeGameModal()" class="absolute top-4 right-4 bg-black bg-opacity-50 text-white w-10 h-10 rounded-full hover:bg-opacity-75">✕</button>
+                    <div class="absolute bottom-4 left-6">
+                        <h2 id="modal-game-title" class="text-4xl font-bold mb-2"></h2>
+                        <div id="modal-game-meta" class="flex gap-3"></div>
+                    </div>
+                </div>
+
+                <!-- Body -->
+                <div class="p-6">
+                    <p id="modal-game-description" class="text-gray-300 mb-6"></p>
+                    
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 text-center">
+                        <div class="bg-purple-900 bg-opacity-50 p-4 rounded-lg">
+                            <div class="text-2xl mb-1">⭐</div>
+                            <div id="modal-game-points" class="text-lg font-bold"></div>
+                            <div class="text-xs text-gray-400">Points/Heure</div>
+                        </div>
+                        <div class="bg-purple-900 bg-opacity-50 p-4 rounded-lg">
+                            <div class="text-2xl mb-1">👥</div>
+                            <div id="modal-game-players" class="text-lg font-bold"></div>
+                            <div class="text-xs text-gray-400">Joueurs</div>
+                        </div>
+                        <div class="bg-purple-900 bg-opacity-50 p-4 rounded-lg">
+                            <div class="text-2xl mb-1">🎮</div>
+                            <div id="modal-game-platform" class="text-lg font-bold"></div>
+                            <div class="text-xs text-gray-400">Plateforme</div>
+                        </div>
+                        <div class="bg-purple-900 bg-opacity-50 p-4 rounded-lg">
+                            <div class="text-2xl mb-1">🔞</div>
+                            <div id="modal-game-age" class="text-lg font-bold"></div>
+                            <div class="text-xs text-gray-400">Âge</div>
+                        </div>
+                    </div>
+
+                    <h3 class="text-2xl font-bold mb-4">Choisissez votre Package</h3>
+                    <div id="packages-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Payment -->
+    <div id="payment-modal" class="fixed inset-0 bg-black bg-opacity-75 z-50 hidden overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl max-w-2xl w-full shadow-2xl p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-3xl font-bold">💳 Paiement</h2>
+                    <button onclick="closePaymentModal()" class="text-gray-400 hover:text-white text-2xl">✕</button>
+                </div>
+
+                <!-- Purchase Summary -->
+                <div class="bg-purple-900 bg-opacity-30 rounded-lg p-6 mb-6">
+                    <h3 class="text-xl font-bold mb-4">Récapitulatif</h3>
+                    <div class="space-y-2">
+                        <div class="flex justify-between"><span class="text-gray-400">Jeu:</span><span id="pay-game-name" class="font-bold"></span></div>
+                        <div class="flex justify-between"><span class="text-gray-400">Package:</span><span id="pay-package-name" class="font-bold"></span></div>
+                        <div class="flex justify-between"><span class="text-gray-400">Durée:</span><span id="pay-duration" class="font-bold"></span></div>
+                        <div class="flex justify-between"><span class="text-gray-400">Points à gagner:</span><span id="pay-points" class="font-bold text-yellow-400"></span></div>
+                        <div class="border-t border-gray-700 pt-2 mt-2"></div>
+                        <div class="flex justify-between text-xl"><span class="font-bold">Total:</span><span id="pay-total" class="font-bold text-green-400"></span></div>
+                    </div>
+                </div>
+
+                <!-- Payment Methods -->
+                <h3 class="text-xl font-bold mb-4">Méthode de Paiement</h3>
+                <div id="payment-methods-list" class="space-y-3 mb-6"></div>
+
+                <!-- Instructions -->
+                <div id="payment-instructions" class="bg-blue-900 bg-opacity-30 rounded-lg p-4 mb-6 hidden">
+                    <h4 class="font-bold mb-2">📋 Instructions</h4>
+                    <p id="payment-instructions-text" class="text-sm text-gray-300"></p>
+                </div>
+
+                <div id="kkiapay-area" class="bg-purple-900 bg-opacity-30 rounded-lg p-4 mb-6 hidden">
+                    <h4 class="font-bold mb-2">💳 Payer avec Kkiapay</h4>
+                    <kkiapay-widget 
+                        id="kkiapay-widget"
+                        amount="1"
+                        key="072b361d25546db0aee3d69bf07b15331c51e39f"
+                        callback="https://kkiapay-redirect.com">
+                    </kkiapay-widget>
+                </div>
+
+                <button onclick="confirmPurchase()" class="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-4 rounded-lg text-xl font-bold hover:from-green-700 hover:to-green-800 transition">
+                    Confirmer l'Achat
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: My Purchases -->
+    <div id="my-purchases-modal" class="fixed inset-0 bg-black bg-opacity-75 z-50 hidden overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl max-w-4xl w-full shadow-2xl p-8 max-h-screen overflow-y-auto">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-3xl font-bold">🛒 Mes Achats</h2>
+                    <button onclick="closeMyPurchasesModal()" class="text-gray-400 hover:text-white text-2xl">✕</button>
+                </div>
+                <div id="my-purchases-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.kkiapay.me/k.js"></script>
+    <script>
+        const API_BASE = 'http://localhost/projet%20ismo/api';
+        let games = [];
+        let currentGame = null;
+        let currentPackage = null;
+        let paymentMethods = [];
+        let selectedPaymentMethod = null;
+        let selectedPaymentProvider = null;
+        const KKIA_PAY_PROVIDERS = ['kkiapay', 'mtn_momo', 'orange_money', 'wave', 'moov_money'];
+        const isKkiapayProvider = (p) => KKIA_PAY_PROVIDERS.includes(String(p || '').toLowerCase());
+
+        // Load games on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadGames();
+            loadUserPoints();
+        });
+
+        async function loadGames(category = '') {
+            document.getElementById('loading').classList.remove('hidden');
+            try {
+                const url = category ? `${API_BASE}/shop/games.php?category=${category}` : `${API_BASE}/shop/games.php`;
+                const res = await fetch(url, {credentials: 'include'});
+                const data = await res.json();
+                games = data.games || [];
+                displayGames(games);
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('Erreur lors du chargement des jeux');
+            } finally {
+                document.getElementById('loading').classList.add('hidden');
+            }
+        }
+
+        function displayGames(list) {
+            const grid = document.getElementById('games-grid');
+            if (list.length === 0) {
+                grid.innerHTML = '<div class="col-span-full text-center text-2xl py-20">Aucun jeu disponible</div>';
+                return;
+            }
+
+            grid.innerHTML = list.map(game => `
+                <div class="game-card bg-gray-800 rounded-xl overflow-hidden cursor-pointer" onclick="openGameModal(${game.id})">
+                    <div class="relative">
+                        ${game.is_featured ? '<div class="featured-badge">⭐ POPULAIRE</div>' : ''}
+                        <img src="${game.image_url || game.thumbnail_url || 'https://via.placeholder.com/400x300?text=' + encodeURIComponent(game.name)}" 
+                             class="w-full h-48 object-cover" alt="${game.name}">
+                    </div>
+                    <div class="p-5">
+                        <h3 class="text-xl font-bold mb-2">${game.name}</h3>
+                        <p class="text-gray-400 text-sm mb-4 h-10 overflow-hidden">${game.short_description || ''}</p>
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="bg-purple-600 px-3 py-1 rounded-full text-sm">${game.category}</span>
+                            <span class="text-yellow-400 font-bold">⭐ ${game.points_per_hour} pts/h</span>
+                        </div>
+                        <div class="text-center bg-green-600 bg-opacity-20 border border-green-600 rounded-lg py-2">
+                            <span class="text-sm">À partir de</span>
+                            <div class="text-2xl font-bold text-green-400">${game.min_price || game.base_price} XOF</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterGames(category) {
+            loadGames(category);
+        }
+
+        async function openGameModal(gameId) {
+            const res = await fetch(`${API_BASE}/shop/games.php?id=${gameId}`, {credentials: 'include'});
+            const data = await res.json();
+            currentGame = data.game;
+
+            document.getElementById('modal-game-image').src = currentGame.image_url || 'https://via.placeholder.com/800x400';
+            document.getElementById('modal-game-title').textContent = currentGame.name;
+            document.getElementById('modal-game-description').textContent = currentGame.description || currentGame.short_description;
+            document.getElementById('modal-game-points').textContent = currentGame.points_per_hour + ' pts';
+            document.getElementById('modal-game-players').textContent = `${currentGame.min_players}-${currentGame.max_players}`;
+            document.getElementById('modal-game-platform').textContent = currentGame.platform || 'Multi';
+            document.getElementById('modal-game-age').textContent = currentGame.age_rating || 'Tous';
+
+            document.getElementById('modal-game-meta').innerHTML = `
+                <span class="bg-purple-700 px-3 py-1 rounded-full text-sm">${currentGame.category}</span>
+            `;
+
+            // Display packages
+            const packagesGrid = document.getElementById('packages-grid');
+            packagesGrid.innerHTML = currentGame.packages.map(pkg => `
+                <div class="bg-gray-800 rounded-lg p-5 border-2 border-transparent hover:border-purple-500 transition cursor-pointer relative" onclick='selectPackage(${JSON.stringify(pkg).replace(/'/g, "&apos;")})'>
+                    ${pkg.is_promotional ? `<div class="promo-badge">${pkg.promotional_label}</div>` : ''}
+                    <h4 class="text-xl font-bold mb-2">${pkg.name}</h4>
+                    <div class="text-gray-400 mb-3">⏱️ ${pkg.duration_minutes} minutes</div>
+                    <div class="flex justify-between items-center mb-3">
+                        <div>
+                            ${pkg.original_price ? `<div class="text-sm text-gray-500 line-through">${pkg.original_price} XOF</div>` : ''}
+                            <div class="text-3xl font-bold text-green-400">${pkg.price} XOF</div>
+                        </div>
+                        <div class="text-yellow-400 font-bold text-xl">+${pkg.points_earned} pts</div>
+                    </div>
+                    ${pkg.bonus_multiplier > 1 ? `<div class="text-center bg-yellow-600 bg-opacity-20 border border-yellow-600 rounded px-2 py-1 text-sm">🔥 Bonus x${pkg.bonus_multiplier}</div>` : ''}
+                </div>
+            `).join('');
+
+            document.getElementById('game-modal').classList.remove('hidden');
+        }
+
+        function closeGameModal() {
+            document.getElementById('game-modal').classList.add('hidden');
+        }
+
+        async function selectPackage(pkg) {
+            currentPackage = pkg;
+            
+            // Load payment methods
+            const res = await fetch(`${API_BASE}/shop/payment_methods.php`, {credentials: 'include'});
+            const data = await res.json();
+            paymentMethods = data.payment_methods || [];
+
+            // Show payment modal
+            document.getElementById('pay-game-name').textContent = currentGame.name;
+            document.getElementById('pay-package-name').textContent = pkg.name;
+            document.getElementById('pay-duration').textContent = pkg.duration_minutes + ' minutes';
+            document.getElementById('pay-points').textContent = '+' + pkg.points_earned + ' points';
+            document.getElementById('pay-total').textContent = pkg.price + ' XOF';
+
+            // Display payment methods
+            const methodsList = document.getElementById('payment-methods-list');
+            methodsList.innerHTML = paymentMethods.map(pm => `
+                <label class="flex items-center p-4 bg-gray-800 rounded-lg cursor-pointer hover:bg-gray-700 border-2 border-transparent payment-method-option">
+                    <input type="radio" name="payment-method" value="${pm.id}" onchange="selectPaymentMethod(${pm.id}, ${pm.requires_online_payment}, '${(pm.instructions || '').replace(/'/g, "&#39;")}', '${(pm.provider || '').replace(/'/g, "&#39;")}')" class="mr-4 w-5 h-5">
+                    <div class="flex-1">
+                        <div class="font-bold">${pm.name}</div>
+                        <div class="text-sm text-gray-400">${pm.requires_online_payment ? 'Paiement en ligne' : 'Paiement sur place'}</div>
+                    </div>
+                </label>
+            `).join('');
+
+            closeGameModal();
+            document.getElementById('payment-modal').classList.remove('hidden');
+        }
+
+        function selectPaymentMethod(id, requiresOnline, instructions, provider) {
+            selectedPaymentMethod = id;
+            selectedPaymentProvider = provider || null;
+            const instructionsDiv = document.getElementById('payment-instructions');
+            const instructionsText = document.getElementById('payment-instructions-text');
+            
+            document.getElementById('kkiapay-area').classList.add('hidden');
+
+            if (instructions) {
+                instructionsDiv.classList.remove('hidden');
+                instructionsText.textContent = instructions;
+            } else {
+                instructionsDiv.classList.add('hidden');
+            }
+
+            // Highlight selected
+            document.querySelectorAll('.payment-method-option').forEach(opt => {
+                opt.classList.remove('border-purple-500');
+            });
+            event.target.closest('.payment-method-option').classList.add('border-purple-500');
+        }
+
+        async function confirmPurchase() {
+            if (!selectedPaymentMethod) {
+                alert('Veuillez sélectionner une méthode de paiement');
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/shop/create_purchase.php`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        game_id: currentGame.id,
+                        package_id: currentPackage.id,
+                        payment_method_id: selectedPaymentMethod
+                    })
+                });
+
+                const data = await res.json();
+                
+                if (data.success) {
+                    if (data.next_step === 'complete_payment' && data.payment_data) {
+                        if (isKkiapayProvider(data.payment_data.provider)) {
+                            const widget = document.getElementById('kkiapay-widget');
+                            const amt = Math.round(Number(data.payment_data.amount || currentPackage.price || 1));
+                            widget.setAttribute('amount', String(amt));
+                            widget.setAttribute('key', '072b361d25546db0aee3d69bf07b15331c51e39f');
+                            widget.setAttribute('callback', 'https://kkiapay-redirect.com');
+                            document.getElementById('kkiapay-area').classList.remove('hidden');
+                            alert('✅ Achat créé. Procédez au paiement via Kkiapay ci-dessous.');
+                        } else {
+                            alert('✅ Achat créé avec succès!\n\nProcédez au paiement selon les instructions.');
+                            closePaymentModal();
+                            loadUserPoints();
+                        }
+                    } else {
+                        alert('✅ Achat créé avec succès!\n\nVotre paiement sera confirmé par un administrateur.');
+                        closePaymentModal();
+                        loadUserPoints();
+                    }
+                } else {
+                    alert('❌ Erreur: ' + (data.error || 'Une erreur est survenue'));
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('❌ Erreur lors de la création de l\'achat');
+            }
+        }
+
+        function closePaymentModal() {
+            document.getElementById('payment-modal').classList.add('hidden');
+            selectedPaymentMethod = null;
+        }
+
+        async function loadUserPoints() {
+            try {
+                const res = await fetch(`${API_BASE}/auth/check.php`, {credentials: 'include'});
+                const data = await res.json();
+                if (data.user) {
+                    document.getElementById('user-points').textContent = (data.user.points || 0) + ' pts';
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+            }
+        }
+
+        async function showMyPurchases() {
+            try {
+                const res = await fetch(`${API_BASE}/shop/my_purchases.php`, {credentials: 'include'});
+                const data = await res.json();
+                
+                const list = document.getElementById('my-purchases-list');
+                if (data.purchases && data.purchases.length > 0) {
+                    list.innerHTML = data.purchases.map(p => `
+                        <div class="bg-gray-800 rounded-lg p-5 mb-4">
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <h3 class="text-xl font-bold">${p.game_name}</h3>
+                                    <p class="text-gray-400">${p.package_name}</p>
+                                </div>
+                                <span class="px-3 py-1 rounded-full text-sm ${
+                                    p.payment_status === 'completed' ? 'bg-green-600' : 
+                                    p.payment_status === 'pending' ? 'bg-yellow-600' : 'bg-red-600'
+                                }">${p.payment_status}</span>
+                            </div>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                                <div><span class="text-gray-400">Durée:</span> ${p.duration_minutes} min</div>
+                                <div><span class="text-gray-400">Prix:</span> ${p.price} XOF</div>
+                                <div><span class="text-gray-400">Points:</span> +${p.points_earned}</div>
+                                <div><span class="text-gray-400">Date:</span> ${new Date(p.created_at).toLocaleDateString()}</div>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    list.innerHTML = '<div class="text-center text-gray-400 py-10">Aucun achat pour le moment</div>';
+                }
+                
+                document.getElementById('my-purchases-modal').classList.remove('hidden');
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('Erreur lors du chargement de vos achats');
+            }
+        }
+
+        function closeMyPurchasesModal() {
+            document.getElementById('my-purchases-modal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>

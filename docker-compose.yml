@@ -1,0 +1,107 @@
+version: '3.8'
+
+services:
+  # Frontend React Router SSR (Node.js)
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: gamezone_frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - API_BASE_URL=http://backend/api
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - gamezone_network
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Backend PHP + Apache
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: gamezone_backend
+    ports:
+      - "8080:80"
+    environment:
+      - DB_HOST=mysql
+      - DB_NAME=${DB_NAME:-gamezone}
+      - DB_USER=${DB_USER:-gamezone_user}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - SESSION_SECRET=${SESSION_SECRET}
+    depends_on:
+      mysql:
+        condition: service_healthy
+    volumes:
+      - ./uploads:/var/www/html/uploads
+      - ./api:/var/www/html/api
+    restart: unless-stopped
+    networks:
+      - gamezone_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/api/health.php"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Base de données MySQL
+  mysql:
+    image: mysql:8.0
+    container_name: gamezone_mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${DB_NAME:-gamezone}
+      - MYSQL_USER=${DB_USER:-gamezone_user}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./api/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+      - ./api/migrations:/docker-entrypoint-initdb.d/migrations
+    restart: unless-stopped
+    networks:
+      - gamezone_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Nginx (Reverse Proxy)
+  nginx:
+    image: nginx:alpine
+    container_name: gamezone_nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - frontend
+      - backend
+    restart: unless-stopped
+    networks:
+      - gamezone_network
+    healthcheck:
+      test: ["CMD", "nginx", "-t"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  mysql_data:
+    driver: local
+
+networks:
+  gamezone_network:
+    driver: bridge

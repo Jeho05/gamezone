@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Récompenses - Admin</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .container {
+            max-width: 1400px;
+            padding-top: 30px;
+            padding-bottom: 50px;
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-bottom: 30px;
+        }
+        .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px 15px 0 0 !important;
+            padding: 20px;
+            font-weight: 600;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 500;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .reward-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .reward-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+            transform: translateY(-2px);
+        }
+        .reward-card.game-package {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+        }
+        .badge-points {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        .badge-game {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+        .form-switch .form-check-input {
+            width: 3em;
+            height: 1.5em;
+        }
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px 15px 0 0;
+        }
+        .stats-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        .stats-card h3 {
+            color: #667eea;
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .stats-card p {
+            color: #666;
+            margin: 0;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- En-tête -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="text-white mb-2">
+                    <i class="bi bi-gift-fill me-2"></i>Gestion des Récompenses
+                </h1>
+                <p class="text-white-50 mb-0">Créez des récompenses physiques ou des packages de jeux payables en points</p>
+            </div>
+            <div>
+                <button class="btn btn-light me-2" onclick="window.location.href='index.html'">
+                    <i class="bi bi-arrow-left me-2"></i>Retour
+                </button>
+                <button class="btn btn-success" onclick="openCreateModal()">
+                    <i class="bi bi-plus-circle me-2"></i>Nouvelle Récompense
+                </button>
+            </div>
+        </div>
+
+        <!-- Statistiques -->
+        <div class="row mb-4" id="statsContainer">
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <h3 id="totalRewards">0</h3>
+                    <p>Total Récompenses</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <h3 id="gamePackages">0</h3>
+                    <p>Packages de Jeux</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <h3 id="totalRedemptions">0</h3>
+                    <p>Échanges Effectués</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <h3 id="totalPointsSpent">0</h3>
+                    <p>Points Dépensés</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Liste des récompenses -->
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-list-ul me-2"></i>Liste des Récompenses
+                    </h5>
+                    <div>
+                        <select class="form-select form-select-sm" id="filterType" onchange="loadRewards()">
+                            <option value="">Tous les types</option>
+                            <option value="physical">Physiques</option>
+                            <option value="game_package">Packages de Jeux</option>
+                            <option value="digital">Digitales</option>
+                            <option value="discount">Réductions</option>
+                            <option value="other">Autres</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="rewardsList" class="row"></div>
+                <div id="emptyState" class="text-center py-5" style="display: none;">
+                    <i class="bi bi-gift" style="font-size: 4rem; color: #ccc;"></i>
+                    <p class="text-muted mt-3">Aucune récompense pour le moment</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de création/édition -->
+    <div class="modal fade" id="rewardModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">
+                        <i class="bi bi-gift me-2"></i>Nouvelle Récompense
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="rewardForm">
+                        <input type="hidden" id="rewardId">
+                        
+                        <!-- Type de récompense -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Type de récompense *</label>
+                            <select class="form-select" id="rewardType" required onchange="togglePackageFields()">
+                                <option value="physical">Physique (Objet, Goodies)</option>
+                                <option value="game_package">Package de Jeu (Payable en Points)</option>
+                                <option value="digital">Digitale (Code, Accès)</option>
+                                <option value="discount">Réduction</option>
+                                <option value="other">Autre</option>
+                            </select>
+                        </div>
+
+                        <!-- Informations de base -->
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Nom *</label>
+                                    <input type="text" class="form-control" id="rewardName" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Coût en points *</label>
+                                    <input type="number" class="form-control" id="rewardCost" min="0" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Description</label>
+                            <textarea class="form-control" id="rewardDescription" rows="3"></textarea>
+                        </div>
+
+                        <!-- Champs spécifiques aux packages de jeux -->
+                        <div id="packageFields" style="display: none;">
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle me-2"></i>
+                                <strong>Package de Jeu:</strong> Cette récompense créera automatiquement un package de jeu payable uniquement avec des points.
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Sélectionner un jeu *</label>
+                                <select class="form-select" id="gameId">
+                                    <option value="">Chargement...</option>
+                                </select>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Durée (minutes) *</label>
+                                        <input type="number" class="form-control" id="durationMinutes" min="5" step="5">
+                                        <small class="text-muted">Ex: 30, 60, 120...</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Points gagnés en jouant *</label>
+                                        <input type="number" class="form-control" id="pointsEarned" min="0">
+                                        <small class="text-muted">Points bonus après avoir joué</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Multiplicateur de bonus</label>
+                                        <input type="number" class="form-control" id="bonusMultiplier" min="1" max="5" step="0.1" value="1">
+                                        <small class="text-muted">1.0 = normal, 1.5 = +50%</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Max achats par utilisateur</label>
+                                        <input type="number" class="form-control" id="maxPerUser" min="1">
+                                        <small class="text-muted">Vide = illimité</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" id="isPromotional">
+                                <label class="form-check-label fw-bold" for="isPromotional">
+                                    Package promotionnel
+                                </label>
+                            </div>
+
+                            <div class="mb-3" id="promotionalLabelField" style="display: none;">
+                                <label class="form-label fw-bold">Label promo</label>
+                                <input type="text" class="form-control" id="promotionalLabel" placeholder="Ex: PROMO -20%, MEILLEURE OFFRE">
+                            </div>
+                        </div>
+
+                        <!-- Options communes -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Catégorie</label>
+                                    <input type="text" class="form-control" id="rewardCategory" placeholder="gaming, goodies, etc.">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">URL de l'image</label>
+                                    <input type="url" class="form-control" id="rewardImage" placeholder="https://...">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="isAvailable" checked>
+                                    <label class="form-check-label fw-bold" for="isAvailable">
+                                        Disponible
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="isFeatured">
+                                    <label class="form-check-label fw-bold" for="isFeatured">
+                                        En vedette
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Ordre d'affichage</label>
+                                    <input type="number" class="form-control" id="displayOrder" value="0">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-primary" onclick="saveReward()">
+                        <i class="bi bi-save me-2"></i>Enregistrer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const API_BASE = '../api';
+        let rewardsData = [];
+        let gamesData = [];
+        let modal;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            modal = new bootstrap.Modal(document.getElementById('rewardModal'));
+            loadGames();
+            loadRewards();
+
+            // Toggle promotional label field
+            document.getElementById('isPromotional').addEventListener('change', (e) => {
+                document.getElementById('promotionalLabelField').style.display = e.target.checked ? 'block' : 'none';
+            });
+        });
+
+        async function loadGames() {
+            try {
+                const response = await fetch(`${API_BASE}/admin/games.php`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                
+                if (data.games) {
+                    gamesData = data.games;
+                    const select = document.getElementById('gameId');
+                    select.innerHTML = '<option value="">Sélectionner un jeu...</option>';
+                    
+                    data.games.forEach(game => {
+                        const option = document.createElement('option');
+                        option.value = game.id;
+                        option.textContent = `${game.name} (${game.category})`;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement des jeux:', error);
+            }
+        }
+
+        async function loadRewards() {
+            try {
+                const filterType = document.getElementById('filterType').value;
+                const response = await fetch(`${API_BASE}/admin/rewards.php`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                
+                if (data.rewards) {
+                    rewardsData = data.rewards;
+                    
+                    // Filtrer si nécessaire
+                    let filtered = rewardsData;
+                    if (filterType) {
+                        filtered = rewardsData.filter(r => r.reward_type === filterType);
+                    }
+                    
+                    displayRewards(filtered);
+                    updateStats();
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement des récompenses:', error);
+                showError('Impossible de charger les récompenses');
+            }
+        }
+
+        function displayRewards(rewards) {
+            const container = document.getElementById('rewardsList');
+            const emptyState = document.getElementById('emptyState');
+            
+            if (rewards.length === 0) {
+                container.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            emptyState.style.display = 'none';
+            container.innerHTML = rewards.map(reward => `
+                <div class="col-md-6 col-lg-4">
+                    <div class="reward-card ${reward.reward_type === 'game_package' ? 'game-package' : ''}" 
+                         onclick="editReward(${reward.id})">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h6 class="mb-0">${reward.name}</h6>
+                            <span class="badge ${reward.available ? 'bg-success' : 'bg-secondary'}">
+                                ${reward.available ? 'Actif' : 'Inactif'}
+                            </span>
+                        </div>
+                        
+                        ${reward.description ? `<p class="small mb-2">${reward.description}</p>` : ''}
+                        
+                        <div class="d-flex flex-wrap gap-2 mb-2">
+                            <span class="badge-points">
+                                <i class="bi bi-star-fill me-1"></i>${reward.cost} points
+                            </span>
+                            ${reward.reward_type === 'game_package' ? `
+                                <span class="badge-game">
+                                    <i class="bi bi-controller me-1"></i>${reward.game_name || 'Jeu'}
+                                </span>
+                                <span class="badge bg-light text-dark">
+                                    ${reward.duration_minutes} min
+                                </span>
+                                <span class="badge bg-success">
+                                    +${reward.package_points_earned} pts
+                                </span>
+                            ` : `
+                                <span class="badge bg-info">
+                                    ${getTypeLabel(reward.reward_type)}
+                                </span>
+                            `}
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center small">
+                            <span>
+                                <i class="bi bi-graph-up me-1"></i>
+                                ${reward.redemptions_count || 0} échanges
+                                ${reward.package_purchases_count ? `(${reward.package_purchases_count} achats)` : ''}
+                            </span>
+                            ${reward.is_featured ? '<i class="bi bi-star-fill text-warning"></i>' : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateStats() {
+            const total = rewardsData.length;
+            const gamePackages = rewardsData.filter(r => r.reward_type === 'game_package').length;
+            const redemptions = rewardsData.reduce((sum, r) => sum + (parseInt(r.redemptions_count) || 0), 0);
+            const pointsSpent = rewardsData.reduce((sum, r) => {
+                const count = parseInt(r.redemptions_count) || 0;
+                const cost = parseInt(r.cost) || 0;
+                return sum + (count * cost);
+            }, 0);
+            
+            document.getElementById('totalRewards').textContent = total;
+            document.getElementById('gamePackages').textContent = gamePackages;
+            document.getElementById('totalRedemptions').textContent = redemptions;
+            document.getElementById('totalPointsSpent').textContent = pointsSpent.toLocaleString();
+        }
+
+        function getTypeLabel(type) {
+            const labels = {
+                physical: 'Physique',
+                game_package: 'Package Jeu',
+                digital: 'Digitale',
+                discount: 'Réduction',
+                other: 'Autre'
+            };
+            return labels[type] || type;
+        }
+
+        function togglePackageFields() {
+            const type = document.getElementById('rewardType').value;
+            const packageFields = document.getElementById('packageFields');
+            packageFields.style.display = type === 'game_package' ? 'block' : 'none';
+            
+            // Rendre les champs requis ou non
+            ['gameId', 'durationMinutes', 'pointsEarned'].forEach(id => {
+                const field = document.getElementById(id);
+                if (field) {
+                    field.required = type === 'game_package';
+                }
+            });
+        }
+
+        function openCreateModal() {
+            document.getElementById('modalTitle').innerHTML = '<i class="bi bi-gift me-2"></i>Nouvelle Récompense';
+            document.getElementById('rewardForm').reset();
+            document.getElementById('rewardId').value = '';
+            document.getElementById('isAvailable').checked = true;
+            document.getElementById('bonusMultiplier').value = '1';
+            togglePackageFields();
+            modal.show();
+        }
+
+        function editReward(id) {
+            const reward = rewardsData.find(r => r.id === id);
+            if (!reward) return;
+            
+            document.getElementById('modalTitle').innerHTML = '<i class="bi bi-pencil me-2"></i>Modifier la Récompense';
+            document.getElementById('rewardId').value = reward.id;
+            document.getElementById('rewardName').value = reward.name;
+            document.getElementById('rewardDescription').value = reward.description || '';
+            document.getElementById('rewardCost').value = reward.cost;
+            document.getElementById('rewardType').value = reward.reward_type || 'physical';
+            document.getElementById('rewardCategory').value = reward.category || '';
+            document.getElementById('rewardImage').value = reward.image_url || '';
+            document.getElementById('isAvailable').checked = reward.available == 1;
+            document.getElementById('isFeatured').checked = reward.is_featured == 1;
+            document.getElementById('displayOrder').value = reward.display_order || 0;
+            
+            togglePackageFields();
+            modal.show();
+        }
+
+        async function saveReward() {
+            const form = document.getElementById('rewardForm');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            
+            const id = document.getElementById('rewardId').value;
+            const rewardType = document.getElementById('rewardType').value;
+            
+            const data = {
+                name: document.getElementById('rewardName').value,
+                description: document.getElementById('rewardDescription').value,
+                cost: parseInt(document.getElementById('rewardCost').value),
+                reward_type: rewardType,
+                category: document.getElementById('rewardCategory').value,
+                image_url: document.getElementById('rewardImage').value,
+                available: document.getElementById('isAvailable').checked ? 1 : 0,
+                is_featured: document.getElementById('isFeatured').checked ? 1 : 0,
+                display_order: parseInt(document.getElementById('displayOrder').value) || 0
+            };
+            
+            // Ajouter les champs spécifiques aux packages
+            if (rewardType === 'game_package') {
+                data.game_id = parseInt(document.getElementById('gameId').value);
+                data.duration_minutes = parseInt(document.getElementById('durationMinutes').value);
+                data.points_earned = parseInt(document.getElementById('pointsEarned').value);
+                data.bonus_multiplier = parseFloat(document.getElementById('bonusMultiplier').value);
+                data.max_per_user = document.getElementById('maxPerUser').value ? parseInt(document.getElementById('maxPerUser').value) : null;
+                data.is_promotional = document.getElementById('isPromotional').checked ? 1 : 0;
+                data.promotional_label = document.getElementById('promotionalLabel').value;
+                
+                if (!data.game_id) {
+                    showError('Veuillez sélectionner un jeu');
+                    return;
+                }
+            }
+            
+            try {
+                const url = id ? `${API_BASE}/admin/rewards.php` : `${API_BASE}/admin/rewards.php`;
+                const method = id ? 'PUT' : 'POST';
+                
+                if (id) {
+                    data.id = parseInt(id);
+                }
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showSuccess(result.message);
+                    modal.hide();
+                    loadRewards();
+                } else {
+                    showError(result.error || 'Erreur lors de l\'enregistrement');
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                showError('Erreur lors de l\'enregistrement');
+            }
+        }
+
+        function showSuccess(message) {
+            alert('✅ ' + message);
+        }
+
+        function showError(message) {
+            alert('❌ ' + message);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Connexion API</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 5px;
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: scale(1.05);
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        .success {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid rgba(16, 185, 129, 0.5);
+        }
+        .error {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.5);
+        }
+        .info {
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.5);
+        }
+        .login-form {
+            display: grid;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        input {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 14px;
+        }
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Test de Connexion API Backend</h1>
+        
+        <div class="test-section">
+            <h2>1. Test Direct Backend PHP</h2>
+            <p>Teste la connexion directe au backend PHP via Apache/XAMPP</p>
+            <button onclick="testDirectBackend()">Tester Backend Direct</button>
+            <div id="direct-result"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>2. Test via Proxy Vite</h2>
+            <p>Teste la connexion via le proxy Vite (/php-api)</p>
+            <button onclick="testViteProxy()">Tester Proxy Vite</button>
+            <div id="proxy-result"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>3. Test de Login Admin</h2>
+            <div class="login-form">
+                <input type="email" id="email" placeholder="Email" value="admin@gamezone.fr">
+                <input type="password" id="password" placeholder="Mot de passe" value="demo123">
+                <div>
+                    <button onclick="testLoginDirect()">Login Direct</button>
+                    <button onclick="testLoginProxy()">Login via Proxy</button>
+                </div>
+            </div>
+            <div id="login-result"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>4. Diagnostic Complet</h2>
+            <button onclick="runAllTests()">Lancer Tous les Tests</button>
+            <div id="diagnostic-result"></div>
+        </div>
+    </div>
+
+    <script>
+        const DIRECT_API = 'http://localhost/projet%20ismo/api';
+        const PROXY_API = '/php-api';
+
+        function showResult(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.className = `result ${type}`;
+            element.textContent = message;
+        }
+
+        async function testDirectBackend() {
+            showResult('direct-result', 'Test en cours...', 'info');
+            try {
+                const response = await fetch(`${DIRECT_API}/auth/check.php`, {
+                    credentials: 'include'
+                });
+                
+                const text = await response.text();
+                let data;
+                try {
+                    data = JSON.parse(text);
+                } catch (e) {
+                    showResult('direct-result', 
+                        `❌ Réponse non-JSON:\n${text.substring(0, 200)}`, 
+                        'error'
+                    );
+                    return;
+                }
+
+                if (response.status === 401) {
+                    showResult('direct-result', 
+                        `✅ Backend OK (401 attendu car non connecté)\nRéponse: ${JSON.stringify(data, null, 2)}`, 
+                        'success'
+                    );
+                } else if (response.ok) {
+                    showResult('direct-result', 
+                        `✅ Backend OK et connecté!\nUtilisateur: ${JSON.stringify(data.user, null, 2)}`, 
+                        'success'
+                    );
+                } else {
+                    showResult('direct-result', 
+                        `⚠️ Status ${response.status}\n${JSON.stringify(data, null, 2)}`, 
+                        'error'
+                    );
+                }
+            } catch (error) {
+                showResult('direct-result', 
+                    `❌ Erreur de connexion:\n${error.message}\n\nAssurez-vous que XAMPP/Apache est démarré!`, 
+                    'error'
+                );
+            }
+        }
+
+        async function testViteProxy() {
+            showResult('proxy-result', 'Test en cours...', 'info');
+            try {
+                const response = await fetch(`${PROXY_API}/auth/check.php`, {
+                    credentials: 'include'
+                });
+                
+                const text = await response.text();
+                let data;
+                try {
+                    data = JSON.parse(text);
+                } catch (e) {
+                    showResult('proxy-result', 
+                        `❌ Réponse non-JSON:\n${text.substring(0, 200)}`, 
+                        'error'
+                    );
+                    return;
+                }
+
+                if (response.status === 401) {
+                    showResult('proxy-result', 
+                        `✅ Proxy OK (401 attendu car non connecté)\nRéponse: ${JSON.stringify(data, null, 2)}`, 
+                        'success'
+                    );
+                } else if (response.ok) {
+                    showResult('proxy-result', 
+                        `✅ Proxy OK et connecté!\nUtilisateur: ${JSON.stringify(data.user, null, 2)}`, 
+                        'success'
+                    );
+                } else {
+                    showResult('proxy-result', 
+                        `⚠️ Status ${response.status}\n${JSON.stringify(data, null, 2)}`, 
+                        'error'
+                    );
+                }
+            } catch (error) {
+                showResult('proxy-result', 
+                    `❌ Erreur de connexion via proxy:\n${error.message}\n\nLe serveur React doit être sur http://localhost:4000`, 
+                    'error'
+                );
+            }
+        }
+
+        async function testLoginDirect() {
+            showResult('login-result', 'Connexion en cours (Direct)...', 'info');
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch(`${DIRECT_API}/auth/login.php`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ email, password })
+                });
+
+                const text = await response.text();
+                let data;
+                try {
+                    data = JSON.parse(text);
+                } catch (e) {
+                    showResult('login-result', 
+                        `❌ Réponse non-JSON:\n${text.substring(0, 200)}`, 
+                        'error'
+                    );
+                    return;
+                }
+
+                if (response.ok) {
+                    showResult('login-result', 
+                        `✅ Connexion réussie (Direct)!\nUtilisateur: ${data.user.username}\nRôle: ${data.user.role}`, 
+                        'success'
+                    );
+                } else {
+                    showResult('login-result', 
+                        `❌ Échec de connexion (Direct)\nErreur: ${data.error || 'Inconnu'}`, 
+                        'error'
+                    );
+                }
+            } catch (error) {
+                showResult('login-result', 
+                    `❌ Erreur réseau (Direct):\n${error.message}`, 
+                    'error'
+                );
+            }
+        }
+
+        async function testLoginProxy() {
+            showResult('login-result', 'Connexion en cours (Proxy)...', 'info');
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch(`${PROXY_API}/auth/login.php`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ email, password })
+                });
+
+                const text = await response.text();
+                let data;
+                try {
+                    data = JSON.parse(text);
+                } catch (e) {
+                    showResult('login-result', 
+                        `❌ Réponse non-JSON:\n${text.substring(0, 200)}`, 
+                        'error'
+                    );
+                    return;
+                }
+
+                if (response.ok) {
+                    showResult('login-result', 
+                        `✅ Connexion réussie (Proxy)!\nUtilisateur: ${data.user.username}\nRôle: ${data.user.role}`, 
+                        'success'
+                    );
+                } else {
+                    showResult('login-result', 
+                        `❌ Échec de connexion (Proxy)\nErreur: ${data.error || 'Inconnu'}`, 
+                        'error'
+                    );
+                }
+            } catch (error) {
+                showResult('login-result', 
+                    `❌ Erreur réseau (Proxy):\n${error.message}`, 
+                    'error'
+                );
+            }
+        }
+
+        async function runAllTests() {
+            showResult('diagnostic-result', 'Diagnostic en cours...', 'info');
+            
+            let report = '=== RAPPORT DE DIAGNOSTIC ===\n\n';
+            
+            // Test 1: Backend Direct
+            report += '1. Backend Direct:\n';
+            try {
+                const res = await fetch(`${DIRECT_API}/auth/check.php`, { credentials: 'include' });
+                report += `   ✅ Accessible (Status: ${res.status})\n`;
+            } catch (e) {
+                report += `   ❌ Inaccessible: ${e.message}\n`;
+            }
+            
+            // Test 2: Proxy Vite
+            report += '\n2. Proxy Vite:\n';
+            try {
+                const res = await fetch(`${PROXY_API}/auth/check.php`, { credentials: 'include' });
+                report += `   ✅ Accessible (Status: ${res.status})\n`;
+            } catch (e) {
+                report += `   ❌ Inaccessible: ${e.message}\n`;
+            }
+            
+            // Test 3: Ports
+            report += '\n3. Configuration:\n';
+            report += `   - URL Actuelle: ${window.location.href}\n`;
+            report += `   - Port: ${window.location.port || '80'}\n`;
+            report += `   - Direct API: ${DIRECT_API}\n`;
+            report += `   - Proxy API: ${PROXY_API}\n`;
+            
+            // Test 4: Cookies
+            report += '\n4. Cookies:\n';
+            report += `   ${document.cookie || 'Aucun cookie'}\n`;
+            
+            showResult('diagnostic-result', report, 'info');
+        }
+
+        // Auto-run diagnostic on load
+        window.addEventListener('load', () => {
+            setTimeout(runAllTests, 1000);
+        });
+    </script>
+</body>
+</html>

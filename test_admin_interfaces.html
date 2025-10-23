@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Interfaces Admin</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        h2 {
+            color: #667eea;
+            margin-top: 0;
+        }
+        .status {
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-weight: bold;
+            display: inline-block;
+            margin: 8px 0;
+        }
+        .success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #5568d3;
+        }
+        pre {
+            background: #f9fafb;
+            padding: 12px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test des Interfaces Admin</h1>
+
+    <div class="test-section">
+        <h2>1. Test API Packages de Jeux</h2>
+        <button onclick="testPackagesAPI()">Tester l'API</button>
+        <div id="packagesResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. Test API Contenu</h2>
+        <button onclick="testContentAPI()">Tester l'API</button>
+        <div id="contentResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. Accès aux Interfaces</h2>
+        <button onclick="window.open('admin/admin_menu.html', '_blank')">📋 Menu Admin</button>
+        <button onclick="window.open('admin/game_packages_manager.html', '_blank')">📦 Packages</button>
+        <button onclick="window.open('admin/content_manager.html', '_blank')">📰 Contenu</button>
+    </div>
+
+    <div class="test-section">
+        <h2>4. Vérification des Fichiers</h2>
+        <div id="filesCheck">
+            <div class="status pending">Vérification en cours...</div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/projet%20ismo/api';
+
+        // Test API Packages
+        async function testPackagesAPI() {
+            const result = document.getElementById('packagesResult');
+            result.innerHTML = '<div class="status pending">Test en cours...</div>';
+
+            try {
+                const response = await fetch(`${API_BASE}/admin/game_packages.php`, {
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    result.innerHTML = `
+                        <div class="status success">✅ API Fonctionnelle</div>
+                        <p>Nombre de packages: ${data.packages ? data.packages.length : 0}</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    const error = await response.json();
+                    result.innerHTML = `
+                        <div class="status error">❌ Erreur API</div>
+                        <p>${error.error || 'Erreur inconnue'}</p>
+                        <p>Status: ${response.status}</p>
+                    `;
+                }
+            } catch (error) {
+                result.innerHTML = `
+                    <div class="status error">❌ Erreur de connexion</div>
+                    <p>${error.message}</p>
+                `;
+            }
+        }
+
+        // Test API Contenu
+        async function testContentAPI() {
+            const result = document.getElementById('contentResult');
+            result.innerHTML = '<div class="status pending">Test en cours...</div>';
+
+            try {
+                const response = await fetch(`${API_BASE}/admin/content.php?type=all`, {
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    result.innerHTML = `
+                        <div class="status success">✅ API Fonctionnelle</div>
+                        <p>Nombre de contenus: ${data.content ? data.content.length : 0}</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    const error = await response.json();
+                    result.innerHTML = `
+                        <div class="status error">❌ Erreur API</div>
+                        <p>${error.error || 'Erreur inconnue'}</p>
+                        <p>Status: ${response.status}</p>
+                    `;
+                }
+            } catch (error) {
+                result.innerHTML = `
+                    <div class="status error">❌ Erreur de connexion</div>
+                    <p>${error.message}</p>
+                `;
+            }
+        }
+
+        // Vérifier les fichiers
+        async function checkFiles() {
+            const files = [
+                'admin/game_packages_manager.html',
+                'admin/content_manager.html',
+                'admin/admin_menu.html',
+                'api/admin/game_packages.php',
+                'api/admin/content.php'
+            ];
+
+            let html = '<h3>Fichiers créés:</h3><ul>';
+            
+            for (const file of files) {
+                try {
+                    const response = await fetch(`/projet%20ismo/${file}`, { method: 'HEAD' });
+                    const status = response.ok ? 
+                        '<span style="color: green;">✅ Présent</span>' : 
+                        '<span style="color: red;">❌ Manquant</span>';
+                    html += `<li>${file}: ${status}</li>`;
+                } catch (error) {
+                    html += `<li>${file}: <span style="color: red;">❌ Erreur</span></li>`;
+                }
+            }
+            
+            html += '</ul>';
+            document.getElementById('filesCheck').innerHTML = html;
+        }
+
+        // Auto-vérification au chargement
+        window.onload = checkFiles;
+    </script>
+</body>
+</html>

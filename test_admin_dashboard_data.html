@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Admin Dashboard Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        .section {
+            background: #2a2a2a;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        h2 { color: #6366f1; }
+        pre {
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .error { color: #ef4444; }
+        .success { color: #10b981; }
+        button {
+            background: #6366f1;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #4f46e5; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #444;
+        }
+        th { background: #333; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Test des données Admin Dashboard</h1>
+    
+    <button onclick="testAPI()">🔄 Tester l'API</button>
+    <button onclick="testDirectDB()">💾 Tester Direct DB</button>
+    
+    <div class="section">
+        <h2>📊 Résultats des tests</h2>
+        <div id="results">Cliquez sur un bouton pour lancer le test...</div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost/projet%20ismo/api';
+        
+        async function testAPI() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<p>⏳ Chargement des données de l\'API...</p>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/admin/statistics.php`, {
+                    credentials: 'include'
+                });
+                
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+                
+                const text = await response.text();
+                console.log('Raw response:', text);
+                
+                let data;
+                try {
+                    data = JSON.parse(text);
+                } catch (e) {
+                    resultsDiv.innerHTML = `
+                        <p class="error">❌ Erreur de parsing JSON</p>
+                        <pre>${text}</pre>
+                    `;
+                    return;
+                }
+                
+                if (data.success) {
+                    resultsDiv.innerHTML = `
+                        <p class="success">✅ API connectée avec succès !</p>
+                        <h3>📈 Statistiques</h3>
+                        <table>
+                            <tr><th>Métrique</th><th>Valeur</th></tr>
+                            <tr><td>Total utilisateurs</td><td>${data.statistics.users.total}</td></tr>
+                            <tr><td>Utilisateurs actifs</td><td>${data.statistics.users.active}</td></tr>
+                            <tr><td>Nouveaux (7j)</td><td>${data.statistics.users.new}</td></tr>
+                            <tr><td>Total événements</td><td>${data.statistics.events.total}</td></tr>
+                            <tr><td>Images galerie</td><td>${data.statistics.gallery.total}</td></tr>
+                            <tr><td>Points distribués</td><td>${data.statistics.gamification.totalPointsDistributed.toLocaleString()}</td></tr>
+                            <tr><td>Sanctions actives</td><td>${data.statistics.gamification.activeSanctions}</td></tr>
+                        </table>
+                        
+                        <h3>🏆 Top 5 Utilisateurs</h3>
+                        <table>
+                            <tr><th>Rang</th><th>Nom</th><th>Email</th><th>Points</th><th>Niveau</th></tr>
+                            ${data.topUsers.map((user, i) => `
+                                <tr>
+                                    <td>#${i+1}</td>
+                                    <td>${user.username}</td>
+                                    <td>${user.email}</td>
+                                    <td>${user.points}</td>
+                                    <td>${user.level}</td>
+                                </tr>
+                            `).join('')}
+                        </table>
+                        
+                        <h3>📅 Événements récents</h3>
+                        <table>
+                            <tr><th>Titre</th><th>Type</th><th>Date</th></tr>
+                            ${data.recentEvents.slice(0, 5).map(event => `
+                                <tr>
+                                    <td>${event.title}</td>
+                                    <td>${event.type}</td>
+                                    <td>${new Date(event.created_at).toLocaleString('fr-FR')}</td>
+                                </tr>
+                            `).join('')}
+                        </table>
+                        
+                        <h3>🔍 Réponse complète</h3>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    resultsDiv.innerHTML = `
+                        <p class="error">❌ Erreur API: ${data.error}</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <p class="error">❌ Erreur: ${error.message}</p>
+                    <p>Vérifiez la console pour plus de détails.</p>
+                `;
+                console.error('Test API error:', error);
+            }
+        }
+        
+        async function testDirectDB() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<p>⏳ Test direct de la base de données...</p>';
+            
+            try {
+                const response = await fetch('test_api_stats.php');
+                const text = await response.text();
+                
+                resultsDiv.innerHTML = `
+                    <p class="success">✅ Test direct terminé</p>
+                    <pre>${text}</pre>
+                `;
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <p class="error">❌ Erreur: ${error.message}</p>
+                `;
+            }
+        }
+        
+        // Auto-test au chargement
+        window.addEventListener('load', () => {
+            console.log('🚀 Page chargée, ready pour les tests');
+            console.log('API_BASE:', API_BASE);
+        });
+    </script>
+</body>
+</html>

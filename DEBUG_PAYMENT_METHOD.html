@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug - Test Méthode de Paiement</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #5568d3;
+        }
+        pre {
+            background: #f9fafb;
+            padding: 12px;
+            border-radius: 4px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        .success { color: #065f46; background: #d1fae5; padding: 10px; border-radius: 4px; }
+        .error { color: #991b1b; background: #fee2e2; padding: 10px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Debug - Création Méthode de Paiement</h1>
+
+    <div class="test-section">
+        <h2>Test de Création</h2>
+        <button onclick="testCreate()">Créer Méthode Test</button>
+        <div id="createResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Vérifier la Table</h2>
+        <button onclick="checkTable()">Vérifier Structure Table</button>
+        <div id="tableResult"></div>
+    </div>
+
+    <script>
+        const API_BASE = '/projet%20ismo/api';
+
+        async function testCreate() {
+            const result = document.getElementById('createResult');
+            result.innerHTML = '<p>Test en cours...</p>';
+
+            const payload = {
+                name: 'Test Payment Method',
+                slug: 'test-payment-' + Date.now(),
+                description: 'Test description',
+                provider: 'manual',
+                fee_percentage: 0,
+                fee_fixed: 0,
+                is_active: 1,
+                auto_confirm: 0,
+                requires_online_payment: 0,
+                display_order: 0
+            };
+
+            console.log('Payload envoyé:', payload);
+
+            try {
+                const response = await fetch(`${API_BASE}/admin/payment_methods.php`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+                
+                console.log('Réponse API:', data);
+                console.log('Status:', response.status);
+
+                if (data.success || response.ok) {
+                    result.innerHTML = `
+                        <div class="success">
+                            <strong>✅ Succès!</strong>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                } else {
+                    result.innerHTML = `
+                        <div class="error">
+                            <strong>❌ Erreur</strong>
+                            <p>${data.error || 'Erreur inconnue'}</p>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                            <p><strong>Status HTTP:</strong> ${response.status}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                result.innerHTML = `
+                    <div class="error">
+                        <strong>❌ Erreur de connexion</strong>
+                        <p>${error.message}</p>
+                        <pre>${error.stack}</pre>
+                    </div>
+                `;
+                console.error('Erreur:', error);
+            }
+        }
+
+        async function checkTable() {
+            const result = document.getElementById('tableResult');
+            result.innerHTML = '<p>Vérification en cours...</p>';
+
+            try {
+                // Test 1: Vérifier si l'API répond
+                const response = await fetch(`${API_BASE}/admin/payment_methods.php`, {
+                    credentials: 'include'
+                });
+
+                const data = await response.json();
+                
+                result.innerHTML = `
+                    <div class="success">
+                        <strong>✅ API accessible</strong>
+                        <p>Méthodes existantes: ${data.payment_methods ? data.payment_methods.length : 0}</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    </div>
+                `;
+            } catch (error) {
+                result.innerHTML = `
+                    <div class="error">
+                        <strong>❌ Erreur</strong>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

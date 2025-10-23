@@ -1,0 +1,144 @@
+═══════════════════════════════════════════════════════════════════════════════
+  📋 ROUTES À AJOUTER - Système de Facturation React
+═══════════════════════════════════════════════════════════════════════════════
+
+Fichier à modifier: createxyz-project/_/apps/web/src/app/routes.ts
+
+═══════════════════════════════════════════════════════════════════════════════
+ROUTES ADMIN
+═══════════════════════════════════════════════════════════════════════════════
+
+// Scanner de Factures - QR Code
+{
+  path: '/admin/invoice-scanner',
+  component: () => import('./admin/invoice-scanner/page'),
+  title: 'Scanner de Factures',
+  icon: 'QrCode',
+  requiresAuth: true,
+  requiresAdmin: true,
+  description: 'Scanner et activer les factures'
+},
+
+// Gestion des Sessions
+{
+  path: '/admin/sessions',
+  component: () => import('./admin/sessions/page'),
+  title: 'Gestion Sessions',
+  icon: 'Activity',
+  requiresAuth: true,
+  requiresAdmin: true,
+  description: 'Gérer les sessions de jeu en temps réel'
+},
+
+═══════════════════════════════════════════════════════════════════════════════
+ROUTES PLAYER
+═══════════════════════════════════════════════════════════════════════════════
+
+// Mes Factures
+{
+  path: '/player/my-invoices',
+  component: () => import('./player/my-invoices/page'),
+  title: 'Mes Factures',
+  icon: 'Receipt',
+  requiresAuth: true,
+  requiresPlayer: true,
+  description: 'Consulter mes factures et codes QR'
+},
+
+═══════════════════════════════════════════════════════════════════════════════
+NAVIGATION À METTRE À JOUR
+═══════════════════════════════════════════════════════════════════════════════
+
+Fichier: createxyz-project/_/apps/web/src/components/Navigation.jsx
+
+1. Importer les nouveaux icons (si pas déjà fait):
+   import { QrCode, Activity, Receipt } from 'lucide-react';
+
+2. Section ADMIN - Ajouter après les autres liens admin:
+
+   <NavLink 
+     to="/admin/invoice-scanner" 
+     icon={<QrCode className="w-5 h-5" />} 
+     label="Scanner Factures"
+     isActive={location.pathname === '/admin/invoice-scanner'}
+   />
+   
+   <NavLink 
+     to="/admin/sessions" 
+     icon={<Activity className="w-5 h-5" />} 
+     label="Sessions"
+     isActive={location.pathname === '/admin/sessions'}
+   />
+
+3. Section PLAYER - Ajouter après /player/my-purchases:
+
+   <NavLink 
+     to="/player/my-invoices" 
+     icon={<Receipt className="w-5 h-5" />} 
+     label="Mes Factures"
+     isActive={location.pathname === '/player/my-invoices'}
+   />
+
+═══════════════════════════════════════════════════════════════════════════════
+MODIFICATION OPTIONNELLE: Page Shop
+═══════════════════════════════════════════════════════════════════════════════
+
+Fichier: createxyz-project/_/apps/web/src/app/player/shop/page.jsx
+
+Après un achat réussi, ajouter un bouton pour voir la facture:
+
+// Dans la fonction après création d'achat réussi
+if (data.success && data.purchase) {
+  toast.success('Achat créé avec succès !', {
+    action: {
+      label: 'Voir Ma Facture',
+      onClick: () => navigate('/player/my-invoices')
+    }
+  });
+}
+
+Ou ajouter un lien dans la modal de confirmation:
+
+<button
+  onClick={() => navigate('/player/my-invoices')}
+  className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+>
+  📱 Voir Ma Facture QR
+</button>
+
+═══════════════════════════════════════════════════════════════════════════════
+VÉRIFICATION APRÈS INTÉGRATION
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Démarrer le serveur React:
+   cd createxyz-project/_/apps/web
+   npm run dev
+
+2. Tester les URLs:
+   ✓ http://localhost:4000/admin/invoice-scanner
+   ✓ http://localhost:4000/admin/sessions
+   ✓ http://localhost:4000/player/my-invoices
+
+3. Vérifier la navigation:
+   ✓ Liens visibles dans sidebar admin
+   ✓ Liens visibles dans sidebar player
+   ✓ Navigation fluide sans rechargement
+
+4. Tester fonctionnalités:
+   ✓ Scanner un code facture
+   ✓ Afficher QR code
+   ✓ Gérer une session
+
+═══════════════════════════════════════════════════════════════════════════════
+NOTES IMPORTANTES
+═══════════════════════════════════════════════════════════════════════════════
+
+• Les composants React sont déjà créés et prêts
+• Les APIs backend sont déjà configurées
+• Le design est cohérent avec le projet existant
+• Seules les routes et navigation doivent être ajoutées
+• Pas de dépendances supplémentaires requises
+
+═══════════════════════════════════════════════════════════════════════════════
+✅ SYSTÈME PRÊT POUR LA PRODUCTION
+═══════════════════════════════════════════════════════════════════════════════

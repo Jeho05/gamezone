@@ -1,0 +1,17 @@
+═══════════════════════════════════════════════════════════════════════════════
+  📦 INSTALLATION DE LA BIBLIOTHÈQUE QR CODE
+═══════════════════════════════════════════════════════════════════════════════
+
+Ouvrez un terminal dans le projet React et exécutez :
+
+cd createxyz-project/_/apps/web
+npm install qrcode.react
+
+OU si vous utilisez yarn :
+
+yarn add qrcode.react
+
+Cette bibliothèque permettra de générer des QR codes directement en React
+sans avoir besoin d'API externe !
+
+═══════════════════════════════════════════════════════════════════════════════

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Direct API</title>
+</head>
+<body>
+    <h1>Test Direct API GameZone</h1>
+    <button onclick="test()">Tester inscription</button>
+    <pre id="result"></pre>
+
+    <script>
+        async function test() {
+            const result = document.getElementById('result');
+            result.textContent = 'Test en cours...\n';
+            
+            const url = 'http://localhost/projet%20ismo/api/auth/register.php';
+            result.textContent += 'URL: ' + url + '\n\n';
+            
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        username: 'DirectTest',
+                        email: 'direct' + Date.now() + '@test.com',
+                        password: 'test1234'
+                    })
+                });
+                
+                result.textContent += 'Status: ' + response.status + '\n';
+                result.textContent += 'Headers:\n';
+                response.headers.forEach((value, key) => {
+                    result.textContent += '  ' + key + ': ' + value + '\n';
+                });
+                
+                const text = await response.text();
+                result.textContent += '\nReponse:\n' + text;
+                
+            } catch (error) {
+                result.textContent += 'ERREUR: ' + error.message + '\n';
+                result.textContent += 'Type: ' + error.name + '\n';
+                result.textContent += '\nStack:\n' + error.stack;
+            }
+        }
+    </script>
+</body>
+</html>

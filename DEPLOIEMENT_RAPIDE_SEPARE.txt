@@ -1,0 +1,114 @@
+╔═══════════════════════════════════════════════════════════════╗
+║                                                               ║
+║    🚀 DEPLOIEMENT SEPARE - VERCEL + INFINITYFREE 🚀         ║
+║                    Guide Rapide                               ║
+║                                                               ║
+╚═══════════════════════════════════════════════════════════════╝
+
+📊 ARCHITECTURE
+
+┌─────────────────────┐
+│  VERCEL             │
+│  (Frontend React)   │  ← GRATUIT, CDN, Auto-deploy
+│  gamezone.vercel.   │
+│  app                │
+└──────────┬──────────┘
+           │ API Calls
+           ↓
+┌─────────────────────┐
+│  INFINITYFREE       │
+│  (Backend PHP)      │  ← GRATUIT, PHP+MySQL
+│  gamezone-api.      │
+│  infinityfreeapp.   │
+│  com                │
+└─────────────────────┘
+
+
+🎯 3 SCRIPTS ESSENTIELS
+
+1️⃣  PREPARER BACKEND
+   .\PREPARER_BACKEND_INFINITYFREE.ps1
+   → Crée dossier backend_infinityfree/
+   → Prêt à uploader sur InfinityFree
+
+2️⃣  INITIALISER GIT
+   .\INIT_GIT_GITHUB.ps1
+   → Configure Git
+   → Push sur GitHub
+
+3️⃣  DEPLOYER SUR VERCEL
+   → Suivre DEPLOIEMENT_VERCEL.md
+   → Import depuis GitHub
+   → Automatique !
+
+
+📋 ORDRE RECOMMANDE
+
+PARTIE 1 - BACKEND (30 min)
+  1. Compte InfinityFree → infinityfree.net
+  2. Créer site + base MySQL
+  3. Lancer: .\PREPARER_BACKEND_INFINITYFREE.ps1
+  4. Upload via FTP (FileZilla)
+  5. Tester: https://votre-nom.infinityfreeapp.com/api/auth/check.php
+
+PARTIE 2 - FRONTEND (15 min)
+  1. Lancer: .\INIT_GIT_GITHUB.ps1
+  2. Créer repo sur github.com/new
+  3. Push sur GitHub
+  4. Compte Vercel → vercel.com
+  5. Import depuis GitHub
+  6. Configurer variables d'environnement
+  7. Deploy !
+
+
+✅ AVANTAGES
+
+Frontend (Vercel):
+  ✓ Déploiement automatique depuis GitHub
+  ✓ CDN mondial (ultra rapide)
+  ✓ HTTPS gratuit
+  ✓ Preview deployments
+  ✓ 100% GRATUIT
+
+Backend (InfinityFree):
+  ✓ PHP + MySQL gratuit
+  ✓ APIs fonctionnent sans modif
+  ✓ Upload fichiers
+  ✓ phpMyAdmin inclus
+
+
+⚡ TEMPS TOTAL
+
+Backend:     30 min
+Frontend:    15 min
+Tests:       10 min
+TOTAL:       55 min
+
+
+📚 DOCUMENTATION
+
+DEPLOIEMENT_SEPARE.md
+  → Guide complet avec tous les détails
+  → Architecture expliquée
+  → Dépannage
+
+DEPLOIEMENT_VERCEL.md
+  → Guide spécifique Vercel
+  → Configuration détaillée
+  → Astuces et optimisations
+
+
+🆘 SUPPORT
+
+Vercel:       vercel.com/docs
+InfinityFree: forum.infinityfree.com
+GitHub:       docs.github.com
+
+
+💡 CONSEIL
+
+Commencez par le backend (InfinityFree) !
+Une fois l'API en ligne, déployez le frontend (Vercel).
+
+
+🎉 BON DEPLOIEMENT !

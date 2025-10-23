@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Création Récompense Admin</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        #result {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            display: none;
+        }
+        .success {
+            background: #d1fae5;
+            border: 2px solid #10b981;
+            color: #065f46;
+        }
+        .error {
+            background: #fee2e2;
+            border: 2px solid #ef4444;
+            color: #991b1b;
+        }
+        .info {
+            background: #dbeafe;
+            border: 2px solid #3b82f6;
+            color: #1e40af;
+        }
+        pre {
+            background: #f3f4f6;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎁 Test Création Récompense Admin</h1>
+        <p style="color: #666; margin-bottom: 20px;">Créez une récompense de type "Package de Jeu" et vérifiez qu'elle apparaît instantanément pour les joueurs.</p>
+        
+        <form id="rewardForm">
+            <div class="form-group">
+                <label>Nom de la récompense *</label>
+                <input type="text" id="name" value="TEST HTML - Super Package" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Description</label>
+                <textarea id="description" rows="2">Package créé via test HTML pour vérifier le flow complet</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>Coût en points *</label>
+                <input type="number" id="cost" value="400" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Jeu *</label>
+                <select id="game_id" required>
+                    <option value="1">FIFA (ID: 1)</option>
+                    <option value="3">ufvvhjk (ID: 3)</option>
+                    <option value="4">naruto (ID: 4)</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Durée (minutes) *</label>
+                <input type="number" id="duration_minutes" value="75" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Points gagnés *</label>
+                <input type="number" id="points_earned" value="35" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Multiplicateur bonus</label>
+                <input type="number" id="bonus_multiplier" value="2.5" step="0.1">
+            </div>
+            
+            <div class="form-group">
+                <label>Label promo</label>
+                <input type="text" id="promotional_label" value="🌟 MEGA DEAL">
+            </div>
+            
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="is_promotional" checked> Package promotionnel
+                </label>
+            </div>
+            
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="is_featured" checked> En vedette
+                </label>
+            </div>
+            
+            <button type="submit">🚀 Créer la Récompense</button>
+        </form>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        document.getElementById('rewardForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'info';
+            resultDiv.innerHTML = '⏳ Création en cours...';
+            
+            const data = {
+                name: document.getElementById('name').value,
+                description: document.getElementById('description').value,
+                cost: parseInt(document.getElementById('cost').value),
+                reward_type: 'game_package',
+                category: 'gaming',
+                available: 1,
+                is_featured: document.getElementById('is_featured').checked ? 1 : 0,
+                display_order: 1,
+                game_id: parseInt(document.getElementById('game_id').value),
+                duration_minutes: parseInt(document.getElementById('duration_minutes').value),
+                points_earned: parseInt(document.getElementById('points_earned').value),
+                bonus_multiplier: parseFloat(document.getElementById('bonus_multiplier').value),
+                is_promotional: document.getElementById('is_promotional').checked ? 1 : 0,
+                promotional_label: document.getElementById('promotional_label').value
+            };
+            
+            console.log('📤 Données envoyées:', data);
+            
+            try {
+                // 1. Créer la récompense
+                const response = await fetch('http://localhost/projet%20ismo/api/admin/rewards.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                console.log('📥 Réponse API:', result);
+                
+                if (result.success) {
+                    // 2. Vérifier qu'elle apparaît dans l'API joueur
+                    const checkResponse = await fetch('http://localhost/projet%20ismo/test_backend_api_direct.php');
+                    const checkData = await checkResponse.json();
+                    
+                    const newPackage = checkData.packages.find(p => p.id == result.package_id);
+                    
+                    if (newPackage) {
+                        resultDiv.className = 'success';
+                        resultDiv.innerHTML = `
+                            <h3>✅ SUCCÈS COMPLET!</h3>
+                            <p><strong>Message:</strong> ${result.message}</p>
+                            <p><strong>Reward ID:</strong> ${result.reward_id}</p>
+                            <p><strong>Package ID:</strong> ${result.package_id}</p>
+                            <hr style="margin: 15px 0; border: 1px solid #10b981;">
+                            <h4>✅ Visible dans l'API joueur!</h4>
+                            <p><strong>Nom:</strong> ${newPackage.reward_name}</p>
+                            <p><strong>Package:</strong> ${newPackage.package_name}</p>
+                            <p><strong>Jeu:</strong> ${newPackage.game_name}</p>
+                            <p><strong>Coût:</strong> ${newPackage.points_cost} points</p>
+                            <p><strong>Durée:</strong> ${newPackage.duration_minutes} minutes</p>
+                            <p><strong>Bonus:</strong> +${newPackage.points_earned} points</p>
+                            ${newPackage.promotional_label ? `<p><strong>Label:</strong> ${newPackage.promotional_label}</p>` : ''}
+                            <hr style="margin: 15px 0; border: 1px solid #10b981;">
+                            <p>🎮 <strong>Les joueurs peuvent maintenant voir cette récompense!</strong></p>
+                            <p style="font-size: 12px; color: #666; margin-top: 10px;">Total de packages: ${checkData.count}</p>
+                        `;
+                    } else {
+                        resultDiv.className = 'error';
+                        resultDiv.innerHTML = `
+                            <h3>⚠️ Récompense créée mais non visible</h3>
+                            <p>La récompense a été créée (ID: ${result.reward_id}, Package: ${result.package_id}) mais n'apparaît pas dans l'API joueur.</p>
+                            <p>Vérifiez que le jeu et le package sont actifs.</p>
+                        `;
+                    }
+                } else {
+                    resultDiv.className = 'error';
+                    resultDiv.innerHTML = `
+                        <h3>❌ Erreur</h3>
+                        <p><strong>Message:</strong> ${result.error || 'Erreur inconnue'}</p>
+                        ${result.details ? `<pre>${result.details}</pre>` : ''}
+                    `;
+                }
+                
+            } catch (error) {
+                resultDiv.className = 'error';
+                resultDiv.innerHTML = `
+                    <h3>❌ Erreur de connexion</h3>
+                    <p>${error.message}</p>
+                    <pre>${error.stack}</pre>
+                `;
+                console.error('Erreur:', error);
+            }
+        });
+    </script>
+</body>
+</html>

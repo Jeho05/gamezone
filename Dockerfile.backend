@@ -1,0 +1,63 @@
+# Dockerfile pour le Backend PHP
+FROM php:8.2-apache
+
+# Installer les extensions PHP nécessaires
+RUN apt-get update && apt-get install -y \
+    libzip-dev \
+    zip \
+    unzip \
+    && docker-php-ext-install mysqli pdo pdo_mysql zip \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Activer les modules Apache nécessaires
+RUN a2enmod rewrite headers
+
+# Copier la configuration Apache personnalisée
+COPY <<EOF /etc/apache2/sites-available/000-default.conf
+<VirtualHost *:80>
+    ServerAdmin webmaster@localhost
+    DocumentRoot /var/www/html
+
+    <Directory /var/www/html>
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    ErrorLog \${APACHE_LOG_DIR}/error.log
+    CustomLog \${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+EOF
+
+# Copier le code PHP
+COPY api /var/www/html/api
+
+# Créer le dossier uploads s'il n'existe pas
+RUN mkdir -p /var/www/html/uploads
+
+# Définir les permissions correctes
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html \
+    && chmod -R 775 /var/www/html/uploads
+
+# Configuration PHP personnalisée
+RUN { \
+    echo 'upload_max_filesize = 50M'; \
+    echo 'post_max_size = 50M'; \
+    echo 'memory_limit = 256M'; \
+    echo 'max_execution_time = 300'; \
+    echo 'display_errors = Off'; \
+    echo 'log_errors = On'; \
+    echo 'error_log = /var/log/apache2/php_errors.log'; \
+} > /usr/local/etc/php/conf.d/custom.ini
+
+# Exposer le port 80
+EXPOSE 80
+
+# Healthcheck
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s \
+  CMD curl -f http://localhost/api/health.php || exit 1
+
+# Démarrer Apache en foreground
+CMD ["apache2-foreground"]

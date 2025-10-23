@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Vérification KkiaPay</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-box {
+            background: white;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .success { border-left: 5px solid #28a745; }
+        .error { border-left: 5px solid #dc3545; }
+        .info { border-left: 5px solid #17a2b8; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Diagnostic KkiaPay</h1>
+
+    <div id="results"></div>
+
+    <button onclick="runAllTests()">🧪 Lancer tous les tests</button>
+    <button onclick="location.reload()">🔄 Rafraîchir</button>
+
+    <script src="https://cdn.kkiapay.me/k.js"></script>
+    
+    <script>
+        function addResult(title, content, type = 'info') {
+            const div = document.createElement('div');
+            div.className = `test-box ${type}`;
+            div.innerHTML = `<h3>${title}</h3>${content}`;
+            document.getElementById('results').appendChild(div);
+        }
+
+        function runAllTests() {
+            document.getElementById('results').innerHTML = '';
+            
+            // Test 1: Script chargé
+            setTimeout(() => {
+                if (typeof window.openKkiapayWidget === 'function') {
+                    addResult(
+                        '✅ Test 1: Script KkiaPay chargé',
+                        '<p>La fonction <code>window.openKkiapayWidget</code> existe.</p>',
+                        'success'
+                    );
+                } else {
+                    addResult(
+                        '❌ Test 1: Script KkiaPay NON chargé',
+                        '<p>La fonction <code>window.openKkiapayWidget</code> n\'existe pas.</p><p><strong>Solution:</strong> Vérifiez votre connexion internet et rafraîchissez la page.</p>',
+                        'error'
+                    );
+                }
+
+                // Test 2: Type de la fonction
+                if (window.openKkiapayWidget) {
+                    addResult(
+                        '✅ Test 2: Type de la fonction',
+                        `<p>Type: <code>${typeof window.openKkiapayWidget}</code></p>`,
+                        'success'
+                    );
+                }
+
+                // Test 3: Propriétés disponibles
+                const kkiapayProps = [];
+                for (let prop in window) {
+                    if (prop.toLowerCase().includes('kkia')) {
+                        kkiapayProps.push(prop);
+                    }
+                }
+                if (kkiapayProps.length > 0) {
+                    addResult(
+                        'ℹ️ Test 3: Propriétés KkiaPay détectées',
+                        `<pre>${kkiapayProps.join('\n')}</pre>`,
+                        'info'
+                    );
+                } else {
+                    addResult(
+                        '⚠️ Test 3: Aucune propriété KkiaPay',
+                        '<p>Aucune propriété contenant "kkia" trouvée dans window.</p>',
+                        'error'
+                    );
+                }
+
+                // Test 4: Console check
+                addResult(
+                    'ℹ️ Test 4: Commandes console',
+                    `<p>Ouvrez la console (F12) et tapez:</p>
+                    <pre>window.openKkiapayWidget</pre>
+                    <p>Si vous voyez <code>ƒ openKkiapayWidget() {...}</code>, c'est bon!</p>`,
+                    'info'
+                );
+
+                // Test 5: Essai d'ouverture
+                addResult(
+                    '🚀 Test 5: Test du widget',
+                    `<button onclick="testWidget()">Cliquer pour tester le widget</button>
+                    <div id="widget-result"></div>`,
+                    'info'
+                );
+            }, 2000);
+        }
+
+        function testWidget() {
+            const resultDiv = document.getElementById('widget-result');
+            resultDiv.innerHTML = '<p>⏳ Tentative d\'ouverture...</p>';
+            
+            if (!window.openKkiapayWidget) {
+                resultDiv.innerHTML = '<p style="color: red;">❌ openKkiapayWidget n\'existe pas!</p>';
+                return;
+            }
+
+            try {
+                window.openKkiapayWidget({
+                    amount: 100,
+                    api_key: '9d566a94b64a9a8ebf552e4a4a8acdecf0d3337383',
+                    sandbox: true,
+                    successCallback: function(response) {
+                        resultDiv.innerHTML = `<p style="color: green;">✅ Paiement réussi!<br>Transaction: ${response.transactionId}</p>`;
+                    },
+                    failedCallback: function(error) {
+                        resultDiv.innerHTML = `<p style="color: red;">❌ Paiement échoué: ${JSON.stringify(error)}</p>`;
+                    }
+                });
+                resultDiv.innerHTML = '<p style="color: green;">✅ Widget ouvert! Vérifiez la popup.</p>';
+            } catch (error) {
+                resultDiv.innerHTML = `<p style="color: red;">❌ Erreur: ${error.message}</p>`;
+            }
+        }
+
+        // Auto-run
+        window.addEventListener('load', () => {
+            setTimeout(runAllTests, 1000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scanner de Factures - GameZone Admin</title>
+    <link rel="stylesheet" href="invoice_scanner.css">
+    <link rel="stylesheet" href="help-widget.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎮 Scanner de Factures GameZone</h1>
+            <p>Scannez ou saisissez le code de validation pour activer une session de jeu</p>
+        </div>
+        
+        <div class="scanner-card">
+            <div class="input-group">
+                <label for="validationCode">Code de Validation (16 caractères)</label>
+                <input type="text" id="validationCode" placeholder="Entrez le code..." maxlength="16" autocomplete="off" autofocus>
+            </div>
+            
+            <button class="btn btn-primary" id="scanBtn">🔍 Scanner & Activer</button>
+            
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p style="margin-top: 15px; color: #666;">Vérification en cours...</p>
+            </div>
+            
+            <div class="result-card" id="resultCard">
+                <h3 id="resultTitle"></h3>
+                <p id="resultMessage"></p>
+                <div id="invoiceDetails"></div>
+                <div class="actions" id="actions"></div>
+            </div>
+        </div>
+        
+        <div class="scan-history" id="scanHistory">
+            <h3 style="color: white; margin-bottom: 15px;">📋 Historique des Scans</h3>
+        </div>
+    </div>
+    
+    <script src="invoice_scanner.js" defer></script>
+    <script src="help-widget.js" defer></script>
+</body>
+</html>

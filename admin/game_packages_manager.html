@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Packages - Admin GameZone</title>
+    <link rel="stylesheet" href="help-widget.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: #10b981;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+        .btn-warning {
+            background: #f59e0b;
+            color: white;
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #374151;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .table-container {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        th {
+            background: #f9fafb;
+            font-weight: 600;
+            color: #374151;
+        }
+        tr:hover {
+            background: #f9fafb;
+        }
+        .badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .badge-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .badge-danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            background: white;
+            padding: 32px;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .alert {
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #6ee7b7;
+        }
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Gestion des Packages de Jeux</h1>
+
+        <div id="alert"></div>
+
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2>Liste des Packages</h2>
+                <button class="btn btn-primary" onclick="openCreateModal()">+ Créer un Package</button>
+            </div>
+
+            <div class="form-group">
+                <label>Filtrer par jeu:</label>
+                <select id="filterGame" onchange="loadPackages()">
+                    <option value="">Tous les jeux</option>
+                </select>
+            </div>
+
+            <div class="table-container">
+                <table id="packagesTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Jeu</th>
+                            <th>Nom</th>
+                            <th>Durée (min)</th>
+                            <th>Prix (XOF)</th>
+                            <th>Points</th>
+                            <th>Statut</th>
+                            <th>Achats</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="packagesBody">
+                        <tr><td colspan="9" style="text-align: center;">Chargement...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Création/Édition -->
+    <div id="packageModal" class="modal">
+        <div class="modal-content">
+            <h2 id="modalTitle">Créer un Package</h2>
+            <form id="packageForm" onsubmit="savePackage(event)">
+                <input type="hidden" id="packageId">
+
+                <div class="form-group">
+                    <label>Jeu *</label>
+                    <select id="gameId" required>
+                        <option value="">Sélectionnez un jeu</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Nom du package *</label>
+                    <input type="text" id="packageName" required placeholder="Ex: Session 1h, Session 3h">
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Durée (minutes) *</label>
+                        <input type="number" id="durationMinutes" required min="1" placeholder="60">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Prix (XOF) *</label>
+                        <input type="number" id="price" required min="0" step="0.01" placeholder="1000">
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Points gagnés *</label>
+                        <input type="number" id="pointsEarned" required min="0" placeholder="100">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Multiplicateur bonus</label>
+                        <input type="number" id="bonusMultiplier" step="0.01" value="1.00" min="1">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Prix original (si promo)</label>
+                    <input type="number" id="originalPrice" step="0.01" placeholder="Optionnel">
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="isPromotional"> Package promotionnel
+                    </label>
+                </div>
+
+                <div class="form-group" id="promoLabelGroup" style="display: none;">
+                    <label>Label promotionnel</label>
+                    <input type="text" id="promotionalLabel" placeholder="Ex: -20%, PROMO">
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Max achats/utilisateur</label>
+                        <input type="number" id="maxPurchases" min="1" placeholder="Illimité si vide">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Ordre d'affichage</label>
+                        <input type="number" id="displayOrder" value="0" min="0">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="isActive" checked> Package actif
+                    </label>
+                </div>
+
+                <div style="display: flex; gap: 12px; margin-top: 24px;">
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                    <button type="button" class="btn btn-danger" onclick="closeModal()">Annuler</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/projet%20ismo/api';
+        let games = [];
+        let packages = [];
+
+        // Charger les jeux
+        async function loadGames() {
+            try {
+                const response = await fetch(`${API_BASE}/admin/games.php`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                games = data.games || [];
+                
+                // Remplir les selects
+                const gameSelect = document.getElementById('gameId');
+                const filterSelect = document.getElementById('filterGame');
+                
+                games.forEach(game => {
+                    gameSelect.innerHTML += `<option value="${game.id}">${game.name}</option>`;
+                    filterSelect.innerHTML += `<option value="${game.id}">${game.name}</option>`;
+                });
+            } catch (error) {
+                showAlert('Erreur lors du chargement des jeux', 'error');
+            }
+        }
+
+        // Charger les packages
+        async function loadPackages() {
+            const gameId = document.getElementById('filterGame').value;
+            const url = gameId ? `${API_BASE}/admin/game_packages.php?game_id=${gameId}` : `${API_BASE}/admin/game_packages.php`;
+            
+            try {
+                const response = await fetch(url, { credentials: 'include' });
+                const data = await response.json();
+                packages = data.packages || [];
+                displayPackages();
+            } catch (error) {
+                showAlert('Erreur lors du chargement des packages', 'error');
+            }
+        }
+
+        // Afficher les packages
+        function displayPackages() {
+            const tbody = document.getElementById('packagesBody');
+            
+            if (packages.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="9" style="text-align: center;">Aucun package trouvé</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = packages.map(pkg => `
+                <tr>
+                    <td>${pkg.id}</td>
+                    <td>${pkg.game_name}</td>
+                    <td>${pkg.name}</td>
+                    <td>${pkg.duration_minutes}</td>
+                    <td>${parseFloat(pkg.price).toFixed(0)}</td>
+                    <td>${pkg.points_earned}</td>
+                    <td>
+                        <span class="badge ${pkg.is_active ? 'badge-success' : 'badge-danger'}">
+                            ${pkg.is_active ? 'Actif' : 'Inactif'}
+                        </span>
+                    </td>
+                    <td>${pkg.purchases_count || 0}</td>
+                    <td>
+                        <button class="btn btn-warning" style="padding: 6px 12px; font-size: 14px;" onclick="editPackage(${pkg.id})">Modifier</button>
+                        <button class="btn btn-danger" style="padding: 6px 12px; font-size: 14px;" onclick="deletePackage(${pkg.id})">Supprimer</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Ouvrir modal création
+        function openCreateModal() {
+            document.getElementById('modalTitle').textContent = 'Créer un Package';
+            document.getElementById('packageForm').reset();
+            document.getElementById('packageId').value = '';
+            document.getElementById('isActive').checked = true;
+            document.getElementById('bonusMultiplier').value = '1.00';
+            document.getElementById('displayOrder').value = '0';
+            document.getElementById('packageModal').classList.add('active');
+        }
+
+        // Éditer package
+        async function editPackage(id) {
+            const pkg = packages.find(p => p.id == id);
+            if (!pkg) return;
+
+            document.getElementById('modalTitle').textContent = 'Modifier le Package';
+            document.getElementById('packageId').value = pkg.id;
+            document.getElementById('gameId').value = pkg.game_id;
+            document.getElementById('packageName').value = pkg.name;
+            document.getElementById('durationMinutes').value = pkg.duration_minutes;
+            document.getElementById('price').value = pkg.price;
+            document.getElementById('pointsEarned').value = pkg.points_earned;
+            document.getElementById('bonusMultiplier').value = pkg.bonus_multiplier || 1.00;
+            document.getElementById('originalPrice').value = pkg.original_price || '';
+            document.getElementById('isPromotional').checked = pkg.is_promotional == 1;
+            document.getElementById('promotionalLabel').value = pkg.promotional_label || '';
+            document.getElementById('maxPurchases').value = pkg.max_purchases_per_user || '';
+            document.getElementById('displayOrder').value = pkg.display_order || 0;
+            document.getElementById('isActive').checked = pkg.is_active == 1;
+
+            togglePromoFields();
+            document.getElementById('packageModal').classList.add('active');
+        }
+
+        // Sauvegarder package
+        async function savePackage(event) {
+            event.preventDefault();
+
+            const packageId = document.getElementById('packageId').value;
+            const isEdit = packageId !== '';
+
+            const data = {
+                game_id: parseInt(document.getElementById('gameId').value),
+                name: document.getElementById('packageName').value,
+                duration_minutes: parseInt(document.getElementById('durationMinutes').value),
+                price: parseFloat(document.getElementById('price').value),
+                points_earned: parseInt(document.getElementById('pointsEarned').value),
+                bonus_multiplier: parseFloat(document.getElementById('bonusMultiplier').value),
+                is_promotional: document.getElementById('isPromotional').checked ? 1 : 0,
+                is_active: document.getElementById('isActive').checked ? 1 : 0,
+                display_order: parseInt(document.getElementById('displayOrder').value)
+            };
+
+            if (document.getElementById('originalPrice').value) {
+                data.original_price = parseFloat(document.getElementById('originalPrice').value);
+            }
+            if (document.getElementById('promotionalLabel').value) {
+                data.promotional_label = document.getElementById('promotionalLabel').value;
+            }
+            if (document.getElementById('maxPurchases').value) {
+                data.max_purchases_per_user = parseInt(document.getElementById('maxPurchases').value);
+            }
+
+            if (isEdit) {
+                data.id = parseInt(packageId);
+            }
+
+            try {
+                const method = isEdit ? 'PUT' : 'POST';
+                const response = await fetch(`${API_BASE}/admin/game_packages.php`, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showAlert(result.message || 'Package sauvegardé avec succès', 'success');
+                    closeModal();
+                    loadPackages();
+                } else {
+                    showAlert(result.error || 'Erreur lors de la sauvegarde', 'error');
+                }
+            } catch (error) {
+                showAlert('Erreur lors de la sauvegarde: ' + error.message, 'error');
+            }
+        }
+
+        // Supprimer package
+        async function deletePackage(id) {
+            if (!confirm('Êtes-vous sûr de vouloir supprimer ce package ?')) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/admin/game_packages.php?id=${id}`, {
+                    method: 'DELETE',
+                    credentials: 'include'
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showAlert('Package supprimé avec succès', 'success');
+                    loadPackages();
+                } else {
+                    showAlert(result.error || 'Erreur lors de la suppression', 'error');
+                }
+            } catch (error) {
+                showAlert('Erreur: ' + error.message, 'error');
+            }
+        }
+
+        // Fermer modal
+        function closeModal() {
+            document.getElementById('packageModal').classList.remove('active');
+        }
+
+        // Afficher alerte
+        function showAlert(message, type) {
+            const alert = document.getElementById('alert');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            alert.style.display = 'block';
+            setTimeout(() => alert.style.display = 'none', 5000);
+        }
+
+        // Toggle champs promo
+        document.getElementById('isPromotional').addEventListener('change', togglePromoFields);
+        function togglePromoFields() {
+            const promoGroup = document.getElementById('promoLabelGroup');
+            promoGroup.style.display = document.getElementById('isPromotional').checked ? 'block' : 'none';
+        }
+
+        // Initialisation
+        loadGames();
+        loadPackages();
+    </script>
+    <script src="help-widget.js"></script>
+</body>
+</html>

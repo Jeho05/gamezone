@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vider le Cache du Dashboard</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #6366f1;
+            margin-bottom: 20px;
+        }
+        .step {
+            background: #f8f9fa;
+            padding: 20px;
+            border-left: 4px solid #6366f1;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .step h3 {
+            color: #333;
+            margin-top: 0;
+        }
+        button {
+            background: #6366f1;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #4f46e5;
+        }
+        .success {
+            color: #10b981;
+            font-weight: bold;
+        }
+        .error {
+            color: #ef4444;
+            font-weight: bold;
+        }
+        code {
+            background: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        .warning {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🔄 Vider le Cache du Dashboard</h1>
+        <p>Le navigateur garde l'ancien fichier <code>admin.js</code> en mémoire. Il faut le forcer à recharger.</p>
+    </div>
+
+    <div class="card">
+        <h2>Méthode 1 : Vider le Cache Automatiquement</h2>
+        <button onclick="clearCacheAndReload()">🗑️ Vider le Cache et Recharger</button>
+        <div id="result1"></div>
+    </div>
+
+    <div class="card">
+        <h2>Méthode 2 : Navigation Privée (Recommandé)</h2>
+        <p>La navigation privée ignore complètement le cache.</p>
+        
+        <div class="step">
+            <h3>Chrome / Edge</h3>
+            <p>1. Appuyez sur <code>Ctrl + Shift + N</code></p>
+            <p>2. Dans la fenêtre privée, allez sur :</p>
+            <button onclick="openPrivate()">📱 Ouvrir en Navigation Privée</button>
+        </div>
+
+        <div class="step">
+            <h3>Firefox</h3>
+            <p>1. Appuyez sur <code>Ctrl + Shift + P</code></p>
+            <p>2. Dans la fenêtre privée, copiez cette URL :</p>
+            <code id="privateUrl">http://localhost/projet%20ismo/admin/login.html</code>
+            <button onclick="copyUrl()">📋 Copier l'URL</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Méthode 3 : Vider Manuellement</h2>
+        
+        <div class="step">
+            <h3>Chrome / Edge</h3>
+            <ol>
+                <li>Appuyez sur <code>F12</code></li>
+                <li>Onglet <strong>"Application"</strong></li>
+                <li>Section <strong>"Storage"</strong> → <strong>"Clear site data"</strong></li>
+                <li>Cochez tout et cliquez <strong>"Clear site data"</strong></li>
+                <li>Fermez F12 et appuyez sur <code>Ctrl + Shift + R</code></li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h3>Firefox</h3>
+            <ol>
+                <li>Appuyez sur <code>Ctrl + Shift + Del</code></li>
+                <li>Sélectionnez "Tout" dans la période</li>
+                <li>Cochez "Cache" et "Cookies"</li>
+                <li>Cliquez "Effacer maintenant"</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Méthode 4 : Recharger avec Cache Vidé</h2>
+        <button onclick="hardReload()">🔄 Rechargement Forcé</button>
+        <p style="margin-top: 15px;">Ou manuellement :</p>
+        <ul>
+            <li>Windows : <code>Ctrl + Shift + R</code></li>
+            <li>Mac : <code>Cmd + Shift + R</code></li>
+        </ul>
+    </div>
+
+    <div class="warning">
+        <strong>⚠️ Si rien ne fonctionne :</strong><br>
+        1. Fermez complètement le navigateur (toutes les fenêtres)<br>
+        2. Rouvrez-le<br>
+        3. Allez directement sur : <a href="http://localhost/projet%20ismo/admin/login.html?nocache=1" target="_blank">Dashboard (nouveau lien)</a>
+    </div>
+
+    <div class="card">
+        <h2>✅ Vérification</h2>
+        <p>Une fois le cache vidé, testez :</p>
+        <button onclick="testAPI()">🧪 Tester l'API</button>
+        <div id="testResult"></div>
+    </div>
+
+    <script>
+        function clearCacheAndReload() {
+            const result = document.getElementById('result1');
+            result.innerHTML = '<p class="success">✓ Cache en cours de vidage...</p>';
+            
+            if ('caches' in window) {
+                caches.keys().then(function(names) {
+                    for (let name of names) caches.delete(name);
+                });
+            }
+            
+            setTimeout(() => {
+                result.innerHTML = '<p class="success">✓ Cache vidé ! Redirection...</p>';
+                setTimeout(() => {
+                    window.location.href = 'http://localhost/projet%20ismo/admin/login.html?t=' + Date.now();
+                }, 1000);
+            }, 1000);
+        }
+
+        function openPrivate() {
+            alert('Ouvrez une fenêtre de navigation privée (Ctrl+Shift+N) puis allez sur:\n\nhttp://localhost/projet%20ismo/admin/login.html');
+        }
+
+        function copyUrl() {
+            const url = document.getElementById('privateUrl').textContent;
+            navigator.clipboard.writeText(url).then(() => {
+                alert('✓ URL copiée ! Collez-la dans votre fenêtre privée.');
+            });
+        }
+
+        function hardReload() {
+            window.location.reload(true);
+        }
+
+        async function testAPI() {
+            const result = document.getElementById('testResult');
+            result.innerHTML = '<p>Test en cours...</p>';
+            
+            try {
+                const response = await fetch('/projet%20ismo/api/admin/statistics.php', {
+                    credentials: 'include',
+                    cache: 'no-cache'
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    result.innerHTML = `
+                        <p class="success">✅ API fonctionne !</p>
+                        <p>Total utilisateurs: <strong>${data.statistics.users.total}</strong></p>
+                        <p>Points distribués: <strong>${data.statistics.gamification.totalPointsDistributed}</strong></p>
+                        <p style="margin-top: 15px;">
+                            <a href="http://localhost/projet%20ismo/admin/login.html?v=${Date.now()}" style="background: #6366f1; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; display: inline-block;">
+                                → Aller au Dashboard
+                            </a>
+                        </p>
+                    `;
+                } else if (response.status === 401) {
+                    result.innerHTML = '<p class="error">⚠️ Non connecté. <a href="http://localhost/projet%20ismo/admin/login.html">Se connecter</a></p>';
+                } else {
+                    result.innerHTML = `<p class="error">❌ Erreur ${response.status}</p>`;
+                }
+            } catch (error) {
+                result.innerHTML = `<p class="error">❌ ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

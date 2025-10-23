@@ -1,0 +1,31 @@
+═══════════════════════════════════════════════════════════════════════════════
+  🔄 REDÉMARRER LE SERVEUR REACT
+═══════════════════════════════════════════════════════════════════════════════
+
+Le module qrcode.react a été installé avec succès, mais Vite doit être redémarré
+pour le détecter.
+
+📋 ÉTAPES :
+
+1️⃣ Dans le terminal où React tourne :
+   - Appuyez sur Ctrl+C pour arrêter le serveur
+   
+2️⃣ Puis relancez-le :
+   cd C:\xampp\htdocs\projet ismo\createxyz-project\_\apps\web
+   npm run dev
+
+3️⃣ Attendez que le serveur démarre
+
+4️⃣ Rechargez la page dans le navigateur (F5)
+
+═══════════════════════════════════════════════════════════════════════════════
+
+✅ Alternative rapide : 
+   Parfois juste recharger la page suffit après quelques secondes
+
+🔍 Si l'erreur persiste :
+   - Vérifiez que node_modules/qrcode.react existe
+   - Supprimez node_modules et réinstallez : npm install
+   - Vérifiez package.json contient "qrcode.react"
+
+═══════════════════════════════════════════════════════════════════════════════

@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion Boutique - GameZone Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="help-widget.css">
+</head>
+<body class="bg-gradient-to-br from-purple-600 to-indigo-700 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h1 class="text-3xl font-bold text-purple-600 mb-2">🎮 Gestion Boutique de Jeux</h1>
+            <p class="text-gray-600">Gérez vos jeux, packages et paiements</p>
+            
+            <!-- Tabs -->
+            <div class="flex gap-4 mt-6 border-b">
+                <button class="tab-btn active px-4 py-2 font-semibold border-b-2 border-purple-600 text-purple-600" data-tab="games">Jeux</button>
+                <button class="tab-btn px-4 py-2 font-semibold text-gray-500 hover:text-purple-600" data-tab="packages">Packages</button>
+                <button class="tab-btn px-4 py-2 font-semibold text-gray-500 hover:text-purple-600" data-tab="payment-methods">Paiements</button>
+                <button class="tab-btn px-4 py-2 font-semibold text-gray-500 hover:text-purple-600" data-tab="purchases">Achats</button>
+            </div>
+        </div>
+
+        <!-- Content Tabs -->
+        <div id="games-content" class="tab-content">
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <input type="text" id="games-search" placeholder="Rechercher..." class="px-4 py-2 border rounded-lg w-80">
+                    <button onclick="openGameModal()" class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700">+ Ajouter Jeu</button>
+                </div>
+                <div id="games-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            </div>
+        </div>
+
+        <div id="packages-content" class="tab-content hidden">
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <select id="package-filter" class="px-4 py-2 border rounded-lg"></select>
+                    <button onclick="openPackageModal()" class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700">+ Ajouter Package</button>
+                </div>
+                <div id="packages-table"></div>
+            </div>
+        </div>
+
+        <div id="payment-methods-content" class="tab-content hidden">
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="flex justify-end mb-6">
+                    <button onclick="openPaymentMethodModal()" class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700">+ Ajouter Méthode</button>
+                </div>
+                <div id="payment-methods-table"></div>
+            </div>
+        </div>
+
+        <div id="purchases-content" class="tab-content hidden">
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <select id="purchase-status-filter" onchange="loadPurchases()" class="px-4 py-2 border rounded-lg">
+                        <option value="">Tous les statuts</option>
+                        <option value="pending">En attente</option>
+                        <option value="completed">Complété</option>
+                    </select>
+                    <button onclick="loadPurchases()" class="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700">🔄 Actualiser</button>
+                </div>
+                <div id="purchases-table"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Jeu -->
+    <div id="gameModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 32px; border-radius: 12px; max-width: 700px; width: 90%; max-height: 90vh; overflow-y: auto;">
+            <h2 id="gameModalTitle" style="margin-top: 0;">Créer un Jeu</h2>
+            <form id="gameForm" onsubmit="saveGame(event)">
+                <input type="hidden" id="gameId">
+                
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; margin-bottom: 4px; font-weight: 600;">Nom du jeu *</label>
+                    <input type="text" id="gameName" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                    <div>
+                        <label style="display: block; margin-bottom: 4px; font-weight: 600;">Catégorie *</label>
+                        <select id="gameCategory" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            <option value="action">Action</option>
+                            <option value="adventure">Aventure</option>
+                            <option value="sports">Sports</option>
+                            <option value="racing">Course</option>
+                            <option value="strategy">Stratégie</option>
+                            <option value="rpg">RPG</option>
+                            <option value="fighting">Combat</option>
+                            <option value="simulation">Simulation</option>
+                            <option value="vr">VR</option>
+                            <option value="retro">Rétro</option>
+                            <option value="other">Autre</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 4px; font-weight: 600;">Plateforme</label>
+                        <input type="text" id="gamePlatform" placeholder="Ex: PS5, Xbox, PC" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; margin-bottom: 4px; font-weight: 600;">Description courte</label>
+                    <input type="text" id="gameShortDescription" maxlength="500" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                </div>
+                
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; margin-bottom: 4px; font-weight: 600;">Description complète</label>
+                    <textarea id="gameDescription" rows="3" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;"></textarea>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                    <div>
+                        <label style="display: block; margin-bottom: 4px; font-weight: 600;">Points par heure *</label>
+                        <input type="number" id="gamePointsPerHour" required min="0" value="10" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 4px; font-weight: 600;">Prix de base (XOF/h) *</label>
+                        <input type="number" id="gameBasePrice" required min="0" step="0.01" value="1000" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; margin-bottom: 4px; font-weight: 600;">Image</label>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <input type="file" id="gameImageUpload" accept="image/*" onchange="uploadGameImage()" style="flex: 1;">
+                        <input type="text" id="gameImageUrl" placeholder="URL de l'image" style="flex: 2; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    </div>
+                    <img id="gameImagePreview" style="display: none; max-width: 200px; margin-top: 8px; border-radius: 8px;">
+                </div>
+                
+                <div style="margin-bottom: 16px;">
+                    <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input type="checkbox" id="gameIsReservable" onchange="toggleReservationFee()" style="margin-right: 8px;">
+                        <span style="font-weight: 600;">Jeu réservable</span>
+                    </label>
+                </div>
+                
+                <div id="reservationFeeGroup" style="display: none; margin-bottom: 16px;">
+                    <label style="display: block; margin-bottom: 4px; font-weight: 600;">Frais de réservation (XOF)</label>
+                    <input type="number" id="gameReservationFee" min="0" step="0.01" value="0" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                </div>
+                
+                <div style="display: flex; gap: 16px; margin-bottom: 16px;">
+                    <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input type="checkbox" id="gameIsActive" checked style="margin-right: 8px;">
+                        <span style="font-weight: 600;">Jeu actif</span>
+                    </label>
+                    <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input type="checkbox" id="gameIsFeatured" style="margin-right: 8px;">
+                        <span style="font-weight: 600;">Jeu en vedette</span>
+                    </label>
+                </div>
+                
+                <div style="display: flex; gap: 12px; margin-top: 24px;">
+                    <button type="submit" style="flex: 1; padding: 12px; background: #10b981; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Enregistrer</button>
+                    <button type="button" onclick="closeGameModal()" style="flex: 1; padding: 12px; background: #ef4444; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Annuler</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost/projet%20ismo/api';
+        let games = [];
+
+        // Tabs
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => {
+                    b.classList.remove('active', 'border-purple-600', 'text-purple-600');
+                    b.classList.add('text-gray-500');
+                });
+                btn.classList.add('active', 'border-purple-600', 'text-purple-600', 'border-b-2');
+                
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+                document.getElementById(btn.dataset.tab + '-content').classList.remove('hidden');
+                
+                if (btn.dataset.tab === 'games') loadGames();
+                if (btn.dataset.tab === 'packages') loadPackages();
+                if (btn.dataset.tab === 'payment-methods') loadPaymentMethods();
+                if (btn.dataset.tab === 'purchases') loadPurchases();
+            });
+        });
+
+        // Load Games
+        async function loadGames() {
+            const res = await fetch(`${API_BASE}/admin/games.php`, {credentials: 'include'});
+            const data = await res.json();
+            games = data.games || [];
+            displayGames(games);
+        }
+
+        function displayGames(list) {
+            document.getElementById('games-grid').innerHTML = list.map(g => `
+                <div class="border rounded-lg overflow-hidden hover:shadow-lg transition">
+                    <img src="${g.image_url || 'https://via.placeholder.com/400x200'}" class="w-full h-40 object-cover">
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg mb-2">${g.name}</h3>
+                        <p class="text-sm text-gray-600 mb-2">${g.short_description || ''}</p>
+                        <div class="flex flex-wrap gap-2 mb-3">
+                            <span class="px-2 py-1 text-xs rounded ${g.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">${g.is_active ? 'Actif' : 'Inactif'}</span>
+                            <span class="px-2 py-1 text-xs rounded bg-blue-100 text-blue-700">${g.category}</span>
+                            ${g.is_reservable ? `<span class="px-2 py-1 text-xs rounded bg-purple-100 text-purple-700">Réservable</span>` : ''}
+                        </div>
+                        <div class="text-sm mb-2"><strong>${g.points_per_hour} pts/h</strong> • <strong>${g.base_price} XOF/h</strong></div>
+                        ${g.is_reservable ? `<div class="text-xs text-gray-600 mb-3">Frais de réservation: <strong class="text-purple-700">${g.reservation_fee} XOF</strong></div>` : ''}
+                        <div class="flex gap-2">
+                            <button onclick="editGame(${g.id})" class="flex-1 bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600">Modifier</button>
+                            <button onclick="deleteGame(${g.id})" class="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600">Supprimer</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function loadPackages() {
+            const res = await fetch(`${API_BASE}/admin/game_packages.php`, {credentials: 'include'});
+            const data = await res.json();
+            document.getElementById('packages-table').innerHTML = `
+                <table class="w-full">
+                    <thead class="bg-gray-50"><tr>
+                        <th class="px-4 py-3 text-left">Jeu</th>
+                        <th class="px-4 py-3 text-left">Package</th>
+                        <th class="px-4 py-3 text-left">Durée</th>
+                        <th class="px-4 py-3 text-left">Prix</th>
+                        <th class="px-4 py-3 text-left">Points</th>
+                        <th class="px-4 py-3 text-left">Statut</th>
+                        <th class="px-4 py-3 text-left">Actions</th>
+                    </tr></thead>
+                    <tbody>
+                        ${(data.packages || []).map(p => `
+                            <tr class="border-b hover:bg-gray-50">
+                                <td class="px-4 py-3">${p.game_name}</td>
+                                <td class="px-4 py-3">${p.name}</td>
+                                <td class="px-4 py-3">${p.duration_minutes} min</td>
+                                <td class="px-4 py-3">${p.price} XOF</td>
+                                <td class="px-4 py-3">${p.points_earned} pts</td>
+                                <td class="px-4 py-3"><span class="px-2 py-1 text-xs rounded ${p.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">${p.is_active ? 'Actif' : 'Inactif'}</span></td>
+                                <td class="px-4 py-3">
+                                    <button onclick="editPackage(${p.id})" class="text-blue-600 hover:underline text-sm mr-2">Modifier</button>
+                                    <button onclick="deletePackage(${p.id})" class="text-red-600 hover:underline text-sm">Supprimer</button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        async function loadPaymentMethods() {
+            const res = await fetch(`${API_BASE}/admin/payment_methods.php`, {credentials: 'include'});
+            const data = await res.json();
+            document.getElementById('payment-methods-table').innerHTML = `
+                <table class="w-full">
+                    <thead class="bg-gray-50"><tr>
+                        <th class="px-4 py-3 text-left">Nom</th>
+                        <th class="px-4 py-3 text-left">Provider</th>
+                        <th class="px-4 py-3 text-left">Type</th>
+                        <th class="px-4 py-3 text-left">Statut</th>
+                        <th class="px-4 py-3 text-left">Actions</th>
+                    </tr></thead>
+                    <tbody>
+                        ${(data.payment_methods || []).map(pm => `
+                            <tr class="border-b hover:bg-gray-50">
+                                <td class="px-4 py-3">${pm.name}</td>
+                                <td class="px-4 py-3">${pm.provider || 'N/A'}</td>
+                                <td class="px-4 py-3">${pm.requires_online_payment ? 'En ligne' : 'Sur place'}</td>
+                                <td class="px-4 py-3"><span class="px-2 py-1 text-xs rounded ${pm.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">${pm.is_active ? 'Actif' : 'Inactif'}</span></td>
+                                <td class="px-4 py-3">
+                                    <button onclick="editPaymentMethod(${pm.id})" class="text-blue-600 hover:underline text-sm mr-2">Modifier</button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        async function loadPurchases() {
+            const status = document.getElementById('purchase-status-filter').value;
+            const res = await fetch(`${API_BASE}/admin/purchases.php?payment_status=${status}`, {credentials: 'include'});
+            const data = await res.json();
+            document.getElementById('purchases-table').innerHTML = `
+                <table class="w-full">
+                    <thead class="bg-gray-50"><tr>
+                        <th class="px-4 py-3 text-left">Utilisateur</th>
+                        <th class="px-4 py-3 text-left">Jeu</th>
+                        <th class="px-4 py-3 text-left">Durée</th>
+                        <th class="px-4 py-3 text-left">Prix</th>
+                        <th class="px-4 py-3 text-left">Paiement</th>
+                        <th class="px-4 py-3 text-left">Actions</th>
+                    </tr></thead>
+                    <tbody>
+                        ${(data.purchases || []).map(p => `
+                            <tr class="border-b hover:bg-gray-50">
+                                <td class="px-4 py-3">${p.username}</td>
+                                <td class="px-4 py-3">${p.game_name}</td>
+                                <td class="px-4 py-3">${p.duration_minutes} min</td>
+                                <td class="px-4 py-3">${p.price} XOF</td>
+                                <td class="px-4 py-3"><span class="px-2 py-1 text-xs rounded ${p.payment_status === 'completed' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}">${p.payment_status}</span></td>
+                                <td class="px-4 py-3">
+                                    ${p.payment_status === 'pending' ? `<button onclick="confirmPurchase(${p.id})" class="text-green-600 hover:underline text-sm">Confirmer</button>` : ''}
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        async function confirmPurchase(id) {
+            if (!confirm('Confirmer ce paiement ?')) return;
+            await fetch(`${API_BASE}/admin/purchases.php`, {
+                method: 'PATCH',
+                credentials: 'include',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({id, action: 'confirm_payment'})
+            });
+            loadPurchases();
+        }
+
+        // Modal Jeu
+        function openGameModal() {
+            document.getElementById('gameModal').style.display = 'flex';
+            document.getElementById('gameForm').reset();
+            document.getElementById('gameId').value = '';
+            document.getElementById('gameModalTitle').textContent = 'Créer un Jeu';
+            document.getElementById('gameImagePreview').style.display = 'none';
+        }
+
+        function closeGameModal() {
+            document.getElementById('gameModal').style.display = 'none';
+        }
+
+        async function editGame(id) {
+            const game = games.find(g => g.id == id);
+            if (!game) return;
+
+            document.getElementById('gameModalTitle').textContent = 'Modifier le Jeu';
+            document.getElementById('gameId').value = game.id;
+            document.getElementById('gameName').value = game.name;
+            document.getElementById('gameCategory').value = game.category;
+            document.getElementById('gameDescription').value = game.description || '';
+            document.getElementById('gameShortDescription').value = game.short_description || '';
+            document.getElementById('gamePlatform').value = game.platform || '';
+            document.getElementById('gamePointsPerHour').value = game.points_per_hour;
+            document.getElementById('gameBasePrice').value = game.base_price;
+            document.getElementById('gameImageUrl').value = game.image_url || '';
+            document.getElementById('gameIsReservable').checked = game.is_reservable == 1;
+            document.getElementById('gameReservationFee').value = game.reservation_fee || 0;
+            document.getElementById('gameIsActive').checked = game.is_active == 1;
+            document.getElementById('gameIsFeatured').checked = game.is_featured == 1;
+            
+            if (game.image_url) {
+                document.getElementById('gameImagePreview').src = game.image_url;
+                document.getElementById('gameImagePreview').style.display = 'block';
+            }
+            
+            toggleReservationFee();
+            document.getElementById('gameModal').style.display = 'flex';
+        }
+
+        async function saveGame(e) {
+            e.preventDefault();
+            
+            const gameId = document.getElementById('gameId').value;
+            const isEdit = gameId !== '';
+            
+            const data = {
+                name: document.getElementById('gameName').value,
+                category: document.getElementById('gameCategory').value,
+                description: document.getElementById('gameDescription').value,
+                short_description: document.getElementById('gameShortDescription').value,
+                platform: document.getElementById('gamePlatform').value,
+                points_per_hour: parseInt(document.getElementById('gamePointsPerHour').value),
+                base_price: parseFloat(document.getElementById('gameBasePrice').value),
+                image_url: document.getElementById('gameImageUrl').value,
+                is_reservable: document.getElementById('gameIsReservable').checked ? 1 : 0,
+                reservation_fee: parseFloat(document.getElementById('gameReservationFee').value) || 0,
+                is_active: document.getElementById('gameIsActive').checked ? 1 : 0,
+                is_featured: document.getElementById('gameIsFeatured').checked ? 1 : 0
+            };
+            
+            if (isEdit) {
+                data.id = parseInt(gameId);
+            }
+            
+            try {
+                const method = isEdit ? 'PUT' : 'POST';
+                const response = await fetch(`${API_BASE}/admin/games.php`, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    alert(result.message || 'Jeu sauvegardé avec succès');
+                    closeGameModal();
+                    loadGames();
+                } else {
+                    alert('Erreur: ' + (result.error || 'Impossible de sauvegarder'));
+                }
+            } catch (error) {
+                alert('Erreur: ' + error.message);
+            }
+        }
+
+        async function deleteGame(id) {
+            if (!confirm('Êtes-vous sûr de vouloir supprimer ce jeu ?')) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/admin/games.php?id=${id}`, {
+                    method: 'DELETE',
+                    credentials: 'include'
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    alert('Jeu supprimé avec succès');
+                    loadGames();
+                } else {
+                    alert('Erreur: ' + (result.error || 'Impossible de supprimer'));
+                }
+            } catch (error) {
+                alert('Erreur: ' + error.message);
+            }
+        }
+
+        async function uploadGameImage() {
+            const input = document.getElementById('gameImageUpload');
+            const file = input.files[0];
+            if (!file) return;
+            
+            const formData = new FormData();
+            formData.append('image', file);
+            
+            try {
+                const response = await fetch(`${API_BASE}/admin/upload_image.php`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok && result.url) {
+                    document.getElementById('gameImageUrl').value = result.url;
+                    document.getElementById('gameImagePreview').src = result.url;
+                    document.getElementById('gameImagePreview').style.display = 'block';
+                    alert('Image uploadée avec succès');
+                } else {
+                    alert('Erreur upload: ' + (result.error || 'Échec'));
+                }
+            } catch (error) {
+                alert('Erreur upload: ' + error.message);
+            }
+        }
+
+        function toggleReservationFee() {
+            const isReservable = document.getElementById('gameIsReservable').checked;
+            document.getElementById('reservationFeeGroup').style.display = isReservable ? 'block' : 'none';
+        }
+        function openPackageModal() { alert('Formulaire package à implémenter'); }
+        function editPackage(id) { alert('Édition package ' + id); }
+        function deletePackage(id) { if(confirm('Supprimer ?')) alert('Suppression ' + id); }
+        function openPaymentMethodModal() { alert('Formulaire méthode à implémenter'); }
+        function editPaymentMethod(id) { alert('Édition méthode ' + id); }
+
+        loadGames();
+    </script>
+    <script src="help-widget.js"></script>
+</body>
+</html>

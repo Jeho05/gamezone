@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Admin - GameZone</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            width: 100%;
+        }
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 3em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+        .card-icon {
+            font-size: 4em;
+            margin-bottom: 16px;
+        }
+        .card-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+        .card-desc {
+            color: #6b7280;
+            font-size: 0.95em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Menu Administration GameZone</h1>
+        
+        <div class="grid">
+            <div class="card" onclick="location.href='dashboard_v2.html'">
+                <div class="card-icon">📊</div>
+                <div class="card-title">Dashboard</div>
+                <div class="card-desc">Statistiques et vue d'ensemble</div>
+            </div>
+
+            <div class="card" onclick="location.href='game_packages_manager.html'">
+                <div class="card-icon">📦</div>
+                <div class="card-title">Packages de Jeux</div>
+                <div class="card-desc">Gérer les packages de temps de jeu</div>
+            </div>
+
+            <div class="card" onclick="location.href='content_manager.html'">
+                <div class="card-icon">📰</div>
+                <div class="card-title">Galerie & Actualités</div>
+                <div class="card-desc">Gérer le contenu, news, événements</div>
+            </div>
+
+            <div class="card" onclick="location.href='game_shop_manager.html'">
+                <div class="card-icon">🎮</div>
+                <div class="card-title">Jeux</div>
+                <div class="card-desc">Gérer la bibliothèque de jeux</div>
+            </div>
+
+            <div class="card" onclick="alert('Page en construction')">
+                <div class="card-icon">🏆</div>
+                <div class="card-title">Tournois</div>
+                <div class="card-desc">Créer et gérer les tournois</div>
+            </div>
+
+            <div class="card" onclick="alert('Page en construction')">
+                <div class="card-icon">🎁</div>
+                <div class="card-title">Récompenses</div>
+                <div class="card-desc">Gérer le catalogue de récompenses</div>
+            </div>
+
+            <div class="card" onclick="alert('Page en construction')">
+                <div class="card-icon">💳</div>
+                <div class="card-title">Paiements</div>
+                <div class="card-desc">Approuver et gérer les paiements</div>
+            </div>
+
+            <div class="card" onclick="alert('Page en construction')">
+                <div class="card-icon">👥</div>
+                <div class="card-title">Utilisateurs</div>
+                <div class="card-desc">Gérer les comptes utilisateurs</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

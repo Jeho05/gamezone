@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion Admin - GameZone v2</title>
+    <link rel="stylesheet" href="help-widget.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        .login-container {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 3rem;
+            width: 100%;
+            max-width: 400px;
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .logo-icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+        .logo-text {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #333;
+        }
+        .logo-subtitle {
+            font-size: 0.875rem;
+            color: #666;
+            margin-top: 0.25rem;
+        }
+        .version-badge {
+            display: inline-block;
+            background: #10b981;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #333;
+            font-size: 0.875rem;
+        }
+        input {
+            width: 100%;
+            padding: 0.875rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            transition: border-color 0.2s;
+        }
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .alert {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+            display: none;
+            animation: slideDown 0.3s;
+        }
+        .alert.show {
+            display: block;
+        }
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border-left: 4px solid #ef4444;
+        }
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border-left: 4px solid #10b981;
+        }
+        .alert-info {
+            background: #dbeafe;
+            color: #1e40af;
+            border-left: 4px solid #3b82f6;
+        }
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .credentials {
+            background: #f1f5f9;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.875rem;
+        }
+        .credentials strong {
+            color: #334155;
+        }
+        .credentials code {
+            background: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-family: monospace;
+            color: #6366f1;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <div class="logo-icon">🎮</div>
+            <div class="logo-text">
+                GameZone
+                <span class="version-badge">v2</span>
+            </div>
+            <div class="logo-subtitle">Administration</div>
+        </div>
+
+        <div class="credentials">
+            <div style="margin-bottom: 0.5rem;"><strong>📋 Identifiants par défaut:</strong></div>
+            <div>Email: <code>admin@gmail.com</code></div>
+            <div>Password: <code>demo123</code></div>
+        </div>
+
+        <div id="alertContainer"></div>
+
+        <form id="loginForm" onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" value="admin@gmail.com" required autocomplete="email">
+            </div>
+
+            <div class="form-group">
+                <label for="password">Mot de passe</label>
+                <input type="password" id="password" value="demo123" required autocomplete="current-password">
+            </div>
+
+            <button type="submit" class="btn" id="submitBtn">
+                Se connecter
+            </button>
+        </form>
+    </div>
+
+    <script>
+        // CONFIGURATION - CHEMINS CORRECTS
+        const API_BASE = '/projet%20ismo/api';
+        const DASHBOARD_URL = '/projet%20ismo/admin/dashboard_v2.html';
+        
+        console.log('🔧 Login v2 chargé');
+        console.log('📍 API_BASE:', API_BASE);
+        console.log('📍 DASHBOARD_URL:', DASHBOARD_URL);
+
+        function showAlert(message, type = 'error') {
+            const alertContainer = document.getElementById('alertContainer');
+            alertContainer.innerHTML = `
+                <div class="alert alert-${type} show">
+                    ${message}
+                </div>
+            `;
+            
+            setTimeout(() => {
+                const alert = alertContainer.querySelector('.alert');
+                if (alert) alert.classList.remove('show');
+            }, 5000);
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const submitBtn = document.getElementById('submitBtn');
+            
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Connexion...';
+            
+            console.log('🔐 Tentative de connexion...');
+            console.log('📧 Email:', email);
+            console.log('🔗 URL:', API_BASE + '/auth/login.php');
+            
+            try {
+                const response = await fetch(API_BASE + '/auth/login.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({ email, password })
+                });
+                
+                console.log('📡 Response status:', response.status);
+                
+                const data = await response.json();
+                console.log('📦 Data received:', data);
+                
+                if (response.ok) {
+                    // Check if user is admin
+                    if (data.role !== 'admin') {
+                        console.error('❌ User is not admin:', data.role);
+                        showAlert('Accès refusé. Vous devez être administrateur.', 'error');
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Se connecter';
+                        return;
+                    }
+                    
+                    console.log('✅ Login successful!');
+                    showAlert('✅ Connexion réussie ! Redirection...', 'success');
+                    setTimeout(() => {
+                        console.log('🚀 Redirection vers:', DASHBOARD_URL);
+                        window.location.href = DASHBOARD_URL;
+                    }, 1000);
+                } else {
+                    console.error('❌ Login failed:', data);
+                    showAlert(data.error || 'Email ou mot de passe incorrect', 'error');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Se connecter';
+                }
+                
+            } catch (error) {
+                console.error('❌ Login exception:', error);
+                showAlert('Erreur de connexion: ' + error.message, 'error');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Se connecter';
+            }
+        }
+
+        // Check if already logged in
+        window.addEventListener('DOMContentLoaded', async () => {
+            console.log('🔍 Vérification de la session...');
+            
+            try {
+                const response = await fetch(API_BASE + '/auth/check.php', {
+                    credentials: 'include'
+                });
+                
+                console.log('📡 Check session status:', response.status);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('📦 Session data:', data);
+                    
+                    if (data.role === 'admin') {
+                        console.log('✅ Already logged in as admin, redirecting...');
+                        showAlert('Vous êtes déjà connecté. Redirection...', 'info');
+                        setTimeout(() => {
+                            window.location.href = DASHBOARD_URL;
+                        }, 1000);
+                    }
+                } else {
+                    console.log('ℹ️ Not logged in');
+                }
+            } catch (error) {
+                console.log('ℹ️ Not logged in (error):', error);
+            }
+        });
+    </script>
+    <script src="help-widget.js"></script>
+</body>
+</html>

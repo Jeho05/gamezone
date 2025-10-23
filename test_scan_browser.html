@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Scanner - Direct</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #1a1a1a;
+            color: #0f0;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 { color: #0ff; }
+        .section {
+            border: 1px solid #333;
+            padding: 15px;
+            margin: 10px 0;
+            background: #222;
+            border-radius: 8px;
+        }
+        .success { color: #0f0; }
+        .error { color: #f00; }
+        .warning { color: #ff0; }
+        .info { color: #0af; }
+        input, button {
+            padding: 12px;
+            font-size: 16px;
+            margin: 5px 0;
+            width: 100%;
+            box-sizing: border-box;
+            background: #333;
+            color: #0f0;
+            border: 1px solid #555;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+        button {
+            background: #0a5;
+            color: #fff;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #0c7;
+        }
+        .code {
+            background: #000;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 14px;
+            overflow-x: auto;
+        }
+        pre {
+            background: #000;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        #result {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 TEST SCANNER - DIRECT</h1>
+    
+    <div class="section">
+        <h3 class="info">📋 Instructions</h3>
+        <ol style="color: #aaa;">
+            <li>Assurez-vous d'être connecté comme ADMIN</li>
+            <li>Entrez le code de validation ci-dessous</li>
+            <li>Cliquez sur "Tester le Scan"</li>
+            <li>Vérifiez la réponse de l'API</li>
+        </ol>
+    </div>
+
+    <div class="section">
+        <h3 class="info">🔑 Codes de Test</h3>
+        <p>Codes disponibles dans la BD:</p>
+        <div class="code" style="margin: 5px 0;">2A52475FCE11FFAF</div>
+        <p style="color: #888; font-size: 12px;">
+            ✅ Facture INV-20251022-00047 (SANS tirets)
+        </p>
+        <div class="code" style="margin: 5px 0;">0043243986AF36A0</div>
+        <p style="color: #888; font-size: 12px;">
+            ✅ Facture INV-20251022-000046 (format avec tirets en BD: 0043-2439-86AF-36A0)
+        </p>
+    </div>
+
+    <div class="section">
+        <h3 class="info">🧪 Test du Scanner</h3>
+        
+        <label for="validationCode">Code de Validation:</label>
+        <input 
+            type="text" 
+            id="validationCode" 
+            placeholder="Entrez le code (avec ou sans tirets)"
+            value="2A52475FCE11FFAF"
+        />
+        
+        <button onclick="testScan()">🔍 Tester le Scan</button>
+        
+        <div id="loading" style="display:none; color: #ff0; margin-top: 10px;">
+            ⏳ Envoi de la requête...
+        </div>
+        
+        <div id="result"></div>
+    </div>
+
+    <div class="section">
+        <h3 class="info">📊 Logs de Debug</h3>
+        <pre id="logs">En attente du test...</pre>
+    </div>
+
+    <script>
+        let logs = [];
+        
+        function addLog(message) {
+            logs.push(`[${new Date().toLocaleTimeString()}] ${message}`);
+            document.getElementById('logs').textContent = logs.join('\n');
+        }
+        
+        async function testScan() {
+            const code = document.getElementById('validationCode').value.trim();
+            const resultDiv = document.getElementById('result');
+            const loadingDiv = document.getElementById('loading');
+            
+            logs = [];
+            addLog('🚀 Début du test');
+            addLog(`Code saisi: "${code}"`);
+            
+            if (!code) {
+                resultDiv.innerHTML = '<div class="error">❌ Veuillez entrer un code</div>';
+                return;
+            }
+            
+            // Nettoyer le code (comme le fait le frontend)
+            const cleanCode = code.toUpperCase().replace(/[-\s]/g, '');
+            addLog(`Code nettoyé: "${cleanCode}"`);
+            addLog(`Longueur: ${cleanCode.length} caractères`);
+            
+            // Valider le format
+            if (!/^[A-Z0-9]{8}$/.test(cleanCode) && !/^[A-Z0-9]{16}$/.test(cleanCode)) {
+                resultDiv.innerHTML = '<div class="error">❌ Format invalide. Le code doit contenir 8 ou 16 caractères alphanumériques.</div>';
+                addLog('❌ Format invalide');
+                return;
+            }
+            addLog('✅ Format valide');
+            
+            loadingDiv.style.display = 'block';
+            resultDiv.innerHTML = '';
+            
+            try {
+                addLog('📤 Envoi requête POST à /api/admin/scan_invoice.php');
+                
+                const response = await fetch('/projet%20ismo/api/admin/scan_invoice.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include', // Important pour envoyer les cookies de session
+                    body: JSON.stringify({
+                        validation_code: cleanCode
+                    })
+                });
+                
+                addLog(`📥 Réponse HTTP ${response.status} ${response.statusText}`);
+                
+                const responseText = await response.text();
+                addLog(`Réponse brute (${responseText.length} chars):\n${responseText.substring(0, 500)}`);
+                
+                let data;
+                try {
+                    data = JSON.parse(responseText);
+                    addLog('✅ JSON parsé avec succès');
+                } catch (e) {
+                    addLog(`❌ Erreur parse JSON: ${e.message}`);
+                    throw new Error('Réponse non-JSON: ' + responseText);
+                }
+                
+                loadingDiv.style.display = 'none';
+                
+                if (response.ok && data.success) {
+                    addLog('🎉 SUCCÈS!');
+                    resultDiv.innerHTML = `
+                        <div class="section success">
+                            <h3>✅ SUCCÈS!</h3>
+                            <p><strong>Message:</strong> ${data.message || 'Facture activée'}</p>
+                            ${data.invoice ? `
+                                <p><strong>Facture:</strong> ${data.invoice.invoice_number}</p>
+                                <p><strong>Session:</strong> ${data.invoice.session_status || 'Active'}</p>
+                            ` : ''}
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                } else if (response.status === 401) {
+                    addLog('❌ ERREUR 401: Non autorisé');
+                    resultDiv.innerHTML = `
+                        <div class="section error">
+                            <h3>❌ ERREUR D'AUTHENTIFICATION</h3>
+                            <p><strong>Code:</strong> 401 Unauthorized</p>
+                            <p><strong>Problème:</strong> Vous n'êtes pas connecté comme admin ou votre session a expiré.</p>
+                            <p><strong>Solution:</strong></p>
+                            <ol>
+                                <li>Connectez-vous à <a href="/projet%20ismo/admin" style="color: #0af;">/admin</a></li>
+                                <li>Revenez sur cette page</li>
+                                <li>Réessayez le test</li>
+                            </ol>
+                        </div>
+                    `;
+                } else if (response.status === 403) {
+                    addLog('❌ ERREUR 403: Accès refusé');
+                    resultDiv.innerHTML = `
+                        <div class="section error">
+                            <h3>❌ ACCÈS REFUSÉ</h3>
+                            <p><strong>Code:</strong> 403 Forbidden</p>
+                            <p><strong>Problème:</strong> Vous n'avez pas les droits admin.</p>
+                            <p><strong>Solution:</strong> Connectez-vous avec un compte admin</p>
+                        </div>
+                    `;
+                } else {
+                    addLog(`❌ ERREUR: ${data.error || 'Inconnue'}`);
+                    resultDiv.innerHTML = `
+                        <div class="section error">
+                            <h3>❌ ERREUR</h3>
+                            <p><strong>Type:</strong> ${data.error || 'unknown'}</p>
+                            <p><strong>Message:</strong> ${data.message || 'Aucun message'}</p>
+                            ${data.debug_info ? `<p><strong>Debug:</strong> ${data.debug_info}</p>` : ''}
+                            ${data.minutes_until_start ? `<p><strong>Minutes restantes:</strong> ${data.minutes_until_start}</p>` : ''}
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                }
+                
+            } catch (error) {
+                addLog(`❌ ERREUR EXCEPTION: ${error.message}`);
+                loadingDiv.style.display = 'none';
+                resultDiv.innerHTML = `
+                    <div class="section error">
+                        <h3>❌ ERREUR TECHNIQUE</h3>
+                        <p><strong>Message:</strong> ${error.message}</p>
+                        <p><strong>Type:</strong> ${error.name}</p>
+                        <p>Vérifiez la console du navigateur (F12) pour plus de détails.</p>
+                    </div>
+                `;
+                console.error('Erreur complète:', error);
+            }
+        }
+        
+        // Log initial
+        addLog('Page chargée');
+        addLog('URL: ' + window.location.href);
+        addLog('Prêt à tester');
+    </script>
+</body>
+</html>

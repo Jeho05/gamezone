@@ -1,0 +1,35 @@
+# Admin directory protection
+
+# Deny access to sensitive files
+<FilesMatch "\.(md|txt|log|sql)$">
+    Order Deny,Allow
+    Deny from all
+</FilesMatch>
+
+# Optional: IP whitelist (uncomment and configure for production)
+# <Limit GET POST PUT DELETE>
+#     Order Deny,Allow
+#     Deny from all
+#     Allow from 127.0.0.1
+#     Allow from ::1
+#     Allow from YOUR.IP.ADDRESS.HERE
+# </Limit>
+
+# Prevent directory listing
+Options -Indexes
+
+# Enable mod_rewrite if available
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Redirect to login if not on login page and not authenticated
+    # This is handled by JavaScript, but you can add server-side checks here
+</IfModule>
+
+# Security headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>

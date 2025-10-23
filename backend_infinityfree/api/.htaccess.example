@@ -1,0 +1,21 @@
+# Configuration KkiaPay pour Apache/XAMPP
+# Copiez ce fichier vers .htaccess et remplacez les valeurs
+
+# Variables d'environnement KkiaPay
+SetEnv KKIAPAY_PUBLIC_KEY "9d566a94b64a9a8ebf552e4a4a8acdecf0d3337383"
+SetEnv KKIAPAY_PRIVATE_KEY "VOTRE_CLE_PRIVEE_ICI"
+SetEnv KKIAPAY_SANDBOX "1"
+
+# URL de base de l'application
+SetEnv APP_BASE_URL "http://localhost/projet%20ismo"
+
+# Configuration de la base de données (optionnel)
+# SetEnv DB_HOST "127.0.0.1"
+# SetEnv DB_NAME "gamezone"
+# SetEnv DB_USER "root"
+# SetEnv DB_PASS ""
+
+# Configuration des sessions (optionnel)
+# SetEnv SESSION_LIFETIME "86400"
+# SetEnv SESSION_SAMESITE "Lax"
+# SetEnv SESSION_SECURE "0"

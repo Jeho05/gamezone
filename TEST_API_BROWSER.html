@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test API Direct - GameZone</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 { color: #667eea; margin-bottom: 20px; }
+        button {
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 5px;
+        }
+        button:hover { background: #5568d3; }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .success { background: #c6f6d5; color: #22543d; }
+        .error { background: #fed7d7; color: #742a2a; }
+        .info { background: #bee3f8; color: #2c5282; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Test API Direct - Diagnostic NetworkError</h1>
+        <p style="margin-bottom: 20px; color: #666;">
+            Ce test vérifie directement l'accès à l'API depuis le navigateur
+        </p>
+
+        <h3>Tests Basiques</h3>
+        <button onclick="test1()">Test 1: Fetch Simple (sans credentials)</button>
+        <button onclick="test2()">Test 2: Fetch avec credentials</button>
+        <button onclick="test3()">Test 3: XMLHttpRequest</button>
+        <button onclick="test4()">Test 4: CORS preflight</button>
+
+        <h3 style="margin-top: 20px;">Tests API Endpoints</h3>
+        <button onclick="test5()">Test 5: /auth/check.php</button>
+        <button onclick="test6()">Test 6: /admin/statistics.php</button>
+        <button onclick="test7()">Test 7: /admin/games.php</button>
+
+        <h3 style="margin-top: 20px;">Tests Connexion</h3>
+        <button onclick="loginTest()">Login Admin</button>
+        <button onclick="checkSession()">Vérifier Session</button>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost/projet%20ismo/api';
+        
+        function showResult(title, content, type = 'info') {
+            const div = document.getElementById('result');
+            const timestamp = new Date().toLocaleTimeString();
+            div.innerHTML = `
+                <div class="result ${type}">
+                    <strong>[${timestamp}] ${title}</strong>
+                    <br><br>
+                    ${content}
+                </div>
+            ` + div.innerHTML;
+        }
+
+        async function test1() {
+            try {
+                showResult('Test 1: Démarrage', 'Fetch simple sans credentials...', 'info');
+                const response = await fetch(`${API_BASE}/auth/check.php`);
+                const data = await response.json();
+                showResult('Test 1: SUCCÈS ✅', 
+                    `Status: ${response.status}\nRéponse: ${JSON.stringify(data, null, 2)}`, 
+                    'success');
+            } catch (error) {
+                showResult('Test 1: ERREUR ❌', 
+                    `Type: ${error.name}\nMessage: ${error.message}\nStack: ${error.stack}`, 
+                    'error');
+            }
+        }
+
+        async function test2() {
+            try {
+                showResult('Test 2: Démarrage', 'Fetch avec credentials...', 'info');
+                const response = await fetch(`${API_BASE}/auth/check.php`, {
+                    credentials: 'include',
+                    mode: 'cors'
+                });
+                const data = await response.json();
+                showResult('Test 2: SUCCÈS ✅', 
+                    `Status: ${response.status}\nRéponse: ${JSON.stringify(data, null, 2)}`, 
+                    'success');
+            } catch (error) {
+                showResult('Test 2: ERREUR ❌', 
+                    `Type: ${error.name}\nMessage: ${error.message}`, 
+                    'error');
+            }
+        }
+
+        async function test3() {
+            showResult('Test 3: Démarrage', 'XMLHttpRequest...', 'info');
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', `${API_BASE}/auth/check.php`, true);
+            xhr.withCredentials = true;
+            
+            xhr.onload = function() {
+                showResult('Test 3: SUCCÈS ✅', 
+                    `Status: ${xhr.status}\nRéponse: ${xhr.responseText}`, 
+                    'success');
+            };
+            
+            xhr.onerror = function() {
+                showResult('Test 3: ERREUR ❌', 
+                    `Erreur réseau XHR\nStatus: ${xhr.status}\nReadyState: ${xhr.readyState}`, 
+                    'error');
+            };
+            
+            xhr.send();
+        }
+
+        async function test4() {
+            try {
+                showResult('Test 4: Démarrage', 'Test CORS preflight (OPTIONS)...', 'info');
+                const response = await fetch(`${API_BASE}/auth/check.php`, {
+                    method: 'OPTIONS',
+                    headers: {
+                        'Access-Control-Request-Method': 'GET',
+                        'Access-Control-Request-Headers': 'content-type'
+                    }
+                });
+                showResult('Test 4: SUCCÈS ✅', 
+                    `Status: ${response.status}\nHeaders CORS OK`, 
+                    'success');
+            } catch (error) {
+                showResult('Test 4: ERREUR ❌', error.message, 'error');
+            }
+        }
+
+        async function test5() {
+            try {
+                const response = await fetch(`${API_BASE}/auth/check.php`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                showResult('Auth Check: ' + (response.ok ? 'SUCCÈS ✅' : 'Réponse ⚠️'), 
+                    JSON.stringify(data, null, 2), 
+                    response.ok ? 'success' : 'info');
+            } catch (error) {
+                showResult('Auth Check: ERREUR ❌', error.message, 'error');
+            }
+        }
+
+        async function test6() {
+            try {
+                const response = await fetch(`${API_BASE}/admin/statistics.php`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                showResult('Statistics: ' + (data.success ? 'SUCCÈS ✅' : 'Erreur ⚠️'), 
+                    JSON.stringify(data, null, 2), 
+                    data.success ? 'success' : 'info');
+            } catch (error) {
+                showResult('Statistics: ERREUR ❌', error.message, 'error');
+            }
+        }
+
+        async function test7() {
+            try {
+                const response = await fetch(`${API_BASE}/admin/games.php`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                showResult('Games: ' + (data.games ? 'SUCCÈS ✅' : 'Erreur ⚠️'), 
+                    JSON.stringify(data, null, 2), 
+                    data.games ? 'success' : 'info');
+            } catch (error) {
+                showResult('Games: ERREUR ❌', error.message, 'error');
+            }
+        }
+
+        async function loginTest() {
+            try {
+                showResult('Login: Démarrage', 'Connexion admin...', 'info');
+                const response = await fetch(`${API_BASE}/auth/login.php`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: 'admin@gamezone.com',
+                        password: 'Admin123!'
+                    })
+                });
+                const data = await response.json();
+                showResult('Login: ' + (data.success ? 'SUCCÈS ✅' : 'ERREUR ❌'), 
+                    JSON.stringify(data, null, 2), 
+                    data.success ? 'success' : 'error');
+            } catch (error) {
+                showResult('Login: ERREUR ❌', error.message, 'error');
+            }
+        }
+
+        async function checkSession() {
+            try {
+                const response = await fetch(`${API_BASE}/auth/check.php`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                showResult('Session Check', 
+                    `Authentifié: ${data.authenticated ? 'OUI ✅' : 'NON ❌'}\n` +
+                    `User: ${data.user ? data.user.username : 'N/A'}\n` +
+                    JSON.stringify(data, null, 2), 
+                    data.authenticated ? 'success' : 'info');
+            } catch (error) {
+                showResult('Session: ERREUR ❌', error.message, 'error');
+            }
+        }
+
+        // Auto test au chargement
+        window.addEventListener('load', () => {
+            showResult('Page chargée', 
+                `API_BASE configuré: ${API_BASE}\n` +
+                `Origin: ${window.location.origin}\n` +
+                `Port: ${window.location.port}\n\n` +
+                `Cliquez sur les boutons ci-dessus pour tester`, 
+                'info');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+╔══════════════════════════════════════════════════════════════════════════╗
+║                    🔄 EXÉCUTION DE LA MIGRATION                          ║
+║                    Ajout des champs de désactivation                     ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+⚡ MÉTHODE AUTOMATIQUE (RECOMMANDÉE) - 1 CLIC ⚡
+
+1. Ouvrir votre navigateur
+
+2. Copier/coller cette URL :
+
+   http://localhost/projet%20ismo/api/run_migration.php
+
+3. Appuyer sur Entrée
+
+4. ✅ C'est fait ! La migration s'exécute automatiquement.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+📋 MÉTHODE MANUELLE (Si l'automatique ne fonctionne pas)
+
+1. Ouvrir phpMyAdmin : http://localhost/phpmyadmin
+
+2. Cliquer sur la base de données "gamezone" (à gauche)
+
+3. Cliquer sur l'onglet "SQL" (en haut)
+
+4. Copier/coller ces 3 commandes :
+
+   ALTER TABLE users ADD COLUMN IF NOT EXISTS deactivation_reason TEXT NULL AFTER status;
+   ALTER TABLE users ADD COLUMN IF NOT EXISTS deactivation_date DATETIME NULL AFTER deactivation_reason;
+   ALTER TABLE users ADD COLUMN IF NOT EXISTS deactivated_by INT NULL AFTER deactivation_date;
+
+5. Cliquer sur le bouton "Exécuter" (en bas à droite)
+
+6. ✅ Terminé !
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+🔍 VÉRIFIER QUE TOUT FONCTIONNE
+
+Après la migration, ouvrir :
+
+   http://localhost/projet%20ismo/api/diagnostic_deactivation.php
+
+Vous devriez voir : "✅ Migration exécutée avec succès !"
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+📌 CE QUE CETTE MIGRATION FAIT :
+
+✅ Ajoute 3 colonnes à la table "users" :
+   • deactivation_reason  → Motif de la désactivation
+   • deactivation_date    → Date de la désactivation  
+   • deactivated_by       → ID de l'admin qui a désactivé
+
+✅ Permet d'afficher le motif à l'utilisateur désactivé
+
+✅ Traçabilité complète (qui, quand, pourquoi)
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+🎯 APRÈS LA MIGRATION
+
+1. Tester une désactivation avec un motif personnalisé
+
+2. Vérifier que le motif s'affiche lors de la tentative de connexion
+
+3. ✅ Tout fonctionne !
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+⚠️ SÉCURITÉ
+
+Cette migration est sûre et ne supprime AUCUNE donnée existante.
+Elle ajoute uniquement de nouvelles colonnes.
+
+
+╔══════════════════════════════════════════════════════════════════════════╗
+║  🚀 LIEN RAPIDE : http://localhost/projet%20ismo/api/run_migration.php  ║
+╚══════════════════════════════════════════════════════════════════════════╝

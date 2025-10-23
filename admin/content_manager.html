@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion de Contenu - Admin GameZone</title>
+    <link rel="stylesheet" href="help-widget.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: #10b981;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+        .btn-warning {
+            background: #f59e0b;
+            color: white;
+        }
+        .btn-info {
+            background: #3b82f6;
+            color: white;
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        .tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: #6b7280;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        .tab:hover {
+            color: #667eea;
+        }
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #374151;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .table-container {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        th {
+            background: #f9fafb;
+            font-weight: 600;
+            color: #374151;
+        }
+        tr:hover {
+            background: #f9fafb;
+        }
+        .badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .badge-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .badge-danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .badge-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .badge-info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            background: white;
+            padding: 32px;
+            border-radius: 12px;
+            max-width: 700px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .alert {
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #6ee7b7;
+        }
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📰 Gestion de Contenu - Galerie & Actualités</h1>
+
+        <div id="alert"></div>
+
+        <div class="card">
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('news')">📰 Actualités</button>
+                <button class="tab" onclick="switchTab('event')">📅 Événements</button>
+                <button class="tab" onclick="switchTab('gallery')">🖼️ Galerie</button>
+                <button class="tab" onclick="switchTab('stream')">📺 Streams</button>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 id="sectionTitle">Actualités</h2>
+                <button class="btn btn-primary" onclick="openCreateModal()">+ Créer</button>
+            </div>
+
+            <div class="table-container">
+                <table id="contentTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Titre</th>
+                            <th>Type</th>
+                            <th>Auteur</th>
+                            <th>Date</th>
+                            <th>Statut</th>
+                            <th>Vues</th>
+                            <th>Likes</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="contentBody">
+                        <tr><td colspan="9" style="text-align: center;">Chargement...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Création/Édition -->
+    <div id="contentModal" class="modal">
+        <div class="modal-content">
+            <h2 id="modalTitle">Créer du Contenu</h2>
+            <form id="contentForm" onsubmit="saveContent(event)">
+                <input type="hidden" id="contentId">
+
+                <div class="form-group">
+                    <label>Type de contenu *</label>
+                    <select id="contentType" required onchange="toggleFields()">
+                        <option value="news">📰 Actualité</option>
+                        <option value="event">📅 Événement</option>
+                        <option value="gallery">🖼️ Galerie</option>
+                        <option value="stream">📺 Stream</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Titre *</label>
+                    <input type="text" id="title" required placeholder="Titre du contenu">
+                </div>
+
+                <div class="form-group">
+                    <label>Description courte</label>
+                    <textarea id="description" rows="3" placeholder="Description courte pour l'aperçu"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Contenu complet</label>
+                    <textarea id="content" rows="6" placeholder="Contenu détaillé (HTML supporté)"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>URL de l'image</label>
+                    <input type="url" id="imageUrl" placeholder="https://example.com/image.jpg">
+                </div>
+
+                <!-- Champs spécifiques Événement -->
+                <div id="eventFields" style="display: none;">
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Date de l'événement</label>
+                            <input type="datetime-local" id="eventDate">
+                        </div>
+                        <div class="form-group">
+                            <label>Lieu</label>
+                            <input type="text" id="eventLocation" placeholder="Lieu de l'événement">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Champs spécifiques Stream -->
+                <div id="streamFields" style="display: none;">
+                    <div class="form-group">
+                        <label>URL du Stream</label>
+                        <input type="url" id="streamUrl" placeholder="https://twitch.tv/...">
+                    </div>
+                </div>
+
+                <!-- Champs spécifiques Galerie -->
+                <div id="galleryFields" style="display: none;">
+                    <div class="form-group">
+                        <label>URL de la vidéo (optionnel)</label>
+                        <input type="url" id="videoUrl" placeholder="https://youtube.com/...">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Lien externe (optionnel)</label>
+                    <input type="url" id="externalLink" placeholder="https://...">
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="isPublished" checked> Publier immédiatement
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="isPinned"> Épingler en haut
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Date de publication</label>
+                    <input type="datetime-local" id="publishedAt">
+                </div>
+
+                <div style="display: flex; gap: 12px; margin-top: 24px;">
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                    <button type="button" class="btn btn-danger" onclick="closeModal()">Annuler</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/projet%20ismo/api';
+        let currentType = 'news';
+        let contents = [];
+
+        const typeLabels = {
+            'news': 'Actualités',
+            'event': 'Événements',
+            'gallery': 'Galerie',
+            'stream': 'Streams'
+        };
+
+        // Changer d'onglet
+        function switchTab(type) {
+            currentType = type;
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('sectionTitle').textContent = typeLabels[type];
+            loadContent();
+        }
+
+        // Charger le contenu
+        async function loadContent() {
+            try {
+                const response = await fetch(`${API_BASE}/admin/content.php?type=${currentType}`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                contents = data.content || [];
+                displayContent();
+            } catch (error) {
+                showAlert('Erreur lors du chargement du contenu', 'error');
+            }
+        }
+
+        // Afficher le contenu
+        function displayContent() {
+            const tbody = document.getElementById('contentBody');
+            
+            if (contents.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="9" style="text-align: center;">Aucun contenu trouvé</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = contents.map(item => `
+                <tr>
+                    <td>${item.id}</td>
+                    <td>${item.title}</td>
+                    <td><span class="badge badge-info">${typeLabels[item.type]}</span></td>
+                    <td>${item.author_name || 'Admin'}</td>
+                    <td>${formatDate(item.published_at || item.created_at)}</td>
+                    <td>
+                        <span class="badge ${item.is_published ? 'badge-success' : 'badge-danger'}">
+                            ${item.is_published ? 'Publié' : 'Brouillon'}
+                        </span>
+                        ${item.is_pinned ? '<span class="badge badge-warning">Épinglé</span>' : ''}
+                    </td>
+                    <td>${item.views_count || 0}</td>
+                    <td>${item.likes_count || 0}</td>
+                    <td>
+                        <button class="btn btn-warning" style="padding: 6px 12px; font-size: 14px;" onclick="editContent(${item.id})">Modifier</button>
+                        <button class="btn btn-danger" style="padding: 6px 12px; font-size: 14px;" onclick="deleteContent(${item.id})">Supprimer</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Ouvrir modal création
+        function openCreateModal() {
+            document.getElementById('modalTitle').textContent = `Créer - ${typeLabels[currentType]}`;
+            document.getElementById('contentForm').reset();
+            document.getElementById('contentId').value = '';
+            document.getElementById('contentType').value = currentType;
+            document.getElementById('isPublished').checked = true;
+            toggleFields();
+            document.getElementById('contentModal').classList.add('active');
+        }
+
+        // Éditer contenu
+        function editContent(id) {
+            const item = contents.find(c => c.id == id);
+            if (!item) return;
+
+            document.getElementById('modalTitle').textContent = `Modifier - ${typeLabels[item.type]}`;
+            document.getElementById('contentId').value = item.id;
+            document.getElementById('contentType').value = item.type;
+            document.getElementById('title').value = item.title;
+            document.getElementById('description').value = item.description || '';
+            document.getElementById('content').value = item.content || '';
+            document.getElementById('imageUrl').value = item.image_url || '';
+            document.getElementById('externalLink').value = item.external_link || '';
+            document.getElementById('isPublished').checked = item.is_published == 1;
+            document.getElementById('isPinned').checked = item.is_pinned == 1;
+            
+            if (item.published_at) {
+                document.getElementById('publishedAt').value = formatDateTime(item.published_at);
+            }
+
+            // Champs spécifiques
+            if (item.type === 'event') {
+                if (item.event_date) {
+                    document.getElementById('eventDate').value = formatDateTime(item.event_date);
+                }
+                document.getElementById('eventLocation').value = item.event_location || '';
+            }
+
+            if (item.type === 'stream') {
+                document.getElementById('streamUrl').value = item.stream_url || '';
+            }
+
+            if (item.type === 'gallery') {
+                document.getElementById('videoUrl').value = item.video_url || '';
+            }
+
+            toggleFields();
+            document.getElementById('contentModal').classList.add('active');
+        }
+
+        // Sauvegarder contenu
+        async function saveContent(event) {
+            event.preventDefault();
+
+            const contentId = document.getElementById('contentId').value;
+            const isEdit = contentId !== '';
+
+            const data = {
+                type: document.getElementById('contentType').value,
+                title: document.getElementById('title').value,
+                description: document.getElementById('description').value,
+                content: document.getElementById('content').value,
+                image_url: document.getElementById('imageUrl').value,
+                external_link: document.getElementById('externalLink').value,
+                is_published: document.getElementById('isPublished').checked ? 1 : 0,
+                is_pinned: document.getElementById('isPinned').checked ? 1 : 0
+            };
+
+            if (document.getElementById('publishedAt').value) {
+                data.published_at = document.getElementById('publishedAt').value.replace('T', ' ') + ':00';
+            }
+
+            // Champs spécifiques
+            if (data.type === 'event') {
+                if (document.getElementById('eventDate').value) {
+                    data.event_date = document.getElementById('eventDate').value.replace('T', ' ') + ':00';
+                }
+                data.event_location = document.getElementById('eventLocation').value;
+            }
+
+            if (data.type === 'stream') {
+                data.stream_url = document.getElementById('streamUrl').value;
+            }
+
+            if (data.type === 'gallery') {
+                data.video_url = document.getElementById('videoUrl').value;
+            }
+
+            if (isEdit) {
+                data.id = parseInt(contentId);
+            }
+
+            try {
+                const method = isEdit ? 'PUT' : 'POST';
+                const response = await fetch(`${API_BASE}/admin/content.php`, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showAlert(result.message || 'Contenu sauvegardé avec succès', 'success');
+                    closeModal();
+                    loadContent();
+                } else {
+                    showAlert(result.error || 'Erreur lors de la sauvegarde', 'error');
+                }
+            } catch (error) {
+                showAlert('Erreur: ' + error.message, 'error');
+            }
+        }
+
+        // Supprimer contenu
+        async function deleteContent(id) {
+            if (!confirm('Êtes-vous sûr de vouloir supprimer ce contenu ?')) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/admin/content.php?id=${id}`, {
+                    method: 'DELETE',
+                    credentials: 'include'
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showAlert('Contenu supprimé avec succès', 'success');
+                    loadContent();
+                } else {
+                    showAlert(result.error || 'Erreur lors de la suppression', 'error');
+                }
+            } catch (error) {
+                showAlert('Erreur: ' + error.message, 'error');
+            }
+        }
+
+        // Toggle champs selon type
+        function toggleFields() {
+            const type = document.getElementById('contentType').value;
+            document.getElementById('eventFields').style.display = type === 'event' ? 'block' : 'none';
+            document.getElementById('streamFields').style.display = type === 'stream' ? 'block' : 'none';
+            document.getElementById('galleryFields').style.display = type === 'gallery' ? 'block' : 'none';
+        }
+
+        // Fermer modal
+        function closeModal() {
+            document.getElementById('contentModal').classList.remove('active');
+        }
+
+        // Afficher alerte
+        function showAlert(message, type) {
+            const alert = document.getElementById('alert');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            alert.style.display = 'block';
+            setTimeout(() => alert.style.display = 'none', 5000);
+        }
+
+        // Formatter date
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('fr-FR', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // Formatter pour input datetime-local
+        function formatDateTime(dateStr) {
+            if (!dateStr) return '';
+            const date = new Date(dateStr);
+            return date.toISOString().slice(0, 16);
+        }
+
+        // Initialisation
+        loadContent();
+    </script>
+    <script src="help-widget.js"></script>
+</body>
+</html>
