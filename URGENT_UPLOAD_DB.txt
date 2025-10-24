@@ -1,0 +1,105 @@
+╔═══════════════════════════════════════════════════════════════╗
+║                                                               ║
+║         ⚠️  db.php N'EST PAS ENCORE UPLOADÉ  ⚠️              ║
+║                                                               ║
+╚═══════════════════════════════════════════════════════════════╝
+
+
+❌ PREUVE
+═══════════════════════════════════════════════════════════════
+
+health.php affiche TOUJOURS :
+  host: "127.0.0.1"      ← Ancien fichier !
+  database: "gamezone"    ← Valeurs en dur !
+  user: "root"           ← Pas les bonnes !
+
+→ Le fichier db.php corrigé n'est PAS sur le serveur !
+
+
+✅ ACTION IMMÉDIATE
+═══════════════════════════════════════════════════════════════
+
+VIA FILEZILLA (30 SECONDES) :
+
+
+1. GAUCHE : Aller dans
+   C:\xampp\htdocs\projet ismo\backend_infinityfree\api\
+
+2. DROITE : Vérifier que vous êtes dans
+   /htdocs/api/
+
+3. Sélectionner db.php à GAUCHE
+
+4. GLISSER vers la DROITE
+
+5. Cliquer "ÉCRASER" ou "OUI"
+
+6. VÉRIFIER : Date du fichier à droite = MAINTENANT
+
+
+🧪 TEST IMMÉDIAT APRÈS
+═══════════════════════════════════════════════════════════════
+
+http://ismo.gamer.gd/api/health.php
+
+VOUS DEVEZ VOIR :
+{
+  "status": "healthy",
+  "database": "connected"
+}
+
+
+⚠️ SI TOUJOURS "127.0.0.1" APRÈS UPLOAD
+═══════════════════════════════════════════════════════════════
+
+OPTION 1 : Supprimer puis Re-uploader
+
+1. DROITE : Clic droit sur db.php → Supprimer
+2. Confirmer
+3. GAUCHE : Glisser db.php → DROITE
+
+
+OPTION 2 : Vérifier le contenu
+
+1. DROITE : Clic droit sur db.php → Afficher/Éditer
+2. Vérifier que vous voyez :
+   parse_ini_file($envFile)
+3. Si vous voyez "putenv" → Fichier pas remplacé !
+
+
+🔍 VÉRIFICATION UPLOAD
+═══════════════════════════════════════════════════════════════
+
+Dans FileZilla panneau DROIT (/htdocs/api/) :
+
+Colonne "Heure de modification" pour db.php
+DOIT être : Aujourd'hui 12:XX (maintenant)
+
+Si date ancienne → Upload échoué !
+
+
+✅ CHECKLIST
+═══════════════════════════════════════════════════════════════
+
+□ FileZilla connecté
+□ GAUCHE : backend_infinityfree\api\db.php visible
+□ DROITE : /htdocs/api/
+□ db.php glissé vers droite
+□ "Écraser" confirmé
+□ Date fichier = MAINTENANT
+□ health.php testé → "connected" ✅
+
+
+⏱️ DURÉE : 30 SECONDES
+═══════════════════════════════════════════════════════════════
+
+Upload → Vérifier date → Tester → Succès !
+
+
+═══════════════════════════════════════════════════════════════
+
+UPLOADEZ db.php MAINTENANT VIA FILEZILLA ! 🚀
+
+Guide détaillé : VERIFICATION_UPLOAD_DB.md
+
+═══════════════════════════════════════════════════════════════

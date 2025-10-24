@@ -1,5 +1,5 @@
 <?php
-// Connexion BDD - Lit les variables depuis .env
+// Connexion BDD - Lit les variables depuis .env avec parse_ini_file()
 
 // Charger le fichier .env
 $envFile = __DIR__ . '/.env';
@@ -65,4 +65,9 @@ function get_db_connection(): PDO {
             ]
         ]));
     }
+}
+
+// Alias pour compatibilité
+function get_db() {
+    return get_db_connection();
 }

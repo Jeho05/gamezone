@@ -100,18 +100,32 @@ if (strpos($origin, 'http://localhost') === 0 || strpos($origin, 'http://127.0.0
     header('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
 }
 
-// DB config - CONSTANTES pour éviter les problèmes de scope
+// DB config - Charger depuis .env avec parse_ini_file()
 if (!defined('DB_HOST')) {
-    // Valeurs par défaut XAMPP
-    $envHost = getenv('DB_HOST');
-    $envName = getenv('DB_NAME');
-    $envUser = getenv('DB_USER');
-    $envPass = getenv('DB_PASS');
+    $envFile = __DIR__ . '/.env';
+    $envVars = [];
     
-    define('DB_HOST', ($envHost !== false && $envHost !== '') ? $envHost : '127.0.0.1');
-    define('DB_NAME', ($envName !== false && $envName !== '') ? $envName : 'gamezone');
-    define('DB_USER', ($envUser !== false && $envUser !== '') ? $envUser : 'root');
-    define('DB_PASS', ($envPass !== false && $envPass !== '') ? $envPass : '');
+    if (file_exists($envFile)) {
+        // Utiliser parse_ini_file qui fonctionne sur InfinityFree
+        $envVars = parse_ini_file($envFile);
+        
+        // Si parse_ini_file échoue, parser manuellement
+        if ($envVars === false) {
+            $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            foreach ($lines as $line) {
+                if (strpos(trim($line), '#') === 0) continue;
+                if (strpos($line, '=') !== false) {
+                    list($key, $value) = explode('=', $line, 2);
+                    $envVars[trim($key)] = trim($value);
+                }
+            }
+        }
+    }
+    
+    define('DB_HOST', isset($envVars['DB_HOST']) ? $envVars['DB_HOST'] : '127.0.0.1');
+    define('DB_NAME', isset($envVars['DB_NAME']) ? $envVars['DB_NAME'] : 'gamezone');
+    define('DB_USER', isset($envVars['DB_USER']) ? $envVars['DB_USER'] : 'root');
+    define('DB_PASS', isset($envVars['DB_PASS']) ? $envVars['DB_PASS'] : '');
 }
 
 function get_db(): PDO {

@@ -1,0 +1,95 @@
+╔═══════════════════════════════════════════════════════════════╗
+║                                                               ║
+║         🔧 NOUVELLE CONFIG VERCEL - REDÉPLOYER               ║
+║                                                               ║
+╚═══════════════════════════════════════════════════════════════╝
+
+
+❌ PROBLÈME ACTUEL
+═══════════════════════════════════════════════════════════════
+
+404: NOT_FOUND persiste
+→ Le build Vercel échoue probablement
+
+
+✅ NOUVELLE CONFIGURATION APPLIQUÉE
+═══════════════════════════════════════════════════════════════
+
+vercel.json mis à jour avec :
+  • --legacy-peer-deps (résout conflits dépendances)
+  • framework: null (force nos commandes)
+  • routes améliorés (routing SPA)
+
+
+📤 ACTION IMMÉDIATE (1 MIN)
+═══════════════════════════════════════════════════════════════
+
+Exécutez :
+
+  .\deploy_vercel_fix.ps1
+
+
+🔍 VÉRIFIER LE BUILD LOG (IMPORTANT !)
+═══════════════════════════════════════════════════════════════
+
+1. Allez sur : https://vercel.com/dashboard
+
+2. Cliquez sur votre projet "gamezone"
+
+3. Onglet "Deployments"
+
+4. Cliquez sur le DERNIER déploiement (en haut)
+
+5. Regardez le "Build Log" EN TEMPS RÉEL
+
+CHERCHEZ :
+  ✅ "Build succeeded" → BON !
+  ❌ Lignes d'erreur rouge → COPIEZ L'ERREUR !
+
+
+📊 CE QUE VOUS DEVEZ VOIR
+═══════════════════════════════════════════════════════════════
+
+Si SUCCÈS :
+  ✅ Building...
+  ✅ npm install --legacy-peer-deps
+  ✅ npm run build
+  ✅ Build completed
+  ✅ Deploying to CDN
+  ✅ Ready
+
+Si ÉCHEC :
+  ❌ Error: ...
+  ❌ npm ERR! ...
+  ❌ Build failed
+
+
+🎯 APRÈS VÉRIFICATION
+═══════════════════════════════════════════════════════════════
+
+SI "Ready" :
+  → Testez : https://gamezone-jada.vercel.app/
+  → Doit charger ✅
+
+SI "Failed" :
+  → Copiez l'erreur du Build Log
+  → Envoyez-moi l'erreur complète
+
+
+⏱️ TEMPS : 5 MINUTES
+═══════════════════════════════════════════════════════════════
+
+1 min : Push Git
+3 min : Attendre build
+1 min : Vérifier status
+
+
+═══════════════════════════════════════════════════════════════
+
+EXÉCUTEZ MAINTENANT : .\deploy_vercel_fix.ps1
+
+PUIS VÉRIFIEZ LE BUILD LOG SUR VERCEL DASHBOARD !
+
+Guide détaillé : CHECK_VERCEL_LOGS.md
+
+═══════════════════════════════════════════════════════════════

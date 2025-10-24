@@ -1,0 +1,148 @@
+╔═══════════════════════════════════════════════════════════════╗
+║                                                               ║
+║      ⚠️  UPLOADEZ CES 3 FICHIERS VIA FILEZILLA  ⚠️          ║
+║                                                               ║
+╚═══════════════════════════════════════════════════════════════╝
+
+
+🔧 PROBLÈME
+═══════════════════════════════════════════════════════════════
+
+L'API affiche encore :
+  host: "127.0.0.1"
+  database: "gamezone"
+  user: "root"
+
+→ Les fichiers corrigés NE SONT PAS uploadés sur le serveur !
+
+
+✅ SOLUTION : UPLOADER 3 FICHIERS
+═══════════════════════════════════════════════════════════════
+
+Via FileZilla, uploadez ces 3 fichiers dans /htdocs/api/ :
+
+
+1. db.php (CORRIGÉ)
+   Depuis : backend_infinityfree\api\db.php
+   Vers   : /htdocs/api/db.php
+   Action : REMPLACER l'ancien
+
+
+2. diagnostic_env.php (NOUVEAU)
+   Depuis : backend_infinityfree\api\diagnostic_env.php
+   Vers   : /htdocs/api/diagnostic_env.php
+   Action : Créer
+
+
+3. .env (VOS IDENTIFIANTS)
+   Depuis : backend_infinityfree\api\.env
+   Vers   : /htdocs/api/.env
+   Action : Créer (peut être invisible dans Windows)
+
+
+⚡ FILEZILLA - CONNEXION
+═══════════════════════════════════════════════════════════════
+
+Host     : ftpupload.net
+User     : if0_40238088
+Password : OTnlRESWse7lVB
+Port     : 21
+
+
+📤 PROCÉDURE RAPIDE
+═══════════════════════════════════════════════════════════════
+
+1. Ouvrir FileZilla
+
+2. Se connecter (infos ci-dessus)
+
+3. GAUCHE : Aller dans
+   C:\xampp\htdocs\projet ismo\backend_infinityfree\api\
+
+4. DROITE : Aller dans
+   /htdocs/api/
+
+5. Sélectionner les 3 fichiers à GAUCHE :
+   - db.php
+   - diagnostic_env.php
+   - .env
+
+6. Les glisser vers la DROITE
+
+7. Cliquer "OUI" pour remplacer
+
+
+🧪 TESTS APRÈS UPLOAD (dans ce ordre)
+═══════════════════════════════════════════════════════════════
+
+TEST 1 : http://ismo.gamer.gd/api/diagnostic_env.php
+
+Vous DEVEZ voir :
+{
+  "env_file_exists": true,
+  "env_values": {
+    "DB_HOST": "sql308.infinityfree.com"
+  }
+}
+
+Si "env_file_exists: false" → Le .env n'est pas uploadé !
+
+
+TEST 2 : http://ismo.gamer.gd/api/health.php
+
+Vous DEVEZ voir :
+{
+  "status": "healthy",
+  "database": "connected"
+}
+
+Si encore "127.0.0.1" → db.php n'est pas uploadé !
+
+
+TEST 3 : http://ismo.gamer.gd/api/auth/check.php
+
+Vous DEVEZ voir :
+{
+  "authenticated": false
+}
+
+
+⚠️ FICHIER .env INVISIBLE ?
+═══════════════════════════════════════════════════════════════
+
+Le fichier .env commence par un point, il peut être invisible !
+
+SOLUTION 1 : Dans Windows
+→ Explorateur → Affichage → Cocher "Éléments masqués"
+
+SOLUTION 2 : Utiliser FileZilla directement
+→ FileZilla voit TOUS les fichiers, même cachés
+→ Allez dans le dossier avec FileZilla, vous le verrez
+
+
+✅ RÉSULTAT ATTENDU
+═══════════════════════════════════════════════════════════════
+
+APRÈS upload :
+
+✓ diagnostic_env.php → "env_file_exists": true
+✓ health.php → "database": "connected"
+✓ auth/check.php → "authenticated": false
+
+→ Backend 100% opérationnel !
+
+
+⏱️ TEMPS : 2-3 MINUTES
+═══════════════════════════════════════════════════════════════
+
+Action → Upload 3 fichiers → Tests → Succès !
+
+
+═══════════════════════════════════════════════════════════════
+
+OUVREZ FILEZILLA ET UPLOADEZ LES 3 FICHIERS MAINTENANT ! 🚀
+
+═══════════════════════════════════════════════════════════════
+
+
+GUIDE DÉTAILLÉ : CHECK_UPLOAD_STATUS.md

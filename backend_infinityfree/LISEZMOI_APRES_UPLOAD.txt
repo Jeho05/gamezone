@@ -1,0 +1,189 @@
+╔═══════════════════════════════════════════════════════════════╗
+║                                                               ║
+║         ✅ BACKEND PRÊT À ÊTRE UPLOADÉ                       ║
+║                                                               ║
+╚═══════════════════════════════════════════════════════════════╝
+
+
+📤 ÉTAPES D'UPLOAD (VIA FILEZILLA)
+═══════════════════════════════════════════════════════════════
+
+1. Ouvrir FileZilla
+
+2. Se connecter :
+   Hôte        : ftpupload.net
+   Identifiant : if0_40238088
+   Mot de passe: OTnlRESWse7lVB
+   Port        : 21
+
+3. Naviguer sur le serveur (panneau DROIT) :
+   - Double-cliquer sur "htdocs"
+   - Vous êtes dans /htdocs/
+
+4. Uploader TOUT le contenu de ce dossier :
+   - Panneau GAUCHE : backend_infinityfree/
+   - Sélectionnez TOUT (Ctrl+A)
+   - Glissez vers le panneau DROIT (dans /htdocs/)
+
+5. Attendre la fin de l'upload (5-15 minutes)
+
+
+✅ CE QUI SERA UPLOADÉ
+═══════════════════════════════════════════════════════════════
+
+✓ Dossier api/          (tous les fichiers PHP + .env)
+✓ Dossier uploads/      (avatars, games)
+✓ Dossier images/       (gaming tof, objet, video)
+✓ Fichier .htaccess     (configuration CORS)
+✓ Fichier index.php     (page d'accueil API)
+
+
+🧪 TESTS APRÈS UPLOAD
+═══════════════════════════════════════════════════════════════
+
+1. Test API principale :
+   http://ismo.gamer.gd/api/health.php
+
+   ✅ Doit afficher du JSON avec "status": "healthy"
+
+
+2. Test connexion base de données :
+   http://ismo.gamer.gd/api/test_db.php
+
+   ✅ Doit afficher "Connected successfully"
+
+
+3. Test authentification :
+   http://ismo.gamer.gd/api/auth/check.php
+
+   ✅ Doit afficher {"authenticated": false}
+
+
+4. Test page d'accueil :
+   http://ismo.gamer.gd/
+
+   ✅ Doit afficher du JSON avec la liste des endpoints
+
+
+⚠️ CORRECTIONS À FAIRE APRÈS UPLOAD
+═══════════════════════════════════════════════════════════════
+
+1. RÉCUPÉRER L'URL VERCEL EXACTE
+
+   Une fois Vercel déployé, vous aurez une URL comme :
+   https://gamezone-xxxx.vercel.app
+
+   Notez-la !
+
+
+2. METTRE À JOUR LE CORS (VIA FILEZILLA)
+
+   a) Connectez-vous à FileZilla
+   b) Allez dans /htdocs/
+   c) Clic droit sur ".htaccess" → View/Edit
+   d) Ligne 6, remplacez :
+      
+      Header set Access-Control-Allow-Origin "*"
+      
+      Par :
+      
+      Header set Access-Control-Allow-Origin "https://gamezone-xxxx.vercel.app"
+   
+   e) Sauvegardez (Ctrl+S)
+   f) FileZilla redemandera de reuploader → Cliquez OUI
+
+
+3. TESTER L'APPLICATION COMPLÈTE
+
+   - Allez sur votre URL Vercel
+   - Essayez de vous connecter
+   - Login : admin@gmail.com
+   - Pass  : demo123
+
+
+📋 STRUCTURE DU SERVEUR APRÈS UPLOAD
+═══════════════════════════════════════════════════════════════
+
+/htdocs/
+├── api/
+│   ├── admin/
+│   ├── auth/
+│   ├── content/
+│   ├── shop/
+│   ├── .env           ← VOS IDENTIFIANTS MYSQL
+│   ├── config.php
+│   └── ... (tous les fichiers PHP)
+├── uploads/
+│   ├── avatars/
+│   └── games/
+├── images/
+│   ├── gaming tof/
+│   ├── objet/
+│   └── video/
+├── .htaccess          ← CONFIGURATION CORS
+└── index.php          ← PAGE D'ACCUEIL
+
+
+🔒 SÉCURITÉ - FICHIERS PROTÉGÉS
+═══════════════════════════════════════════════════════════════
+
+Ces fichiers sont protégés par .htaccess et ne sont PAS accessibles via le web :
+
+✓ .env (identifiants MySQL)
+✓ .htaccess
+✓ Fichiers .sql
+✓ Fichiers .md, .txt
+
+→ Personne ne peut y accéder depuis un navigateur !
+
+
+⚡ DÉMARRAGE RAPIDE
+═══════════════════════════════════════════════════════════════
+
+1. Upload via FileZilla (15 min)
+2. Test : http://ismo.gamer.gd/api/health.php
+3. Récupérer URL Vercel
+4. Modifier CORS dans .htaccess
+5. Tester application complète
+
+✅ TERMINÉ !
+
+
+🆘 DÉPANNAGE
+═══════════════════════════════════════════════════════════════
+
+Erreur 500 Internal Server Error ?
+→ Vérifiez que le fichier .env existe dans /htdocs/api/
+→ Vérifiez les identifiants MySQL dans .env
+
+Erreur 404 Not Found ?
+→ Vérifiez que les fichiers sont bien dans /htdocs/ (pas dans un sous-dossier)
+→ Vérifiez que le dossier api/ existe
+
+Erreur CORS ?
+→ Mettez à jour le .htaccess avec l'URL Vercel exacte
+→ Redémarrez le serveur (ou attendez 2 min)
+
+Connexion base de données échoue ?
+→ Vérifiez les identifiants MySQL dans .env
+→ Testez la connexion dans phpMyAdmin
+
+
+📞 URLS IMPORTANTES
+═══════════════════════════════════════════════════════════════
+
+Backend API     : http://ismo.gamer.gd/api
+Test Health     : http://ismo.gamer.gd/api/health.php
+Test DB         : http://ismo.gamer.gd/api/test_db.php
+Test Auth       : http://ismo.gamer.gd/api/auth/check.php
+phpMyAdmin      : Accessible via votre panneau InfinityFree
+Vercel          : https://vercel.com/dashboard
+
+
+═══════════════════════════════════════════════════════════════
+
+🎉 TOUT EST PRÊT !
+
+Uploadez simplement tout le contenu de ce dossier via FileZilla !
+
+═══════════════════════════════════════════════════════════════
