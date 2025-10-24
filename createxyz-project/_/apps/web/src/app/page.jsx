@@ -75,15 +75,16 @@ export default function HomePage() {
         overlayOpacity={0.75}
         className="bg-black"
       >
-        <section className="relative min-h-screen bg-transparent overflow-hidden">
+        <section className="relative min-h-screen bg-transparent overflow-hidden pt-24 pb-20">
           {/* Parallax Gaming Objects - Tailles ajustées pour éviter débordement */}
           <ParallaxObject src="/images/objet/Goku-Blue-PNG-Photo.png" alt="Goku" size={180} speed={0.3} position={{ x: 15, y: 20 }} />
           <ParallaxObject src="/images/objet/Kratos-PNG-Clipart.png" alt="Kratos" size={150} speed={0.4} position={{ x: 80, y: 30 }} rotate />
           <ParallaxObject src="/images/objet/Console-PNG-Clipart.png" alt="Console" size={130} speed={0.5} position={{ x: 20, y: 65 }} />
           <ParallaxObject src="/images/objet/Dragon-Ball-Z-Logo-PNG-HD.png" alt="Dragon Ball" size={100} speed={0.6} position={{ x: 75, y: 70 }} />
 
-          <div className="relative z-10 container mx-auto px-6 md:px-8 max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-            <div className="animate-slide-in-up">
+          <div className="relative z-10 container mx-auto px-6 md:px-8 max-w-7xl">
+            {/* Hero Text */}
+            <div className="text-center mb-12 animate-slide-in-up">
               <div className="inline-flex items-center gap-2 mb-8">
                 <Sparkles className="w-6 h-6 text-yellow-400 animate-pulse" />
                 <span className="text-purple-300 font-semibold tracking-widest uppercase text-sm">Bienvenue dans le futur du gaming</span>
@@ -95,29 +96,33 @@ export default function HomePage() {
               <NeonText color="pink" className="text-2xl sm:text-4xl md:text-6xl mb-12">
                 Nouvelle Génération
               </NeonText>
+              <p className="text-xl text-gray-200 mb-16 max-w-4xl mx-auto leading-relaxed animate-slide-in-up" style={{ animationDelay: '0.2s' }}>
+                Rejoignez notre communauté grandissante et découvrez pourquoi nous sommes le gaming #1 de la région.
+                Expérience gaming ultime avec consoles dernière génération et système de récompenses innovant!
+              </p>
+              
+              {/* CTA Buttons */}
+              <div className="flex flex-col sm:flex-row gap-6 justify-center mb-20 animate-slide-in-up" style={{ animationDelay: '0.4s' }}>
+                <button
+                  onClick={() => setShowAuthModal(true)}
+                  className="group relative overflow-hidden bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-10 py-5 rounded-full font-bold text-lg transition-all duration-300 transform hover:scale-110 flex items-center justify-center gap-3 neon-border-purple hover-lift"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+                  <Rocket className="w-6 h-6 animate-bounce-soft" />
+                  <span>Commencer à jouer</span>
+                </button>
+                <button 
+                  onClick={scrollToFeatures}
+                  className="glass-strong border-2 border-purple-400/50 hover:border-pink-400 text-white px-10 py-5 rounded-full font-bold text-lg transition-all duration-300 hover:bg-purple-400/20 hover-lift flex items-center justify-center gap-3"
+                >
+                  <Sparkles className="w-5 h-5" />
+                  <span>Découvrir</span>
+                </button>
+              </div>
             </div>
-            <p className="text-xl text-gray-200 mb-16 max-w-4xl mx-auto leading-relaxed animate-slide-in-up" style={{ animationDelay: '0.2s' }}>
-              Rejoignez notre communauté grandissante et découvrez pourquoi nous sommes le gaming #1 de la région.
-              Expérience gaming ultime avec consoles dernière génération et système de récompenses innovant!
-            </p>
-            <div className="flex flex-col sm:flex-row gap-6 justify-center lg:justify-start animate-slide-in-up" style={{ animationDelay: '0.4s' }}>
-              <button
-                onClick={() => setShowAuthModal(true)}
-                className="group relative overflow-hidden bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-10 py-5 rounded-full font-bold text-lg transition-all duration-300 transform hover:scale-110 flex items-center justify-center gap-3 neon-border-purple hover-lift"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
-                <Rocket className="w-6 h-6 animate-bounce-soft" />
-                <span>Commencer à jouer</span>
-              </button>
-              <button 
-                onClick={scrollToFeatures}
-                className="glass-strong border-2 border-purple-400/50 hover:border-pink-400 text-white px-10 py-5 rounded-full font-bold text-lg transition-all duration-300 hover:bg-purple-400/20 hover-lift flex items-center justify-center gap-3"
-              >
-                <Sparkles className="w-5 h-5" />
-                <span>Découvrir</span>
-              </button>
-            </div>
-            <div className="grid grid-cols-2 gap-4 lg:gap-6">
+            
+            {/* Feature Cards Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
               <GlassCard className="p-6">
                 <div className="flex items-center gap-3">
                   <GamepadIcon className="w-8 h-8 text-purple-400" />

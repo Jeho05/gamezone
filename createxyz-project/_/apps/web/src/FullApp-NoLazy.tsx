@@ -3,8 +3,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
 
-// Import TEST de la page simplifiée pour debug
-import HomePage from './app/page-test';
+// Import DIRECT de la vraie page d'accueil avec tous les effets
+import HomePage from './app/page';
 
 // Import global styles
 import './app/global.css';
