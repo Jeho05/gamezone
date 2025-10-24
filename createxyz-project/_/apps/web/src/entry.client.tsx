@@ -3,10 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Root from './app/root';
 
-// Import des routes
-import { routes } from 'react-router';
-
-// Créer le router
+// Créer le router SPA
 const router = createBrowserRouter([
   {
     path: '*',
@@ -14,6 +11,7 @@ const router = createBrowserRouter([
   },
 ]);
 
+// Initialiser l'application
 const rootElement = document.getElementById('root');
 if (rootElement) {
   createRoot(rootElement).render(
@@ -21,4 +19,6 @@ if (rootElement) {
       <RouterProvider router={router} />
     </StrictMode>
   );
+} else {
+  console.error('Root element not found');
 }

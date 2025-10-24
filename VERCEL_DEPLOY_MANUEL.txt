@@ -1,0 +1,90 @@
+╔═══════════════════════════════════════════════════════════════╗
+║                                                               ║
+║         🚀 DÉPLOIEMENT MANUEL VERCEL (SI AUTO ÉCHOUE)        ║
+║                                                               ║
+╚═══════════════════════════════════════════════════════════════╝
+
+
+OPTION 1 : DEPUIS LE DASHBOARD (RECOMMANDÉ)
+═══════════════════════════════════════════════════════════════
+
+1. Allez sur : https://vercel.com/
+
+2. Cliquez sur votre projet "gamezone"
+
+3. Onglet "Deployments"
+
+4. Dernier déploiement → Cliquez les 3 points (⋯)
+
+5. Cliquez "Redeploy"
+
+6. Attendez 2-3 minutes
+
+
+OPTION 2 : VÉRIFIER LES LOGS
+═══════════════════════════════════════════════════════════════
+
+1. Dashboard Vercel → Votre projet
+
+2. Dernier déploiement → Cliquez dessus
+
+3. Regardez "Build Logs"
+
+4. Cherchez les erreurs en rouge
+
+
+OPTION 3 : FORCER UN NOUVEAU COMMIT
+═══════════════════════════════════════════════════════════════
+
+Si Vercel ne détecte pas le push, créez un commit vide :
+
+cd "C:\xampp\htdocs\projet ismo\createxyz-project\_\apps\web"
+git commit --allow-empty -m "trigger vercel rebuild"
+git push origin main
+
+
+OPTION 4 : VERCEL CLI (SI VRAIMENT NÉCESSAIRE)
+═══════════════════════════════════════════════════════════════
+
+Installer Vercel CLI :
+
+npm install -g vercel
+
+Déployer :
+
+cd "C:\xampp\htdocs\projet ismo\createxyz-project\_\apps\web"
+vercel --prod
+
+
+STATUS DU DERNIER COMMIT
+═══════════════════════════════════════════════════════════════
+
+Commit : bd0b1bd
+Message : "netlify client build only"
+Changement : entry.client.tsx avec createBrowserRouter
+
+
+CE QUI DEVRAIT SE PASSER
+═══════════════════════════════════════════════════════════════
+
+1. Vercel détecte le push (1-2 min)
+2. Lance le build (2-3 min)
+3. Déploie si succès
+4. URL mise à jour : https://gamezone-g4ns.vercel.app/
+
+
+SI LE SITE NE CHANGE PAS
+═══════════════════════════════════════════════════════════════
+
+1. Videz le cache du navigateur : Ctrl + F5
+
+2. Mode navigation privée pour tester
+
+3. Vérifiez l'heure du dernier déploiement sur Vercel
+
+
+═══════════════════════════════════════════════════════════════
+
+Vérifiez d'abord le Dashboard Vercel !
+
+═══════════════════════════════════════════════════════════════
