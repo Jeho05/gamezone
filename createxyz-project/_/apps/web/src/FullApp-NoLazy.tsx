@@ -1,11 +1,10 @@
 import { Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { ChakraProvider } from '@chakra-ui/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
 
-// Import DIRECT de la vraie page d'accueil avec tous les effets
-import HomePage from './app/page';
+// Import TEST de la page simplifiée pour debug
+import HomePage from './app/page-test';
 
 // Import global styles
 import './app/global.css';
@@ -90,29 +89,27 @@ export default function FullApp() {
   console.log('✅ FullApp-NoLazy rendering...');
   
   return (
-    <ChakraProvider>
-      <QueryClientProvider client={queryClient}>
-        <BrowserRouter basename="/">
-          <Routes>
-            {/* Page d'accueil SEULE */}
-            <Route path="/" element={<HomePage />} />
-            
-            {/* Auth pages - Coming Soon */}
-            <Route path="/auth/login" element={<ComingSoonPage title="Connexion" />} />
-            <Route path="/auth/register" element={<ComingSoonPage title="Inscription" />} />
-            
-            {/* Player pages - Coming Soon */}
-            <Route path="/player/*" element={<ComingSoonPage title="Espace Joueur" />} />
-            
-            {/* Admin pages - Coming Soon */}
-            <Route path="/admin/*" element={<ComingSoonPage title="Espace Admin" />} />
-            
-            {/* 404 pour tout le reste */}
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
-        </BrowserRouter>
-        <Toaster position="top-right" />
-      </QueryClientProvider>
-    </ChakraProvider>
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter basename="/">
+        <Routes>
+          {/* Page d'accueil SEULE */}
+          <Route path="/" element={<HomePage />} />
+          
+          {/* Auth pages - Coming Soon */}
+          <Route path="/auth/login" element={<ComingSoonPage title="Connexion" />} />
+          <Route path="/auth/register" element={<ComingSoonPage title="Inscription" />} />
+          
+          {/* Player pages - Coming Soon */}
+          <Route path="/player/*" element={<ComingSoonPage title="Espace Joueur" />} />
+          
+          {/* Admin pages - Coming Soon */}
+          <Route path="/admin/*" element={<ComingSoonPage title="Espace Admin" />} />
+          
+          {/* 404 pour tout le reste */}
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </BrowserRouter>
+      <Toaster position="top-right" />
+    </QueryClientProvider>
   );
 }
