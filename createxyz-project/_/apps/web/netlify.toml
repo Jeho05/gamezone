@@ -1,7 +1,6 @@
 [build]
-  command = "npm run build:server"
+  command = "npm run build"
   publish = "build/client"
-  functions = "build/server"
 
 [[redirects]]
   from = "/api/*"
@@ -11,7 +10,7 @@
 
 [[redirects]]
   from = "/*"
-  to = "/.netlify/functions/server/:splat"
+  to = "/index.html"
   status = 200
 
 [build.environment]
