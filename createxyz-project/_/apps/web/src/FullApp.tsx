@@ -3,7 +3,6 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ChakraProvider } from '@chakra-ui/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
-import RootLayout from './app/layout';
 
 // Import direct de la page d'accueil (critique)
 import HomePage from './app/page';
@@ -74,9 +73,8 @@ export default function FullApp() {
     <ChakraProvider>
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
-          <RootLayout>
-            <Suspense fallback={<LoadingFallback />}>
-              <Routes>
+          <Suspense fallback={<LoadingFallback />}>
+            <Routes>
                 {/* Public routes */}
                 <Route path="/" element={<HomePage />} />
                 <Route path="/auth/login" element={<LoginPage />} />
@@ -114,7 +112,6 @@ export default function FullApp() {
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </Suspense>
-          </RootLayout>
         </BrowserRouter>
         <Toaster position="top-right" />
       </QueryClientProvider>
