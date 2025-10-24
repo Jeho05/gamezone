@@ -16,9 +16,6 @@ export default defineConfig({
     outDir: 'build/client',
     emptyOutDir: true,
     rollupOptions: {
-      input: {
-        main: path.resolve(__dirname, 'public/index.html'),
-      },
       output: {
         manualChunks: {
           'react-vendor': ['react', 'react-dom', 'react-router-dom'],
