@@ -1,11 +1,15 @@
 {
+  "version": 2,
   "buildCommand": "npm run build",
   "outputDirectory": "build/client",
   "installCommand": "npm install --legacy-peer-deps",
-  "devCommand": "npm run dev",
   "framework": null,
-  "cleanUrls": true,
-  "trailingSlash": false,
+  "env": {
+    "NEXT_PUBLIC_API_BASE": "http://ismo.gamer.gd/api",
+    "NEXT_PUBLIC_KKIAPAY_PUBLIC_KEY": "072b361d25546db0aee3d69bf07b15331c51e39f",
+    "NEXT_PUBLIC_KKIAPAY_SANDBOX": "0",
+    "NODE_ENV": "production"
+  },
   "headers": [
     {
       "source": "/(.*)",
