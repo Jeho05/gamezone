@@ -1,4 +1,3 @@
-'use client';
 import { useState } from 'react';
 import { Play, Users, Trophy, Clock, Star, GamepadIcon, Zap, Sparkles, Gift, Rocket, Shield } from 'lucide-react';
 import VideoBackground from '@/components/ui/VideoBackground';
