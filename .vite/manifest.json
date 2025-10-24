@@ -1,0 +1,2172 @@
+{
+  "C:/xampp/htdocs/projet ismo/createxyz-project/_/apps/web/src/app/global.css": {
+    "file": "assets/global-Bk2Qd6KH.css",
+    "src": "C:/xampp/htdocs/projet ismo/createxyz-project/_/apps/web/src/app/global.css"
+  },
+  "C:/xampp/htdocs/projet ismo/createxyz-project/_/apps/web/src/styles/animations.css": {
+    "file": "assets/animations-B0wTSEwz.css",
+    "src": "C:/xampp/htdocs/projet ismo/createxyz-project/_/apps/web/src/styles/animations.css"
+  },
+  "_ImageUpload-8L1yZ-uK.js": {
+    "file": "assets/ImageUpload-8L1yZ-uK.js",
+    "name": "ImageUpload",
+    "imports": [
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_react-vendor-Ct9RIpkg.js",
+      "_apiBase-uKT1-15E.js",
+      "_index-Dwoj3kwW.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_loader-Bm8Ytk7D.js",
+      "_x-DLYRcRbV.js",
+      "_upload-B79tLj9z.js",
+      "_image-BOhTq8oj.js"
+    ]
+  },
+  "_InvoiceModal-BXRbFQzA.js": {
+    "file": "assets/InvoiceModal-BXRbFQzA.js",
+    "name": "InvoiceModal",
+    "imports": [
+      "_createLucideIcon-CyDeinbq.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_react-vendor-Ct9RIpkg.js",
+      "_apiBase-uKT1-15E.js",
+      "_index-Dwoj3kwW.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_x-DLYRcRbV.js",
+      "_circle-alert-DV7sLuL2.js",
+      "_Navigation-uFWfAvUk.js",
+      "_clock-Dw7Syj2h.js"
+    ]
+  },
+  "_Navigation-uFWfAvUk.js": {
+    "file": "assets/Navigation-uFWfAvUk.js",
+    "name": "Navigation",
+    "imports": [
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_react-vendor-Ct9RIpkg.js",
+      "_apiBase-uKT1-15E.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_gamepad-BKjcAtD2.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_users-DtBMk0sz.js",
+      "_star-BS7t5YYQ.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_trophy-Tx3IvyeC.js",
+      "_x-DLYRcRbV.js"
+    ]
+  },
+  "_ParallaxObject-qEjXm56D.js": {
+    "file": "assets/ParallaxObject-qEjXm56D.js",
+    "name": "ParallaxObject",
+    "imports": [
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js"
+    ]
+  },
+  "_PolymorphicComponent-CaeVC8po.js": {
+    "file": "assets/PolymorphicComponent-CaeVC8po.js",
+    "name": "PolymorphicComponent",
+    "imports": [
+      "_react-vendor-Ct9RIpkg.js"
+    ]
+  },
+  "_apiBase-uKT1-15E.js": {
+    "file": "assets/apiBase-uKT1-15E.js",
+    "name": "apiBase"
+  },
+  "_arrow-left-BBSe8jzE.js": {
+    "file": "assets/arrow-left-BBSe8jzE.js",
+    "name": "arrow-left",
+    "imports": [
+      "_createLucideIcon-CyDeinbq.js"
+    ]
+  },
+  "_arrow-right-UwaTTyFQ.js": {
+    "file": "assets/arrow-right-UwaTTyFQ.js",
+    "name": "arrow-right",
+    "imports": [
+      "_createLucideIcon-CyDeinbq.js"
+    ]
+  },
+  "_avatarUrl-DJYax4aH.js": {
+    "file": "assets/avatarUrl-DJYax4aH.js",
+    "name": "avatarUrl"
+  },
+  "_award-eSp6n4S5.js": {
+    "file": "assets/award-eSp6n4S5.js",
+    "name": "award",
+    "imports": [
+      "_createLucideIcon-CyDeinbq.js"
+    ]
+  },
+  "_camera-CBGIjcoH.js": {
+    "file": "assets/camera-CBGIjcoH.js",
+    "name": "camera",
+    "imports": [
+      "_createLucideIcon-CyDeinbq.js"
+    ]
+  },
+  "_circle-alert-DV7sLuL2.js": {
+    "file": "assets/circle-alert-DV7sLuL2.js",
+    "name": "circle-alert",
+    "imports": [
+      "_createLucideIcon-CyDeinbq.js"
+    ]
+  },
+  "_circle-check-big-Dl2mg9cX.js": {
+    "file": "assets/circle-check-big-Dl2mg9cX.js",
+    "name": "circle-check-big",
+    "imports": [
+      "_createLucideIcon-CyDeinbq.js"
+    ]
+  },
+  "_circle-x-BtKtckyT.js": {
+    "file": "assets/circle-x-BtKtckyT.js",
+    "name": "circle-x",
+    "imports": [
+      "_createLucideIcon-CyDeinbq.js"
+    ]
+  },
+  "_client-BUJTSgFG.js": {
+    "file": "assets/client-BUJTSgFG.js",
+    "name": "client",
+    "imports": [
+      "_react-vendor-Ct9RIpkg.js"
+    ]
+  },
+  "_clock-Dw7Syj2h.js": {
+    "file": "assets/clock-Dw7Syj2h.js",
+    "name": "clock",
+    "imports": [
+      "_createLucideIcon-CyDeinbq.js"
+    ]
+  },
+  "_createLucideIcon-CyDeinbq.js": {
+    "file": "assets/createLucideIcon-CyDeinbq.js",
+    "name": "createLucideIcon",
+    "imports": [
+      "_react-vendor-Ct9RIpkg.js"
+    ]
+  },
+  "_credit-card-C9Jd3_0s.js": {
+    "file": "assets/credit-card-C9Jd3_0s.js",
+    "name": "credit-card",
+    "imports": [
+      "_createLucideIcon-CyDeinbq.js"
+    ]
+  },
+  "_eye-C9b1e9NH.js": {
+    "file": "assets/eye-C9b1e9NH.js",
+    "name": "eye",
+    "imports": [
+      "_createLucideIcon-CyDeinbq.js"
+    ]
+  },
+  "_eye-off-DEhuC6pZ.js": {
+    "file": "assets/eye-off-DEhuC6pZ.js",
+    "name": "eye-off",
+    "imports": [
+      "_createLucideIcon-CyDeinbq.js"
+    ]
+  },
+  "_filter-CRY2orxT.js": {
+    "file": "assets/filter-CRY2orxT.js",
+    "name": "filter",
+    "imports": [
+      "_createLucideIcon-CyDeinbq.js"
+    ]
+  },
+  "_flame-6t_lP86R.js": {
+    "file": "assets/flame-6t_lP86R.js",
+    "name": "flame",
+    "imports": [
+      "_createLucideIcon-CyDeinbq.js"
+    ]
+  },
+  "_gameImageUrl-DJfrTMbD.js": {
+    "file": "assets/gameImageUrl-DJfrTMbD.js",
+    "name": "gameImageUrl",
+    "imports": [
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_style-DnYvAxPc.js",
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_info-BLRu2m6m.js",
+      "_triangle-alert-Cv_qy4XN.js",
+      "_circle-x-BtKtckyT.js",
+      "_circle-check-big-Dl2mg9cX.js",
+      "_x-DLYRcRbV.js"
+    ]
+  },
+  "_gamepad-2-CIt1vOKC.js": {
+    "file": "assets/gamepad-2-CIt1vOKC.js",
+    "name": "gamepad-2",
+    "imports": [
+      "_createLucideIcon-CyDeinbq.js"
+    ]
+  },
+  "_gamepad-BKjcAtD2.js": {
+    "file": "assets/gamepad-BKjcAtD2.js",
+    "name": "gamepad",
+    "imports": [
+      "_createLucideIcon-CyDeinbq.js"
+    ]
+  },
+  "_image-BOhTq8oj.js": {
+    "file": "assets/image-BOhTq8oj.js",
+    "name": "image",
+    "imports": [
+      "_createLucideIcon-CyDeinbq.js"
+    ]
+  },
+  "_index-C7REL6_e.js": {
+    "file": "assets/index-C7REL6_e.js",
+    "name": "index",
+    "imports": [
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js"
+    ]
+  },
+  "_index-Dwoj3kwW.js": {
+    "file": "assets/index-Dwoj3kwW.js",
+    "name": "index",
+    "imports": [
+      "_react-vendor-Ct9RIpkg.js"
+    ]
+  },
+  "_info-BLRu2m6m.js": {
+    "file": "assets/info-BLRu2m6m.js",
+    "name": "info",
+    "imports": [
+      "_createLucideIcon-CyDeinbq.js"
+    ]
+  },
+  "_layout-DT9dxTg9.js": {
+    "file": "assets/layout-DT9dxTg9.js",
+    "name": "layout",
+    "imports": [
+      "_index-C7REL6_e.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js"
+    ]
+  },
+  "_loader-Bm8Ytk7D.js": {
+    "file": "assets/loader-Bm8Ytk7D.js",
+    "name": "loader",
+    "imports": [
+      "_createLucideIcon-CyDeinbq.js"
+    ]
+  },
+  "_lock-UjuDG_4I.js": {
+    "file": "assets/lock-UjuDG_4I.js",
+    "name": "lock",
+    "imports": [
+      "_createLucideIcon-CyDeinbq.js"
+    ]
+  },
+  "_mail-CdQQb3TV.js": {
+    "file": "assets/mail-CdQQb3TV.js",
+    "name": "mail",
+    "imports": [
+      "_createLucideIcon-CyDeinbq.js"
+    ]
+  },
+  "_pause-C4zf4-jw.js": {
+    "file": "assets/pause-C4zf4-jw.js",
+    "name": "pause",
+    "imports": [
+      "_createLucideIcon-CyDeinbq.js"
+    ]
+  },
+  "_play-BQh7zYqc.js": {
+    "file": "assets/play-BQh7zYqc.js",
+    "name": "play",
+    "imports": [
+      "_createLucideIcon-CyDeinbq.js"
+    ]
+  },
+  "_plus-BMw2sqDi.js": {
+    "file": "assets/plus-BMw2sqDi.js",
+    "name": "plus",
+    "imports": [
+      "_createLucideIcon-CyDeinbq.js"
+    ]
+  },
+  "_react-vendor-Ct9RIpkg.js": {
+    "file": "assets/react-vendor-Ct9RIpkg.js",
+    "name": "react-vendor"
+  },
+  "_refresh-cw-CApMwsX6.js": {
+    "file": "assets/refresh-cw-CApMwsX6.js",
+    "name": "refresh-cw",
+    "imports": [
+      "_createLucideIcon-CyDeinbq.js"
+    ]
+  },
+  "_search-pgtlLRgs.js": {
+    "file": "assets/search-pgtlLRgs.js",
+    "name": "search",
+    "imports": [
+      "_createLucideIcon-CyDeinbq.js"
+    ]
+  },
+  "_shield-HF_b68B1.js": {
+    "file": "assets/shield-HF_b68B1.js",
+    "name": "shield",
+    "imports": [
+      "_createLucideIcon-CyDeinbq.js"
+    ]
+  },
+  "_sparkles-Cq5HuY9N.js": {
+    "file": "assets/sparkles-Cq5HuY9N.js",
+    "name": "sparkles",
+    "imports": [
+      "_createLucideIcon-CyDeinbq.js"
+    ]
+  },
+  "_square-CYAAZtqH.js": {
+    "file": "assets/square-CYAAZtqH.js",
+    "name": "square",
+    "imports": [
+      "_createLucideIcon-CyDeinbq.js"
+    ]
+  },
+  "_star-BS7t5YYQ.js": {
+    "file": "assets/star-BS7t5YYQ.js",
+    "name": "star",
+    "imports": [
+      "_createLucideIcon-CyDeinbq.js"
+    ]
+  },
+  "_style-DnYvAxPc.js": {
+    "file": "assets/style-DnYvAxPc.js",
+    "name": "style",
+    "imports": [
+      "_react-vendor-Ct9RIpkg.js"
+    ]
+  },
+  "_timer-ByHqhyeu.js": {
+    "file": "assets/timer-ByHqhyeu.js",
+    "name": "timer",
+    "imports": [
+      "_createLucideIcon-CyDeinbq.js"
+    ]
+  },
+  "_trash-2-BXW8_ECB.js": {
+    "file": "assets/trash-2-BXW8_ECB.js",
+    "name": "trash-2",
+    "imports": [
+      "_createLucideIcon-CyDeinbq.js"
+    ]
+  },
+  "_trending-up-Dz8cAqw-.js": {
+    "file": "assets/trending-up-Dz8cAqw-.js",
+    "name": "trending-up",
+    "imports": [
+      "_createLucideIcon-CyDeinbq.js"
+    ]
+  },
+  "_triangle-alert-Cv_qy4XN.js": {
+    "file": "assets/triangle-alert-Cv_qy4XN.js",
+    "name": "triangle-alert",
+    "imports": [
+      "_createLucideIcon-CyDeinbq.js"
+    ]
+  },
+  "_trophy-Tx3IvyeC.js": {
+    "file": "assets/trophy-Tx3IvyeC.js",
+    "name": "trophy",
+    "imports": [
+      "_createLucideIcon-CyDeinbq.js"
+    ]
+  },
+  "_ui-vendor-Bm7JQX2T.js": {
+    "file": "assets/ui-vendor-Bm7JQX2T.js",
+    "name": "ui-vendor",
+    "imports": [
+      "_react-vendor-Ct9RIpkg.js"
+    ]
+  },
+  "_upload-B79tLj9z.js": {
+    "file": "assets/upload-B79tLj9z.js",
+    "name": "upload",
+    "imports": [
+      "_createLucideIcon-CyDeinbq.js"
+    ]
+  },
+  "_user-CRwh8MzD.js": {
+    "file": "assets/user-CRwh8MzD.js",
+    "name": "user",
+    "imports": [
+      "_createLucideIcon-CyDeinbq.js"
+    ]
+  },
+  "_user-check-HCqhdk3Y.js": {
+    "file": "assets/user-check-HCqhdk3Y.js",
+    "name": "user-check",
+    "imports": [
+      "_createLucideIcon-CyDeinbq.js"
+    ]
+  },
+  "_users-DtBMk0sz.js": {
+    "file": "assets/users-DtBMk0sz.js",
+    "name": "users",
+    "imports": [
+      "_createLucideIcon-CyDeinbq.js"
+    ]
+  },
+  "_x-DLYRcRbV.js": {
+    "file": "assets/x-DLYRcRbV.js",
+    "name": "x",
+    "imports": [
+      "_createLucideIcon-CyDeinbq.js"
+    ]
+  },
+  "_zap-gCLMcZLD.js": {
+    "file": "assets/zap-gCLMcZLD.js",
+    "name": "zap",
+    "imports": [
+      "_createLucideIcon-CyDeinbq.js"
+    ]
+  },
+  "index.html": {
+    "file": "assets/index-BI9iyQst.js",
+    "name": "index",
+    "src": "index.html",
+    "isEntry": true,
+    "imports": [
+      "_client-BUJTSgFG.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_index-C7REL6_e.js",
+      "_index-Dwoj3kwW.js",
+      "_gamepad-BKjcAtD2.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_play-BQh7zYqc.js",
+      "_clock-Dw7Syj2h.js",
+      "_trophy-Tx3IvyeC.js",
+      "_users-DtBMk0sz.js",
+      "_zap-gCLMcZLD.js",
+      "_createLucideIcon-CyDeinbq.js"
+    ],
+    "dynamicImports": [
+      "src/app/auth/login/page.jsx",
+      "src/app/auth/register/page.jsx",
+      "src/app/player/dashboard/page.jsx",
+      "src/app/player/profile/page.jsx",
+      "src/app/player/shop/page.jsx",
+      "src/app/player/rewards/page.jsx",
+      "src/app/player/leaderboard/page.jsx",
+      "src/app/player/progression/page.jsx",
+      "src/app/player/gallery/page.jsx",
+      "src/app/player/my-session/page.jsx",
+      "src/app/player/my-reservations/page.jsx",
+      "src/app/player/my-invoices/page.jsx",
+      "src/app/player/my-purchases/page.jsx",
+      "src/app/player/gamification/page.jsx",
+      "src/app/player/convert-points/page.jsx",
+      "src/app/admin/dashboard/page.jsx",
+      "src/app/admin/players/page.jsx",
+      "src/app/admin/sessions/page.jsx",
+      "src/app/admin/active-sessions/page.jsx",
+      "src/app/admin/rewards/page.jsx",
+      "src/app/admin/shop/page.jsx",
+      "src/app/admin/content/page.jsx",
+      "src/app/admin/bonuses/page.jsx",
+      "src/app/admin/levels/page.jsx",
+      "src/app/admin/points/page.jsx",
+      "src/app/admin/invoice-scanner/page.jsx"
+    ],
+    "css": [
+      "assets/index-BNvCO-8l.css"
+    ]
+  },
+  "node_modules/@react-router/dev/dist/config/defaults/entry.client.tsx": {
+    "file": "assets/entry.client-B-Ob_4Nm.js",
+    "name": "entry.client",
+    "src": "node_modules/@react-router/dev/dist/config/defaults/entry.client.tsx",
+    "isEntry": true,
+    "imports": [
+      "_ui-vendor-Bm7JQX2T.js",
+      "_react-vendor-Ct9RIpkg.js",
+      "_client-BUJTSgFG.js"
+    ]
+  },
+  "src/app/__create/not-found.tsx?__react-router-build-client-route": {
+    "file": "assets/not-found-uuA_8ohR.js",
+    "name": "not-found",
+    "src": "src/app/__create/not-found.tsx?__react-router-build-client-route",
+    "isEntry": true,
+    "imports": [
+      "_react-vendor-Ct9RIpkg.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_ui-vendor-Bm7JQX2T.js"
+    ]
+  },
+  "src/app/admin/active-sessions/page.jsx": {
+    "file": "assets/page-BuoCv40j.js",
+    "name": "page",
+    "src": "src/app/admin/active-sessions/page.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_Navigation-uFWfAvUk.js",
+      "_apiBase-uKT1-15E.js",
+      "_index-Dwoj3kwW.js",
+      "_avatarUrl-DJYax4aH.js",
+      "_refresh-cw-CApMwsX6.js",
+      "_play-BQh7zYqc.js",
+      "_clock-Dw7Syj2h.js",
+      "_pause-C4zf4-jw.js",
+      "_trending-up-Dz8cAqw-.js",
+      "_triangle-alert-Cv_qy4XN.js",
+      "_user-CRwh8MzD.js",
+      "_gamepad-2-CIt1vOKC.js",
+      "_square-CYAAZtqH.js",
+      "_circle-check-big-Dl2mg9cX.js",
+      "_index-C7REL6_e.js",
+      "_gamepad-BKjcAtD2.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_users-DtBMk0sz.js",
+      "_star-BS7t5YYQ.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_trophy-Tx3IvyeC.js",
+      "_x-DLYRcRbV.js"
+    ]
+  },
+  "src/app/admin/active-sessions/page.jsx?__react-router-build-client-route": {
+    "file": "assets/page--h6cMjn9.js",
+    "name": "page",
+    "src": "src/app/admin/active-sessions/page.jsx?__react-router-build-client-route",
+    "isEntry": true,
+    "imports": [
+      "src/app/admin/active-sessions/page.jsx",
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_index-C7REL6_e.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_Navigation-uFWfAvUk.js",
+      "_apiBase-uKT1-15E.js",
+      "_gamepad-BKjcAtD2.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_users-DtBMk0sz.js",
+      "_star-BS7t5YYQ.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_trophy-Tx3IvyeC.js",
+      "_x-DLYRcRbV.js",
+      "_index-Dwoj3kwW.js",
+      "_avatarUrl-DJYax4aH.js",
+      "_refresh-cw-CApMwsX6.js",
+      "_play-BQh7zYqc.js",
+      "_clock-Dw7Syj2h.js",
+      "_pause-C4zf4-jw.js",
+      "_trending-up-Dz8cAqw-.js",
+      "_triangle-alert-Cv_qy4XN.js",
+      "_user-CRwh8MzD.js",
+      "_gamepad-2-CIt1vOKC.js",
+      "_square-CYAAZtqH.js",
+      "_circle-check-big-Dl2mg9cX.js"
+    ]
+  },
+  "src/app/admin/bonuses/page.jsx": {
+    "file": "assets/page-CVAXnyrD.js",
+    "name": "page",
+    "src": "src/app/admin/bonuses/page.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_index-Dwoj3kwW.js",
+      "_Navigation-uFWfAvUk.js",
+      "_apiBase-uKT1-15E.js",
+      "_index-C7REL6_e.js",
+      "_gamepad-BKjcAtD2.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_users-DtBMk0sz.js",
+      "_star-BS7t5YYQ.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_trophy-Tx3IvyeC.js",
+      "_x-DLYRcRbV.js"
+    ]
+  },
+  "src/app/admin/bonuses/page.jsx?__react-router-build-client-route": {
+    "file": "assets/page-ZpFPUZsx.js",
+    "name": "page",
+    "src": "src/app/admin/bonuses/page.jsx?__react-router-build-client-route",
+    "isEntry": true,
+    "imports": [
+      "src/app/admin/bonuses/page.jsx",
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_index-C7REL6_e.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_index-Dwoj3kwW.js",
+      "_Navigation-uFWfAvUk.js",
+      "_apiBase-uKT1-15E.js",
+      "_gamepad-BKjcAtD2.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_users-DtBMk0sz.js",
+      "_star-BS7t5YYQ.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_trophy-Tx3IvyeC.js",
+      "_x-DLYRcRbV.js"
+    ]
+  },
+  "src/app/admin/content/page.jsx": {
+    "file": "assets/page-D4lgb9Ry.js",
+    "name": "page",
+    "src": "src/app/admin/content/page.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_Navigation-uFWfAvUk.js",
+      "_ImageUpload-8L1yZ-uK.js",
+      "_apiBase-uKT1-15E.js",
+      "_index-Dwoj3kwW.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_image-BOhTq8oj.js",
+      "_eye-C9b1e9NH.js",
+      "_search-pgtlLRgs.js",
+      "_plus-BMw2sqDi.js",
+      "_eye-off-DEhuC6pZ.js",
+      "_index-C7REL6_e.js",
+      "_gamepad-BKjcAtD2.js",
+      "_users-DtBMk0sz.js",
+      "_star-BS7t5YYQ.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_trophy-Tx3IvyeC.js",
+      "_x-DLYRcRbV.js",
+      "_loader-Bm8Ytk7D.js",
+      "_upload-B79tLj9z.js"
+    ]
+  },
+  "src/app/admin/content/page.jsx?__react-router-build-client-route": {
+    "file": "assets/page-ZOTpOkAW.js",
+    "name": "page",
+    "src": "src/app/admin/content/page.jsx?__react-router-build-client-route",
+    "isEntry": true,
+    "imports": [
+      "src/app/admin/content/page.jsx",
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_index-C7REL6_e.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_Navigation-uFWfAvUk.js",
+      "_apiBase-uKT1-15E.js",
+      "_gamepad-BKjcAtD2.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_users-DtBMk0sz.js",
+      "_star-BS7t5YYQ.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_trophy-Tx3IvyeC.js",
+      "_x-DLYRcRbV.js",
+      "_ImageUpload-8L1yZ-uK.js",
+      "_index-Dwoj3kwW.js",
+      "_loader-Bm8Ytk7D.js",
+      "_upload-B79tLj9z.js",
+      "_image-BOhTq8oj.js",
+      "_eye-C9b1e9NH.js",
+      "_search-pgtlLRgs.js",
+      "_plus-BMw2sqDi.js",
+      "_eye-off-DEhuC6pZ.js"
+    ]
+  },
+  "src/app/admin/dashboard/page.jsx": {
+    "file": "assets/page-CrykCV96.js",
+    "name": "page",
+    "src": "src/app/admin/dashboard/page.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_Navigation-uFWfAvUk.js",
+      "_apiBase-uKT1-15E.js",
+      "_avatarUrl-DJYax4aH.js",
+      "_shield-HF_b68B1.js",
+      "_refresh-cw-CApMwsX6.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_users-DtBMk0sz.js",
+      "_user-check-HCqhdk3Y.js",
+      "_trending-up-Dz8cAqw-.js",
+      "_trophy-Tx3IvyeC.js",
+      "_eye-C9b1e9NH.js",
+      "_star-BS7t5YYQ.js",
+      "_clock-Dw7Syj2h.js",
+      "_index-C7REL6_e.js",
+      "_gamepad-BKjcAtD2.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_x-DLYRcRbV.js"
+    ]
+  },
+  "src/app/admin/dashboard/page.jsx?__react-router-build-client-route": {
+    "file": "assets/page-C-35CV6i.js",
+    "name": "page",
+    "src": "src/app/admin/dashboard/page.jsx?__react-router-build-client-route",
+    "isEntry": true,
+    "imports": [
+      "src/app/admin/dashboard/page.jsx",
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_index-C7REL6_e.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_Navigation-uFWfAvUk.js",
+      "_apiBase-uKT1-15E.js",
+      "_gamepad-BKjcAtD2.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_users-DtBMk0sz.js",
+      "_star-BS7t5YYQ.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_trophy-Tx3IvyeC.js",
+      "_x-DLYRcRbV.js",
+      "_avatarUrl-DJYax4aH.js",
+      "_shield-HF_b68B1.js",
+      "_refresh-cw-CApMwsX6.js",
+      "_user-check-HCqhdk3Y.js",
+      "_trending-up-Dz8cAqw-.js",
+      "_eye-C9b1e9NH.js",
+      "_clock-Dw7Syj2h.js"
+    ]
+  },
+  "src/app/admin/invoice-scanner/page.jsx": {
+    "file": "assets/page-BnAjuxXs.js",
+    "name": "page",
+    "src": "src/app/admin/invoice-scanner/page.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_Navigation-uFWfAvUk.js",
+      "_camera-CBGIjcoH.js",
+      "_circle-x-BtKtckyT.js",
+      "_triangle-alert-Cv_qy4XN.js",
+      "_apiBase-uKT1-15E.js",
+      "_index-Dwoj3kwW.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_refresh-cw-CApMwsX6.js",
+      "_circle-check-big-Dl2mg9cX.js",
+      "_play-BQh7zYqc.js",
+      "_timer-ByHqhyeu.js",
+      "_clock-Dw7Syj2h.js",
+      "_pause-C4zf4-jw.js",
+      "_index-C7REL6_e.js",
+      "_gamepad-BKjcAtD2.js",
+      "_users-DtBMk0sz.js",
+      "_star-BS7t5YYQ.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_trophy-Tx3IvyeC.js",
+      "_x-DLYRcRbV.js"
+    ]
+  },
+  "src/app/admin/invoice-scanner/page.jsx?__react-router-build-client-route": {
+    "file": "assets/page-BsjKISmB.js",
+    "name": "page",
+    "src": "src/app/admin/invoice-scanner/page.jsx?__react-router-build-client-route",
+    "isEntry": true,
+    "imports": [
+      "src/app/admin/invoice-scanner/page.jsx",
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_index-C7REL6_e.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_Navigation-uFWfAvUk.js",
+      "_apiBase-uKT1-15E.js",
+      "_gamepad-BKjcAtD2.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_users-DtBMk0sz.js",
+      "_star-BS7t5YYQ.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_trophy-Tx3IvyeC.js",
+      "_x-DLYRcRbV.js",
+      "_camera-CBGIjcoH.js",
+      "_circle-x-BtKtckyT.js",
+      "_triangle-alert-Cv_qy4XN.js",
+      "_index-Dwoj3kwW.js",
+      "_refresh-cw-CApMwsX6.js",
+      "_circle-check-big-Dl2mg9cX.js",
+      "_play-BQh7zYqc.js",
+      "_timer-ByHqhyeu.js",
+      "_clock-Dw7Syj2h.js",
+      "_pause-C4zf4-jw.js"
+    ]
+  },
+  "src/app/admin/levels/page.jsx": {
+    "file": "assets/page-COx3b8Ng.js",
+    "name": "page",
+    "src": "src/app/admin/levels/page.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_index-Dwoj3kwW.js",
+      "_Navigation-uFWfAvUk.js",
+      "_apiBase-uKT1-15E.js",
+      "_index-C7REL6_e.js",
+      "_gamepad-BKjcAtD2.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_users-DtBMk0sz.js",
+      "_star-BS7t5YYQ.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_trophy-Tx3IvyeC.js",
+      "_x-DLYRcRbV.js"
+    ]
+  },
+  "src/app/admin/levels/page.jsx?__react-router-build-client-route": {
+    "file": "assets/page-9RQDRMxx.js",
+    "name": "page",
+    "src": "src/app/admin/levels/page.jsx?__react-router-build-client-route",
+    "isEntry": true,
+    "imports": [
+      "src/app/admin/levels/page.jsx",
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_index-C7REL6_e.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_index-Dwoj3kwW.js",
+      "_Navigation-uFWfAvUk.js",
+      "_apiBase-uKT1-15E.js",
+      "_gamepad-BKjcAtD2.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_users-DtBMk0sz.js",
+      "_star-BS7t5YYQ.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_trophy-Tx3IvyeC.js",
+      "_x-DLYRcRbV.js"
+    ]
+  },
+  "src/app/admin/players/[id]/page.jsx?__react-router-build-client-route": {
+    "file": "assets/page-BOnb7Y5v.js",
+    "name": "page",
+    "src": "src/app/admin/players/[id]/page.jsx?__react-router-build-client-route",
+    "isEntry": true,
+    "imports": [
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_Navigation-uFWfAvUk.js",
+      "_index-Dwoj3kwW.js",
+      "_apiBase-uKT1-15E.js",
+      "_avatarUrl-DJYax4aH.js",
+      "_circle-alert-DV7sLuL2.js",
+      "_arrow-left-BBSe8jzE.js",
+      "_triangle-alert-Cv_qy4XN.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_user-check-HCqhdk3Y.js",
+      "_trash-2-BXW8_ECB.js",
+      "_award-eSp6n4S5.js",
+      "_mail-CdQQb3TV.js",
+      "_clock-Dw7Syj2h.js",
+      "_trending-up-Dz8cAqw-.js",
+      "_star-BS7t5YYQ.js",
+      "_shield-HF_b68B1.js",
+      "_index-C7REL6_e.js",
+      "_gamepad-BKjcAtD2.js",
+      "_users-DtBMk0sz.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_trophy-Tx3IvyeC.js",
+      "_x-DLYRcRbV.js"
+    ]
+  },
+  "src/app/admin/players/page.jsx": {
+    "file": "assets/page-CmRKUDL4.js",
+    "name": "page",
+    "src": "src/app/admin/players/page.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_Navigation-uFWfAvUk.js",
+      "_index-Dwoj3kwW.js",
+      "_apiBase-uKT1-15E.js",
+      "_avatarUrl-DJYax4aH.js",
+      "_users-DtBMk0sz.js",
+      "_search-pgtlLRgs.js",
+      "_filter-CRY2orxT.js",
+      "_eye-C9b1e9NH.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_star-BS7t5YYQ.js",
+      "_plus-BMw2sqDi.js",
+      "_index-C7REL6_e.js",
+      "_gamepad-BKjcAtD2.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_trophy-Tx3IvyeC.js",
+      "_x-DLYRcRbV.js"
+    ]
+  },
+  "src/app/admin/players/page.jsx?__react-router-build-client-route": {
+    "file": "assets/page-Cqgvervx.js",
+    "name": "page",
+    "src": "src/app/admin/players/page.jsx?__react-router-build-client-route",
+    "isEntry": true,
+    "imports": [
+      "src/app/admin/players/page.jsx",
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_index-C7REL6_e.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_Navigation-uFWfAvUk.js",
+      "_apiBase-uKT1-15E.js",
+      "_gamepad-BKjcAtD2.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_users-DtBMk0sz.js",
+      "_star-BS7t5YYQ.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_trophy-Tx3IvyeC.js",
+      "_x-DLYRcRbV.js",
+      "_index-Dwoj3kwW.js",
+      "_avatarUrl-DJYax4aH.js",
+      "_search-pgtlLRgs.js",
+      "_filter-CRY2orxT.js",
+      "_eye-C9b1e9NH.js",
+      "_plus-BMw2sqDi.js"
+    ]
+  },
+  "src/app/admin/points/page.jsx": {
+    "file": "assets/page-DUZ9eZS2.js",
+    "name": "page",
+    "src": "src/app/admin/points/page.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_index-Dwoj3kwW.js",
+      "_Navigation-uFWfAvUk.js",
+      "_apiBase-uKT1-15E.js",
+      "_index-C7REL6_e.js",
+      "_gamepad-BKjcAtD2.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_users-DtBMk0sz.js",
+      "_star-BS7t5YYQ.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_trophy-Tx3IvyeC.js",
+      "_x-DLYRcRbV.js"
+    ]
+  },
+  "src/app/admin/points/page.jsx?__react-router-build-client-route": {
+    "file": "assets/page-BbJbaKrl.js",
+    "name": "page",
+    "src": "src/app/admin/points/page.jsx?__react-router-build-client-route",
+    "isEntry": true,
+    "imports": [
+      "src/app/admin/points/page.jsx",
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_index-C7REL6_e.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_index-Dwoj3kwW.js",
+      "_Navigation-uFWfAvUk.js",
+      "_apiBase-uKT1-15E.js",
+      "_gamepad-BKjcAtD2.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_users-DtBMk0sz.js",
+      "_star-BS7t5YYQ.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_trophy-Tx3IvyeC.js",
+      "_x-DLYRcRbV.js"
+    ]
+  },
+  "src/app/admin/rewards/page.jsx": {
+    "file": "assets/page-DhwH5jvf.js",
+    "name": "page",
+    "src": "src/app/admin/rewards/page.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_index-Dwoj3kwW.js",
+      "_Navigation-uFWfAvUk.js",
+      "_apiBase-uKT1-15E.js",
+      "_index-C7REL6_e.js",
+      "_gamepad-BKjcAtD2.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_users-DtBMk0sz.js",
+      "_star-BS7t5YYQ.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_trophy-Tx3IvyeC.js",
+      "_x-DLYRcRbV.js"
+    ]
+  },
+  "src/app/admin/rewards/page.jsx?__react-router-build-client-route": {
+    "file": "assets/page-DTEP6Fkk.js",
+    "name": "page",
+    "src": "src/app/admin/rewards/page.jsx?__react-router-build-client-route",
+    "isEntry": true,
+    "imports": [
+      "src/app/admin/rewards/page.jsx",
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_index-C7REL6_e.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_index-Dwoj3kwW.js",
+      "_Navigation-uFWfAvUk.js",
+      "_apiBase-uKT1-15E.js",
+      "_gamepad-BKjcAtD2.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_users-DtBMk0sz.js",
+      "_star-BS7t5YYQ.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_trophy-Tx3IvyeC.js",
+      "_x-DLYRcRbV.js"
+    ]
+  },
+  "src/app/admin/sessions/page.jsx": {
+    "file": "assets/page-xEpF4jkg.js",
+    "name": "page",
+    "src": "src/app/admin/sessions/page.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_Navigation-uFWfAvUk.js",
+      "_apiBase-uKT1-15E.js",
+      "_index-Dwoj3kwW.js",
+      "_triangle-alert-Cv_qy4XN.js",
+      "_user-CRwh8MzD.js",
+      "_square-CYAAZtqH.js",
+      "_circle-x-BtKtckyT.js",
+      "_refresh-cw-CApMwsX6.js",
+      "_trending-up-Dz8cAqw-.js",
+      "_play-BQh7zYqc.js",
+      "_clock-Dw7Syj2h.js",
+      "_pause-C4zf4-jw.js",
+      "_filter-CRY2orxT.js",
+      "_gamepad-2-CIt1vOKC.js",
+      "_timer-ByHqhyeu.js",
+      "_circle-alert-DV7sLuL2.js",
+      "_index-C7REL6_e.js",
+      "_gamepad-BKjcAtD2.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_users-DtBMk0sz.js",
+      "_star-BS7t5YYQ.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_trophy-Tx3IvyeC.js",
+      "_x-DLYRcRbV.js"
+    ]
+  },
+  "src/app/admin/sessions/page.jsx?__react-router-build-client-route": {
+    "file": "assets/page-CHq5Dt6t.js",
+    "name": "page",
+    "src": "src/app/admin/sessions/page.jsx?__react-router-build-client-route",
+    "isEntry": true,
+    "imports": [
+      "src/app/admin/sessions/page.jsx",
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_index-C7REL6_e.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_Navigation-uFWfAvUk.js",
+      "_apiBase-uKT1-15E.js",
+      "_gamepad-BKjcAtD2.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_users-DtBMk0sz.js",
+      "_star-BS7t5YYQ.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_trophy-Tx3IvyeC.js",
+      "_x-DLYRcRbV.js",
+      "_index-Dwoj3kwW.js",
+      "_triangle-alert-Cv_qy4XN.js",
+      "_user-CRwh8MzD.js",
+      "_square-CYAAZtqH.js",
+      "_circle-x-BtKtckyT.js",
+      "_refresh-cw-CApMwsX6.js",
+      "_trending-up-Dz8cAqw-.js",
+      "_play-BQh7zYqc.js",
+      "_clock-Dw7Syj2h.js",
+      "_pause-C4zf4-jw.js",
+      "_filter-CRY2orxT.js",
+      "_gamepad-2-CIt1vOKC.js",
+      "_timer-ByHqhyeu.js",
+      "_circle-alert-DV7sLuL2.js"
+    ]
+  },
+  "src/app/admin/shop/page.jsx": {
+    "file": "assets/page-ywMizafw.js",
+    "name": "page",
+    "src": "src/app/admin/shop/page.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_Navigation-uFWfAvUk.js",
+      "_ImageUpload-8L1yZ-uK.js",
+      "_apiBase-uKT1-15E.js",
+      "_index-Dwoj3kwW.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_credit-card-C9Jd3_0s.js",
+      "_gamepad-2-CIt1vOKC.js",
+      "_search-pgtlLRgs.js",
+      "_plus-BMw2sqDi.js",
+      "_trash-2-BXW8_ECB.js",
+      "_circle-check-big-Dl2mg9cX.js",
+      "_index-C7REL6_e.js",
+      "_gamepad-BKjcAtD2.js",
+      "_users-DtBMk0sz.js",
+      "_star-BS7t5YYQ.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_trophy-Tx3IvyeC.js",
+      "_x-DLYRcRbV.js",
+      "_loader-Bm8Ytk7D.js",
+      "_upload-B79tLj9z.js",
+      "_image-BOhTq8oj.js"
+    ]
+  },
+  "src/app/admin/shop/page.jsx?__react-router-build-client-route": {
+    "file": "assets/page-DZ245x0Z.js",
+    "name": "page",
+    "src": "src/app/admin/shop/page.jsx?__react-router-build-client-route",
+    "isEntry": true,
+    "imports": [
+      "src/app/admin/shop/page.jsx",
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_index-C7REL6_e.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_Navigation-uFWfAvUk.js",
+      "_apiBase-uKT1-15E.js",
+      "_gamepad-BKjcAtD2.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_users-DtBMk0sz.js",
+      "_star-BS7t5YYQ.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_trophy-Tx3IvyeC.js",
+      "_x-DLYRcRbV.js",
+      "_ImageUpload-8L1yZ-uK.js",
+      "_index-Dwoj3kwW.js",
+      "_loader-Bm8Ytk7D.js",
+      "_upload-B79tLj9z.js",
+      "_image-BOhTq8oj.js",
+      "_credit-card-C9Jd3_0s.js",
+      "_gamepad-2-CIt1vOKC.js",
+      "_search-pgtlLRgs.js",
+      "_plus-BMw2sqDi.js",
+      "_trash-2-BXW8_ECB.js",
+      "_circle-check-big-Dl2mg9cX.js"
+    ]
+  },
+  "src/app/admin/test/page.jsx?__react-router-build-client-route": {
+    "file": "assets/page-DizkKJmt.js",
+    "name": "page",
+    "src": "src/app/admin/test/page.jsx?__react-router-build-client-route",
+    "isEntry": true,
+    "imports": [
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_index-C7REL6_e.js"
+    ]
+  },
+  "src/app/auth/login/page.jsx": {
+    "file": "assets/page-BSRpUs5x.js",
+    "name": "page",
+    "src": "src/app/auth/login/page.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_apiBase-uKT1-15E.js",
+      "_ParallaxObject-qEjXm56D.js",
+      "_gamepad-BKjcAtD2.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_zap-gCLMcZLD.js",
+      "_mail-CdQQb3TV.js",
+      "_lock-UjuDG_4I.js",
+      "_eye-off-DEhuC6pZ.js",
+      "_eye-C9b1e9NH.js",
+      "_index-C7REL6_e.js",
+      "_createLucideIcon-CyDeinbq.js"
+    ]
+  },
+  "src/app/auth/login/page.jsx?__react-router-build-client-route": {
+    "file": "assets/page-VkAlp0QP.js",
+    "name": "page",
+    "src": "src/app/auth/login/page.jsx?__react-router-build-client-route",
+    "isEntry": true,
+    "imports": [
+      "src/app/auth/login/page.jsx",
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_index-C7REL6_e.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_apiBase-uKT1-15E.js",
+      "_ParallaxObject-qEjXm56D.js",
+      "_gamepad-BKjcAtD2.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_zap-gCLMcZLD.js",
+      "_mail-CdQQb3TV.js",
+      "_lock-UjuDG_4I.js",
+      "_eye-off-DEhuC6pZ.js",
+      "_eye-C9b1e9NH.js"
+    ]
+  },
+  "src/app/auth/register/page.jsx": {
+    "file": "assets/page-BkpYvGo5.js",
+    "name": "page",
+    "src": "src/app/auth/register/page.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_apiBase-uKT1-15E.js",
+      "_index-Dwoj3kwW.js",
+      "_ParallaxObject-qEjXm56D.js",
+      "_gamepad-BKjcAtD2.js",
+      "_trophy-Tx3IvyeC.js",
+      "_zap-gCLMcZLD.js",
+      "_upload-B79tLj9z.js",
+      "_user-CRwh8MzD.js",
+      "_mail-CdQQb3TV.js",
+      "_lock-UjuDG_4I.js",
+      "_eye-off-DEhuC6pZ.js",
+      "_eye-C9b1e9NH.js",
+      "_index-C7REL6_e.js",
+      "_createLucideIcon-CyDeinbq.js"
+    ]
+  },
+  "src/app/auth/register/page.jsx?__react-router-build-client-route": {
+    "file": "assets/page-Bfbd0cQp.js",
+    "name": "page",
+    "src": "src/app/auth/register/page.jsx?__react-router-build-client-route",
+    "isEntry": true,
+    "imports": [
+      "src/app/auth/register/page.jsx",
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_index-C7REL6_e.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_apiBase-uKT1-15E.js",
+      "_index-Dwoj3kwW.js",
+      "_ParallaxObject-qEjXm56D.js",
+      "_gamepad-BKjcAtD2.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_trophy-Tx3IvyeC.js",
+      "_zap-gCLMcZLD.js",
+      "_upload-B79tLj9z.js",
+      "_user-CRwh8MzD.js",
+      "_mail-CdQQb3TV.js",
+      "_lock-UjuDG_4I.js",
+      "_eye-off-DEhuC6pZ.js",
+      "_eye-C9b1e9NH.js"
+    ]
+  },
+  "src/app/page.jsx?__react-router-build-client-route": {
+    "file": "assets/page-WFIz8D2s.js",
+    "name": "page",
+    "src": "src/app/page.jsx?__react-router-build-client-route",
+    "isEntry": true,
+    "imports": [
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_ParallaxObject-qEjXm56D.js",
+      "_gamepad-BKjcAtD2.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_trophy-Tx3IvyeC.js",
+      "_users-DtBMk0sz.js",
+      "_zap-gCLMcZLD.js",
+      "_clock-Dw7Syj2h.js",
+      "_shield-HF_b68B1.js",
+      "_star-BS7t5YYQ.js",
+      "_play-BQh7zYqc.js",
+      "_index-C7REL6_e.js"
+    ]
+  },
+  "src/app/player/convert-points/page.jsx": {
+    "file": "assets/page-CHE6gxR_.js",
+    "name": "page",
+    "src": "src/app/player/convert-points/page.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_Navigation-uFWfAvUk.js",
+      "_apiBase-uKT1-15E.js",
+      "_index-Dwoj3kwW.js",
+      "_circle-x-BtKtckyT.js",
+      "_zap-gCLMcZLD.js",
+      "_clock-Dw7Syj2h.js",
+      "_trending-up-Dz8cAqw-.js",
+      "_award-eSp6n4S5.js",
+      "_info-BLRu2m6m.js",
+      "_arrow-right-UwaTTyFQ.js",
+      "_circle-alert-DV7sLuL2.js",
+      "_refresh-cw-CApMwsX6.js",
+      "_circle-check-big-Dl2mg9cX.js",
+      "_index-C7REL6_e.js",
+      "_gamepad-BKjcAtD2.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_users-DtBMk0sz.js",
+      "_star-BS7t5YYQ.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_trophy-Tx3IvyeC.js",
+      "_x-DLYRcRbV.js"
+    ]
+  },
+  "src/app/player/convert-points/page.jsx?__react-router-build-client-route": {
+    "file": "assets/page-CPTodcGq.js",
+    "name": "page",
+    "src": "src/app/player/convert-points/page.jsx?__react-router-build-client-route",
+    "isEntry": true,
+    "imports": [
+      "src/app/player/convert-points/page.jsx",
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_index-C7REL6_e.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_Navigation-uFWfAvUk.js",
+      "_apiBase-uKT1-15E.js",
+      "_gamepad-BKjcAtD2.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_users-DtBMk0sz.js",
+      "_star-BS7t5YYQ.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_trophy-Tx3IvyeC.js",
+      "_x-DLYRcRbV.js",
+      "_index-Dwoj3kwW.js",
+      "_circle-x-BtKtckyT.js",
+      "_zap-gCLMcZLD.js",
+      "_clock-Dw7Syj2h.js",
+      "_trending-up-Dz8cAqw-.js",
+      "_award-eSp6n4S5.js",
+      "_info-BLRu2m6m.js",
+      "_arrow-right-UwaTTyFQ.js",
+      "_circle-alert-DV7sLuL2.js",
+      "_refresh-cw-CApMwsX6.js",
+      "_circle-check-big-Dl2mg9cX.js"
+    ]
+  },
+  "src/app/player/dashboard/page.jsx": {
+    "file": "assets/page-k4dCwftx.js",
+    "name": "page",
+    "src": "src/app/player/dashboard/page.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_Navigation-uFWfAvUk.js",
+      "_apiBase-uKT1-15E.js",
+      "_index-Dwoj3kwW.js",
+      "_star-BS7t5YYQ.js",
+      "_trophy-Tx3IvyeC.js",
+      "_trending-up-Dz8cAqw-.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_arrow-right-UwaTTyFQ.js",
+      "_flame-6t_lP86R.js",
+      "_zap-gCLMcZLD.js",
+      "_clock-Dw7Syj2h.js",
+      "_users-DtBMk0sz.js",
+      "_gamepad-2-CIt1vOKC.js",
+      "_index-C7REL6_e.js",
+      "_gamepad-BKjcAtD2.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_x-DLYRcRbV.js"
+    ]
+  },
+  "src/app/player/dashboard/page.jsx?__react-router-build-client-route": {
+    "file": "assets/page-8YmHcfgK.js",
+    "name": "page",
+    "src": "src/app/player/dashboard/page.jsx?__react-router-build-client-route",
+    "isEntry": true,
+    "imports": [
+      "src/app/player/dashboard/page.jsx",
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_index-C7REL6_e.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_Navigation-uFWfAvUk.js",
+      "_apiBase-uKT1-15E.js",
+      "_gamepad-BKjcAtD2.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_users-DtBMk0sz.js",
+      "_star-BS7t5YYQ.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_trophy-Tx3IvyeC.js",
+      "_x-DLYRcRbV.js",
+      "_index-Dwoj3kwW.js",
+      "_trending-up-Dz8cAqw-.js",
+      "_arrow-right-UwaTTyFQ.js",
+      "_flame-6t_lP86R.js",
+      "_zap-gCLMcZLD.js",
+      "_clock-Dw7Syj2h.js",
+      "_gamepad-2-CIt1vOKC.js"
+    ]
+  },
+  "src/app/player/gallery/page.jsx": {
+    "file": "assets/page-B1arp_Rf.js",
+    "name": "page",
+    "src": "src/app/player/gallery/page.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_Navigation-uFWfAvUk.js",
+      "_apiBase-uKT1-15E.js",
+      "_avatarUrl-DJYax4aH.js",
+      "_index-Dwoj3kwW.js",
+      "_filter-CRY2orxT.js",
+      "_image-BOhTq8oj.js",
+      "_play-BQh7zYqc.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_eye-C9b1e9NH.js",
+      "_x-DLYRcRbV.js",
+      "_index-C7REL6_e.js",
+      "_gamepad-BKjcAtD2.js",
+      "_users-DtBMk0sz.js",
+      "_star-BS7t5YYQ.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_trophy-Tx3IvyeC.js"
+    ]
+  },
+  "src/app/player/gallery/page.jsx?__react-router-build-client-route": {
+    "file": "assets/page-DY-BNKwp.js",
+    "name": "page",
+    "src": "src/app/player/gallery/page.jsx?__react-router-build-client-route",
+    "isEntry": true,
+    "imports": [
+      "src/app/player/gallery/page.jsx",
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_index-C7REL6_e.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_Navigation-uFWfAvUk.js",
+      "_apiBase-uKT1-15E.js",
+      "_gamepad-BKjcAtD2.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_users-DtBMk0sz.js",
+      "_star-BS7t5YYQ.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_trophy-Tx3IvyeC.js",
+      "_x-DLYRcRbV.js",
+      "_avatarUrl-DJYax4aH.js",
+      "_index-Dwoj3kwW.js",
+      "_filter-CRY2orxT.js",
+      "_image-BOhTq8oj.js",
+      "_play-BQh7zYqc.js",
+      "_eye-C9b1e9NH.js"
+    ]
+  },
+  "src/app/player/gamification/page.jsx": {
+    "file": "assets/page-BedIbJOX.js",
+    "name": "page",
+    "src": "src/app/player/gamification/page.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_Navigation-uFWfAvUk.js",
+      "_style-DnYvAxPc.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_x-DLYRcRbV.js",
+      "_star-BS7t5YYQ.js",
+      "_flame-6t_lP86R.js",
+      "_trophy-Tx3IvyeC.js",
+      "_info-BLRu2m6m.js",
+      "_apiBase-uKT1-15E.js",
+      "_index-Dwoj3kwW.js",
+      "_index-C7REL6_e.js",
+      "_gamepad-BKjcAtD2.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_users-DtBMk0sz.js"
+    ]
+  },
+  "src/app/player/gamification/page.jsx?__react-router-build-client-route": {
+    "file": "assets/page-BWs4Pwy4.js",
+    "name": "page",
+    "src": "src/app/player/gamification/page.jsx?__react-router-build-client-route",
+    "isEntry": true,
+    "imports": [
+      "src/app/player/gamification/page.jsx",
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_index-C7REL6_e.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_Navigation-uFWfAvUk.js",
+      "_apiBase-uKT1-15E.js",
+      "_gamepad-BKjcAtD2.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_users-DtBMk0sz.js",
+      "_star-BS7t5YYQ.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_trophy-Tx3IvyeC.js",
+      "_x-DLYRcRbV.js",
+      "_style-DnYvAxPc.js",
+      "_flame-6t_lP86R.js",
+      "_info-BLRu2m6m.js",
+      "_index-Dwoj3kwW.js"
+    ]
+  },
+  "src/app/player/leaderboard/page.jsx": {
+    "file": "assets/page-BQECWG_f.js",
+    "name": "page",
+    "src": "src/app/player/leaderboard/page.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_Navigation-uFWfAvUk.js",
+      "_apiBase-uKT1-15E.js",
+      "_avatarUrl-DJYax4aH.js",
+      "_trophy-Tx3IvyeC.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_trending-up-Dz8cAqw-.js",
+      "_index-C7REL6_e.js",
+      "_gamepad-BKjcAtD2.js",
+      "_users-DtBMk0sz.js",
+      "_star-BS7t5YYQ.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_x-DLYRcRbV.js"
+    ]
+  },
+  "src/app/player/leaderboard/page.jsx?__react-router-build-client-route": {
+    "file": "assets/page-yj5Qi380.js",
+    "name": "page",
+    "src": "src/app/player/leaderboard/page.jsx?__react-router-build-client-route",
+    "isEntry": true,
+    "imports": [
+      "src/app/player/leaderboard/page.jsx",
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_index-C7REL6_e.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_Navigation-uFWfAvUk.js",
+      "_apiBase-uKT1-15E.js",
+      "_gamepad-BKjcAtD2.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_users-DtBMk0sz.js",
+      "_star-BS7t5YYQ.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_trophy-Tx3IvyeC.js",
+      "_x-DLYRcRbV.js",
+      "_avatarUrl-DJYax4aH.js",
+      "_trending-up-Dz8cAqw-.js"
+    ]
+  },
+  "src/app/player/my-invoices/page.jsx": {
+    "file": "assets/page-C0rb4K2N.js",
+    "name": "page",
+    "src": "src/app/player/my-invoices/page.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_Navigation-uFWfAvUk.js",
+      "_InvoiceModal-BXRbFQzA.js",
+      "_apiBase-uKT1-15E.js",
+      "_index-Dwoj3kwW.js",
+      "_filter-CRY2orxT.js",
+      "_refresh-cw-CApMwsX6.js",
+      "_gamepad-2-CIt1vOKC.js",
+      "_timer-ByHqhyeu.js",
+      "_clock-Dw7Syj2h.js",
+      "_circle-alert-DV7sLuL2.js",
+      "_circle-check-big-Dl2mg9cX.js",
+      "_circle-x-BtKtckyT.js",
+      "_index-C7REL6_e.js",
+      "_gamepad-BKjcAtD2.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_users-DtBMk0sz.js",
+      "_star-BS7t5YYQ.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_trophy-Tx3IvyeC.js",
+      "_x-DLYRcRbV.js"
+    ]
+  },
+  "src/app/player/my-invoices/page.jsx?__react-router-build-client-route": {
+    "file": "assets/page-2fCDK7vs.js",
+    "name": "page",
+    "src": "src/app/player/my-invoices/page.jsx?__react-router-build-client-route",
+    "isEntry": true,
+    "imports": [
+      "src/app/player/my-invoices/page.jsx",
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_index-C7REL6_e.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_Navigation-uFWfAvUk.js",
+      "_apiBase-uKT1-15E.js",
+      "_gamepad-BKjcAtD2.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_users-DtBMk0sz.js",
+      "_star-BS7t5YYQ.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_trophy-Tx3IvyeC.js",
+      "_x-DLYRcRbV.js",
+      "_InvoiceModal-BXRbFQzA.js",
+      "_index-Dwoj3kwW.js",
+      "_circle-alert-DV7sLuL2.js",
+      "_clock-Dw7Syj2h.js",
+      "_filter-CRY2orxT.js",
+      "_refresh-cw-CApMwsX6.js",
+      "_gamepad-2-CIt1vOKC.js",
+      "_timer-ByHqhyeu.js",
+      "_circle-check-big-Dl2mg9cX.js",
+      "_circle-x-BtKtckyT.js"
+    ]
+  },
+  "src/app/player/my-purchases/page.jsx": {
+    "file": "assets/page-DfzXsoz7.js",
+    "name": "page",
+    "src": "src/app/player/my-purchases/page.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_Navigation-uFWfAvUk.js",
+      "_InvoiceModal-BXRbFQzA.js",
+      "_gameImageUrl-DJfrTMbD.js",
+      "_apiBase-uKT1-15E.js",
+      "_index-Dwoj3kwW.js",
+      "_arrow-left-BBSe8jzE.js",
+      "_play-BQh7zYqc.js",
+      "_circle-check-big-Dl2mg9cX.js",
+      "_clock-Dw7Syj2h.js",
+      "_refresh-cw-CApMwsX6.js",
+      "_star-BS7t5YYQ.js",
+      "_circle-alert-DV7sLuL2.js",
+      "_circle-x-BtKtckyT.js",
+      "_index-C7REL6_e.js",
+      "_gamepad-BKjcAtD2.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_users-DtBMk0sz.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_trophy-Tx3IvyeC.js",
+      "_x-DLYRcRbV.js",
+      "_style-DnYvAxPc.js",
+      "_info-BLRu2m6m.js",
+      "_triangle-alert-Cv_qy4XN.js"
+    ]
+  },
+  "src/app/player/my-purchases/page.jsx?__react-router-build-client-route": {
+    "file": "assets/page-BoYcvqVC.js",
+    "name": "page",
+    "src": "src/app/player/my-purchases/page.jsx?__react-router-build-client-route",
+    "isEntry": true,
+    "imports": [
+      "src/app/player/my-purchases/page.jsx",
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_index-C7REL6_e.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_Navigation-uFWfAvUk.js",
+      "_apiBase-uKT1-15E.js",
+      "_gamepad-BKjcAtD2.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_users-DtBMk0sz.js",
+      "_star-BS7t5YYQ.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_trophy-Tx3IvyeC.js",
+      "_x-DLYRcRbV.js",
+      "_InvoiceModal-BXRbFQzA.js",
+      "_index-Dwoj3kwW.js",
+      "_circle-alert-DV7sLuL2.js",
+      "_clock-Dw7Syj2h.js",
+      "_gameImageUrl-DJfrTMbD.js",
+      "_style-DnYvAxPc.js",
+      "_info-BLRu2m6m.js",
+      "_triangle-alert-Cv_qy4XN.js",
+      "_circle-x-BtKtckyT.js",
+      "_circle-check-big-Dl2mg9cX.js",
+      "_arrow-left-BBSe8jzE.js",
+      "_play-BQh7zYqc.js",
+      "_refresh-cw-CApMwsX6.js"
+    ]
+  },
+  "src/app/player/my-reservations/page.jsx": {
+    "file": "assets/page-DwUO9aQe.js",
+    "name": "page",
+    "src": "src/app/player/my-reservations/page.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_Navigation-uFWfAvUk.js",
+      "_apiBase-uKT1-15E.js",
+      "_index-Dwoj3kwW.js",
+      "_arrow-left-BBSe8jzE.js",
+      "_refresh-cw-CApMwsX6.js",
+      "_filter-CRY2orxT.js",
+      "_gamepad-2-CIt1vOKC.js",
+      "_clock-Dw7Syj2h.js",
+      "_star-BS7t5YYQ.js",
+      "_circle-alert-DV7sLuL2.js",
+      "_circle-x-BtKtckyT.js",
+      "_circle-check-big-Dl2mg9cX.js",
+      "_timer-ByHqhyeu.js",
+      "_index-C7REL6_e.js",
+      "_gamepad-BKjcAtD2.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_users-DtBMk0sz.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_trophy-Tx3IvyeC.js",
+      "_x-DLYRcRbV.js"
+    ]
+  },
+  "src/app/player/my-reservations/page.jsx?__react-router-build-client-route": {
+    "file": "assets/page-BSQpiBG7.js",
+    "name": "page",
+    "src": "src/app/player/my-reservations/page.jsx?__react-router-build-client-route",
+    "isEntry": true,
+    "imports": [
+      "src/app/player/my-reservations/page.jsx",
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_index-C7REL6_e.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_Navigation-uFWfAvUk.js",
+      "_apiBase-uKT1-15E.js",
+      "_gamepad-BKjcAtD2.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_users-DtBMk0sz.js",
+      "_star-BS7t5YYQ.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_trophy-Tx3IvyeC.js",
+      "_x-DLYRcRbV.js",
+      "_index-Dwoj3kwW.js",
+      "_arrow-left-BBSe8jzE.js",
+      "_refresh-cw-CApMwsX6.js",
+      "_filter-CRY2orxT.js",
+      "_gamepad-2-CIt1vOKC.js",
+      "_clock-Dw7Syj2h.js",
+      "_circle-alert-DV7sLuL2.js",
+      "_circle-x-BtKtckyT.js",
+      "_circle-check-big-Dl2mg9cX.js",
+      "_timer-ByHqhyeu.js"
+    ]
+  },
+  "src/app/player/my-session/page.jsx": {
+    "file": "assets/page-Dg1OY_FH.js",
+    "name": "page",
+    "src": "src/app/player/my-session/page.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_Navigation-uFWfAvUk.js",
+      "_apiBase-uKT1-15E.js",
+      "_index-Dwoj3kwW.js",
+      "_refresh-cw-CApMwsX6.js",
+      "_gamepad-2-CIt1vOKC.js",
+      "_timer-ByHqhyeu.js",
+      "_circle-alert-DV7sLuL2.js",
+      "_pause-C4zf4-jw.js",
+      "_circle-check-big-Dl2mg9cX.js",
+      "_clock-Dw7Syj2h.js",
+      "_play-BQh7zYqc.js",
+      "_index-C7REL6_e.js",
+      "_gamepad-BKjcAtD2.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_users-DtBMk0sz.js",
+      "_star-BS7t5YYQ.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_trophy-Tx3IvyeC.js",
+      "_x-DLYRcRbV.js"
+    ]
+  },
+  "src/app/player/my-session/page.jsx?__react-router-build-client-route": {
+    "file": "assets/page-D4h9FKd_.js",
+    "name": "page",
+    "src": "src/app/player/my-session/page.jsx?__react-router-build-client-route",
+    "isEntry": true,
+    "imports": [
+      "src/app/player/my-session/page.jsx",
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_index-C7REL6_e.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_Navigation-uFWfAvUk.js",
+      "_apiBase-uKT1-15E.js",
+      "_gamepad-BKjcAtD2.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_users-DtBMk0sz.js",
+      "_star-BS7t5YYQ.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_trophy-Tx3IvyeC.js",
+      "_x-DLYRcRbV.js",
+      "_index-Dwoj3kwW.js",
+      "_refresh-cw-CApMwsX6.js",
+      "_gamepad-2-CIt1vOKC.js",
+      "_timer-ByHqhyeu.js",
+      "_circle-alert-DV7sLuL2.js",
+      "_pause-C4zf4-jw.js",
+      "_circle-check-big-Dl2mg9cX.js",
+      "_clock-Dw7Syj2h.js",
+      "_play-BQh7zYqc.js"
+    ]
+  },
+  "src/app/player/profile/page.jsx": {
+    "file": "assets/page-nSksrptA.js",
+    "name": "page",
+    "src": "src/app/player/profile/page.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_Navigation-uFWfAvUk.js",
+      "_apiBase-uKT1-15E.js",
+      "_avatarUrl-DJYax4aH.js",
+      "_loader-Bm8Ytk7D.js",
+      "_circle-x-BtKtckyT.js",
+      "_circle-check-big-Dl2mg9cX.js",
+      "_user-CRwh8MzD.js",
+      "_camera-CBGIjcoH.js",
+      "_shield-HF_b68B1.js",
+      "_award-eSp6n4S5.js",
+      "_trending-up-Dz8cAqw-.js",
+      "_mail-CdQQb3TV.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_index-C7REL6_e.js",
+      "_gamepad-BKjcAtD2.js",
+      "_users-DtBMk0sz.js",
+      "_star-BS7t5YYQ.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_trophy-Tx3IvyeC.js",
+      "_x-DLYRcRbV.js"
+    ]
+  },
+  "src/app/player/profile/page.jsx?__react-router-build-client-route": {
+    "file": "assets/page-BPopAURq.js",
+    "name": "page",
+    "src": "src/app/player/profile/page.jsx?__react-router-build-client-route",
+    "isEntry": true,
+    "imports": [
+      "src/app/player/profile/page.jsx",
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_index-C7REL6_e.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_Navigation-uFWfAvUk.js",
+      "_apiBase-uKT1-15E.js",
+      "_gamepad-BKjcAtD2.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_users-DtBMk0sz.js",
+      "_star-BS7t5YYQ.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_trophy-Tx3IvyeC.js",
+      "_x-DLYRcRbV.js",
+      "_avatarUrl-DJYax4aH.js",
+      "_loader-Bm8Ytk7D.js",
+      "_circle-x-BtKtckyT.js",
+      "_circle-check-big-Dl2mg9cX.js",
+      "_user-CRwh8MzD.js",
+      "_camera-CBGIjcoH.js",
+      "_shield-HF_b68B1.js",
+      "_award-eSp6n4S5.js",
+      "_trending-up-Dz8cAqw-.js",
+      "_mail-CdQQb3TV.js"
+    ]
+  },
+  "src/app/player/progression/page.jsx": {
+    "file": "assets/page-REusMiyK.js",
+    "name": "page",
+    "src": "src/app/player/progression/page.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_Navigation-uFWfAvUk.js",
+      "_apiBase-uKT1-15E.js",
+      "_index-Dwoj3kwW.js",
+      "_trending-up-Dz8cAqw-.js",
+      "_star-BS7t5YYQ.js",
+      "_zap-gCLMcZLD.js",
+      "_trophy-Tx3IvyeC.js",
+      "_award-eSp6n4S5.js",
+      "_index-C7REL6_e.js",
+      "_gamepad-BKjcAtD2.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_users-DtBMk0sz.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_x-DLYRcRbV.js"
+    ]
+  },
+  "src/app/player/progression/page.jsx?__react-router-build-client-route": {
+    "file": "assets/page-BKscGYux.js",
+    "name": "page",
+    "src": "src/app/player/progression/page.jsx?__react-router-build-client-route",
+    "isEntry": true,
+    "imports": [
+      "src/app/player/progression/page.jsx",
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_index-C7REL6_e.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_Navigation-uFWfAvUk.js",
+      "_apiBase-uKT1-15E.js",
+      "_gamepad-BKjcAtD2.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_users-DtBMk0sz.js",
+      "_star-BS7t5YYQ.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_trophy-Tx3IvyeC.js",
+      "_x-DLYRcRbV.js",
+      "_index-Dwoj3kwW.js",
+      "_trending-up-Dz8cAqw-.js",
+      "_zap-gCLMcZLD.js",
+      "_award-eSp6n4S5.js"
+    ]
+  },
+  "src/app/player/rewards/history/page.jsx?__react-router-build-client-route": {
+    "file": "assets/page-DHfba0cW.js",
+    "name": "page",
+    "src": "src/app/player/rewards/history/page.jsx?__react-router-build-client-route",
+    "isEntry": true,
+    "imports": [
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_apiBase-uKT1-15E.js",
+      "_index-C7REL6_e.js"
+    ]
+  },
+  "src/app/player/rewards/page.jsx": {
+    "file": "assets/page-9SicQBn2.js",
+    "name": "page",
+    "src": "src/app/player/rewards/page.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_apiBase-uKT1-15E.js",
+      "_gameImageUrl-DJfrTMbD.js",
+      "_index-Dwoj3kwW.js",
+      "_index-C7REL6_e.js",
+      "_style-DnYvAxPc.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_info-BLRu2m6m.js",
+      "_triangle-alert-Cv_qy4XN.js",
+      "_circle-x-BtKtckyT.js",
+      "_circle-check-big-Dl2mg9cX.js",
+      "_x-DLYRcRbV.js"
+    ]
+  },
+  "src/app/player/rewards/page.jsx?__react-router-build-client-route": {
+    "file": "assets/page-CvJhCS9O.js",
+    "name": "page",
+    "src": "src/app/player/rewards/page.jsx?__react-router-build-client-route",
+    "isEntry": true,
+    "imports": [
+      "src/app/player/rewards/page.jsx",
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_index-C7REL6_e.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_apiBase-uKT1-15E.js",
+      "_gameImageUrl-DJfrTMbD.js",
+      "_style-DnYvAxPc.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_info-BLRu2m6m.js",
+      "_triangle-alert-Cv_qy4XN.js",
+      "_circle-x-BtKtckyT.js",
+      "_circle-check-big-Dl2mg9cX.js",
+      "_x-DLYRcRbV.js",
+      "_index-Dwoj3kwW.js"
+    ]
+  },
+  "src/app/player/shop/[gameId]/page.jsx?__react-router-build-client-route": {
+    "file": "assets/page-Cdr4aA_H.js",
+    "name": "page",
+    "src": "src/app/player/shop/[gameId]/page.jsx?__react-router-build-client-route",
+    "isEntry": true,
+    "imports": [
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_Navigation-uFWfAvUk.js",
+      "_apiBase-uKT1-15E.js",
+      "_index-Dwoj3kwW.js",
+      "_arrow-left-BBSe8jzE.js",
+      "_star-BS7t5YYQ.js",
+      "_users-DtBMk0sz.js",
+      "_gamepad-2-CIt1vOKC.js",
+      "_circle-alert-DV7sLuL2.js",
+      "_clock-Dw7Syj2h.js",
+      "_zap-gCLMcZLD.js",
+      "_credit-card-C9Jd3_0s.js",
+      "_timer-ByHqhyeu.js",
+      "_circle-check-big-Dl2mg9cX.js",
+      "_index-C7REL6_e.js",
+      "_gamepad-BKjcAtD2.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_trophy-Tx3IvyeC.js",
+      "_x-DLYRcRbV.js"
+    ]
+  },
+  "src/app/player/shop/page.jsx": {
+    "file": "assets/page-C8NkPHbM.js",
+    "name": "page",
+    "src": "src/app/player/shop/page.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_Navigation-uFWfAvUk.js",
+      "_apiBase-uKT1-15E.js",
+      "_index-Dwoj3kwW.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_star-BS7t5YYQ.js",
+      "_gamepad-2-CIt1vOKC.js",
+      "_arrow-right-UwaTTyFQ.js",
+      "_filter-CRY2orxT.js",
+      "_zap-gCLMcZLD.js",
+      "_trending-up-Dz8cAqw-.js",
+      "_flame-6t_lP86R.js",
+      "_search-pgtlLRgs.js",
+      "_index-C7REL6_e.js",
+      "_gamepad-BKjcAtD2.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_users-DtBMk0sz.js",
+      "_trophy-Tx3IvyeC.js",
+      "_x-DLYRcRbV.js"
+    ]
+  },
+  "src/app/player/shop/page.jsx?__react-router-build-client-route": {
+    "file": "assets/page-C7Q-9DGr.js",
+    "name": "page",
+    "src": "src/app/player/shop/page.jsx?__react-router-build-client-route",
+    "isEntry": true,
+    "imports": [
+      "src/app/player/shop/page.jsx",
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_index-C7REL6_e.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_Navigation-uFWfAvUk.js",
+      "_apiBase-uKT1-15E.js",
+      "_gamepad-BKjcAtD2.js",
+      "_createLucideIcon-CyDeinbq.js",
+      "_users-DtBMk0sz.js",
+      "_star-BS7t5YYQ.js",
+      "_sparkles-Cq5HuY9N.js",
+      "_trophy-Tx3IvyeC.js",
+      "_x-DLYRcRbV.js",
+      "_index-Dwoj3kwW.js",
+      "_gamepad-2-CIt1vOKC.js",
+      "_arrow-right-UwaTTyFQ.js",
+      "_filter-CRY2orxT.js",
+      "_zap-gCLMcZLD.js",
+      "_trending-up-Dz8cAqw-.js",
+      "_flame-6t_lP86R.js",
+      "_search-pgtlLRgs.js"
+    ]
+  },
+  "src/app/root.tsx?__react-router-build-client-route": {
+    "file": "assets/root-D7o-LAqx.js",
+    "name": "root",
+    "src": "src/app/root.tsx?__react-router-build-client-route",
+    "isEntry": true,
+    "imports": [
+      "_react-vendor-Ct9RIpkg.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_index-Dwoj3kwW.js",
+      "_ui-vendor-Bm7JQX2T.js"
+    ],
+    "assets": [
+      "assets/global-Bk2Qd6KH.css",
+      "assets/animations-B0wTSEwz.css"
+    ]
+  },
+  "src/app/test-api/page.jsx?__react-router-build-client-route": {
+    "file": "assets/page-CqZrN7s-.js",
+    "name": "page",
+    "src": "src/app/test-api/page.jsx?__react-router-build-client-route",
+    "isEntry": true,
+    "imports": [
+      "_react-vendor-Ct9RIpkg.js",
+      "_ui-vendor-Bm7JQX2T.js",
+      "_layout-DT9dxTg9.js",
+      "_PolymorphicComponent-CaeVC8po.js",
+      "_apiBase-uKT1-15E.js",
+      "_index-C7REL6_e.js"
+    ]
+  }
+}
