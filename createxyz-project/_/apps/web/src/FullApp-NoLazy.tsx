@@ -92,7 +92,7 @@ export default function FullApp() {
   return (
     <ChakraProvider>
       <QueryClientProvider client={queryClient}>
-        <BrowserRouter basename="/gamezone">
+        <BrowserRouter basename="/">
           <Routes>
             {/* Page d'accueil SEULE */}
             <Route path="/" element={<HomePage />} />
