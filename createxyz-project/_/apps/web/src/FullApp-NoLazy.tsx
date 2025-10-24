@@ -4,8 +4,8 @@ import { ChakraProvider } from '@chakra-ui/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
 
-// Import DIRECT de la page minimale (pas de lazy loading)
-import HomePage from './app/page-minimal';
+// Import DIRECT de la vraie page d'accueil avec tous les effets
+import HomePage from './app/page';
 
 // Import global styles
 import './app/global.css';
