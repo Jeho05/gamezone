@@ -12,6 +12,12 @@ import { nextPublicProcessEnv } from './plugins/nextPublicProcessEnv';
 export default defineConfig({
   base: '/',
   envPrefix: 'NEXT_PUBLIC_',
+  define: {
+    'process.env.NODE_ENV': JSON.stringify('production'),
+    'process.env.NEXT_PUBLIC_API_BASE': JSON.stringify(process.env.NEXT_PUBLIC_API_BASE || 'http://ismo.gamer.gd/api'),
+    'process.env.NEXT_PUBLIC_KKIAPAY_PUBLIC_KEY': JSON.stringify(process.env.NEXT_PUBLIC_KKIAPAY_PUBLIC_KEY || '072b361d25546db0aee3d69bf07b15331c51e39f'),
+    'process.env.NEXT_PUBLIC_KKIAPAY_SANDBOX': JSON.stringify(process.env.NEXT_PUBLIC_KKIAPAY_SANDBOX || '0'),
+  },
   build: {
     target: 'es2022', // Support top-level await
     outDir: 'build/client',
