@@ -1,25 +1,10 @@
 {
-  "buildCommand": "npm install && npm run build",
-  "outputDirectory": "build/client",
+  "buildCommand": "npm run build:server",
   "installCommand": "npm install --legacy-peer-deps",
-  "framework": null,
   "rewrites": [
     {
       "source": "/api/:path*",
       "destination": "http://ismo.gamer.gd/api/:path*"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
-  ],
-  "routes": [
-    {
-      "handle": "filesystem"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
     }
   ]
 }
