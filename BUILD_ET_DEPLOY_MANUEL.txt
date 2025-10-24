@@ -1,0 +1,90 @@
+╔═══════════════════════════════════════════════════════════════╗
+║                                                               ║
+║         🚀 DÉPLOIEMENT MANUEL NETLIFY (5 MIN)                ║
+║                                                               ║
+╚═══════════════════════════════════════════════════════════════╝
+
+
+❌ POURQUOI MANUEL ?
+═══════════════════════════════════════════════════════════════
+
+React Router 7 + Build Auto Netlify = Erreurs complexes
+Déploiement manuel = Simple et fonctionne à 100% !
+
+
+✅ ÉTAPE 1 : BUILD LOCAL (2 MIN)
+═══════════════════════════════════════════════════════════════
+
+Ouvrez PowerShell et exécutez :
+
+  cd "C:\xampp\htdocs\projet ismo\createxyz-project\_\apps\web"
+  npm run build
+
+Attendez que le build termine (2 minutes)
+
+
+🔍 ÉTAPE 2 : VÉRIFIER (10 SEC)
+═══════════════════════════════════════════════════════════════
+
+Vérifiez que ce dossier existe :
+
+  build/client/
+
+Il doit contenir :
+  • index.html
+  • assets/ (dossier avec JS/CSS)
+  • _redirects
+
+
+📤 ÉTAPE 3 : DRAG & DROP NETLIFY (1 MIN)
+═══════════════════════════════════════════════════════════════
+
+1. Allez sur : https://app.netlify.com/
+
+2. Cliquez sur votre site (gamezone-xxxx)
+
+3. Onglet "Deploys"
+
+4. Section "Need to update your site?"
+
+5. GLISSEZ-DÉPOSEZ le dossier :
+   C:\xampp\htdocs\projet ismo\createxyz-project\_\apps\web\build\client
+
+6. Attendez 20 secondes
+
+7. Testez : https://gamezone-xxxx.netlify.app/
+
+
+✅ RÉSULTAT
+═══════════════════════════════════════════════════════════════
+
+Application fonctionnelle en 5 minutes !
+
+✅ Backend : http://ismo.gamer.gd
+✅ Frontend : https://gamezone-xxxx.netlify.app
+✅ Base de données : MySQL InfinityFree
+
+
+🔄 POUR LES MISES À JOUR
+═══════════════════════════════════════════════════════════════
+
+À chaque modification :
+
+1. npm run build
+2. Drag & drop build/client sur Netlify
+3. Site mis à jour en 30 secondes !
+
+
+⏱️ TEMPS TOTAL : 5 MINUTES
+═══════════════════════════════════════════════════════════════
+
+C'est la méthode la plus rapide et fiable ! 🚀
+
+
+═══════════════════════════════════════════════════════════════
+
+Guide détaillé : DEPLOIEMENT_MANUEL_NETLIFY.md
+
+COMMENCEZ PAR : npm run build
+
+═══════════════════════════════════════════════════════════════

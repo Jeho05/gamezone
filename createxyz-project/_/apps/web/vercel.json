@@ -1,6 +1,7 @@
 {
   "buildCommand": "npm run build:server",
   "installCommand": "npm install --legacy-peer-deps",
+  "framework": "react-router",
   "rewrites": [
     {
       "source": "/api/:path*",
