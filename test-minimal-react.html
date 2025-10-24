@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Minimal React + Basename</title>
+    <style>
+        body { background: #000; color: #0f0; font-family: monospace; padding: 20px; }
+        #debug { background: #111; padding: 20px; margin-bottom: 20px; border: 1px solid #0f0; }
+    </style>
+</head>
+<body>
+    <div id="debug">
+        <h2>🧪 TEST MINIMAL REACT + ROUTER BASENAME</h2>
+        <div id="log"></div>
+    </div>
+    <div id="root"></div>
+
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-router-dom@6/dist/umd/react-router-dom.production.min.js"></script>
+
+    <script>
+        const log = (msg) => {
+            document.getElementById('log').innerHTML += `<div>${msg}</div>`;
+            console.log(msg);
+        };
+
+        log('✅ React loaded: ' + (typeof React !== 'undefined'));
+        log('✅ ReactDOM loaded: ' + (typeof ReactDOM !== 'undefined'));
+        log('✅ ReactRouterDOM loaded: ' + (typeof ReactRouterDOM !== 'undefined'));
+        
+        const { BrowserRouter, Routes, Route } = ReactRouterDOM;
+        const { createElement: h } = React;
+        
+        function App() {
+            return h('div', { style: { padding: '40px', background: '#222', borderRadius: '10px' } },
+                h('h1', { style: { color: '#0f0', fontSize: '3rem' } }, '🎮 GameZone - TEST RÉUSSI !'),
+                h('p', { style: { color: '#fff', fontSize: '1.5rem' } }, 'React + BrowserRouter fonctionne'),
+                h('p', { style: { color: '#ccc' } }, 'Location: ' + window.location.pathname),
+                h('p', { style: { color: '#ccc' } }, 'Basename: /gamezone')
+            );
+        }
+
+        function RouterApp() {
+            return h(BrowserRouter, { basename: '/gamezone' },
+                h(Routes, null,
+                    h(Route, { path: '/', element: h(App) }),
+                    h(Route, { path: '*', element: h('div', null, 'Route: ' + window.location.pathname) })
+                )
+            );
+        }
+
+        try {
+            const root = ReactDOM.createRoot(document.getElementById('root'));
+            root.render(h(RouterApp));
+            log('✅ React mounted successfully!');
+        } catch (error) {
+            log('❌ ERROR: ' + error.message);
+        }
+    </script>
+</body>
+</html>

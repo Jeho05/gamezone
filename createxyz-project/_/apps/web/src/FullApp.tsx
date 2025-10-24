@@ -4,8 +4,8 @@ import { ChakraProvider } from '@chakra-ui/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
 
-// Import direct de la page d'accueil (nouvelle version sans composants problématiques)
-import HomePage from './app/NewHomePage';
+// Import direct de la page d'accueil MINIMALE (sans composants complexes)
+import HomePage from './app/page-minimal';
 
 // Lazy load des autres pages pour éviter les erreurs de chargement initial
 const LoginPage = lazy(() => import('./app/auth/login/page'));
@@ -72,7 +72,7 @@ export default function FullApp() {
   return (
     <ChakraProvider>
       <QueryClientProvider client={queryClient}>
-        <BrowserRouter>
+        <BrowserRouter basename="/gamezone">
           <Suspense fallback={<LoadingFallback />}>
             <Routes>
               {/* Public routes */}

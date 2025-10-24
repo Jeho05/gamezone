@@ -1,0 +1,94 @@
+╔═══════════════════════════════════════════════════════════════╗
+║                                                               ║
+║         🚀 3 ALTERNATIVES DE DÉPLOIEMENT RAPIDES             ║
+║                                                               ║
+╚═══════════════════════════════════════════════════════════════╝
+
+
+OPTION 1 : GITHUB PAGES (RECOMMANDÉ) ⭐
+═══════════════════════════════════════════════════════════════
+
+✅ Le plus simple
+✅ Gratuit illimité
+✅ 1 commande pour déployer
+✅ Fonctionne à 100% avec React SPA
+
+Commandes :
+  npm install --save-dev gh-pages
+  npm run deploy
+
+URL finale : https://Jeho05.github.io/gamezone
+
+Temps : 5 minutes
+
+
+OPTION 2 : RENDER.COM (Automatique)
+═══════════════════════════════════════════════════════════════
+
+✅ Gratuit (avec limitations)
+✅ Déploiement auto depuis GitHub
+✅ Support React natif
+✅ Pas de configuration compliquée
+
+Étapes :
+1. Allez sur https://render.com/
+2. "New" → "Static Site"
+3. Connectez GitHub
+4. Sélectionnez votre repo
+5. Build command : npm run build
+6. Publish directory : build/client
+
+URL : https://gamezone-xxxx.onrender.com
+
+Temps : 3 minutes
+
+
+OPTION 3 : SURGE.SH (Ultra Simple)
+═══════════════════════════════════════════════════════════════
+
+✅ Ultra rapide
+✅ CLI simple
+✅ Gratuit
+✅ Domaine personnalisé possible
+
+Commandes :
+  npm install -g surge
+  npm run build
+  surge build/client gamezone.surge.sh
+
+URL : https://gamezone.surge.sh
+
+Temps : 2 minutes
+
+
+OPTION 4 : CONTINUER AVEC BACKEND PHP (Hébergement Actuel)
+═══════════════════════════════════════════════════════════════
+
+✅ Utiliser votre hébergement InfinityFree actuel
+✅ Uploader build/client via FTP
+✅ Tout au même endroit (frontend + backend)
+
+Étapes :
+1. npm run build
+2. FTP vers http://ismo.gamer.gd/
+3. Uploader le contenu de build/client/
+
+URL : http://ismo.gamer.gd
+
+Temps : 3 minutes
+
+
+═══════════════════════════════════════════════════════════════
+
+RECOMMANDATION : GitHub Pages (Option 1)
+
+C'est le plus fiable et le plus simple !
+
+═══════════════════════════════════════════════════════════════
+
+
+VOULEZ-VOUS QUE JE CONFIGURE GITHUB PAGES MAINTENANT ?
+
+Dites simplement OUI et je le fais en 2 minutes !
+
+═══════════════════════════════════════════════════════════════

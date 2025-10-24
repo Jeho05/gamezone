@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test GitHub Pages Load</title>
+</head>
+<body>
+    <h1>Test de Chargement GitHub Pages</h1>
+    <div id="results"></div>
+    
+    <script>
+        const results = document.getElementById('results');
+        
+        async function testURL(url, name) {
+            try {
+                const response = await fetch(url);
+                const status = response.status;
+                const type = response.headers.get('content-type');
+                
+                results.innerHTML += `
+                    <p style="color: ${status === 200 ? 'green' : 'red'}">
+                        <strong>${name}</strong><br>
+                        Status: ${status}<br>
+                        Type: ${type}<br>
+                        URL: ${url}
+                    </p>
+                `;
+            } catch (error) {
+                results.innerHTML += `
+                    <p style="color: red">
+                        <strong>${name}</strong><br>
+                        Error: ${error.message}
+                    </p>
+                `;
+            }
+        }
+        
+        // Test tous les fichiers critiques
+        testURL('https://Jeho05.github.io/gamezone/', 'Page principale');
+        testURL('https://Jeho05.github.io/gamezone/assets/index-CZ38SZtb.js', 'JS Principal');
+        testURL('https://Jeho05.github.io/gamezone/assets/react-vendor-BXH1ZKCn.js', 'React Vendor');
+        testURL('https://Jeho05.github.io/gamezone/assets/index-BNvCO-8l.css', 'CSS Principal');
+        testURL('https://Jeho05.github.io/gamezone/assets/page-CvLpYLL2.js', 'Page Home');
+    </script>
+</body>
+</html>

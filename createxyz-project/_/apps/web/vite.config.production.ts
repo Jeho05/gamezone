@@ -10,6 +10,7 @@ import { loadFontsFromTailwindSource } from './plugins/loadFontsFromTailwindSour
 import { nextPublicProcessEnv } from './plugins/nextPublicProcessEnv';
 
 export default defineConfig({
+  base: '/',
   envPrefix: 'NEXT_PUBLIC_',
   build: {
     target: 'es2022', // Support top-level await
