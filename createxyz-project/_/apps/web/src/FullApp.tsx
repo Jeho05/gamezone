@@ -4,8 +4,8 @@ import { ChakraProvider } from '@chakra-ui/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
 
-// Import direct de la page d'accueil (critique)
-// import HomePage from './app/page'; // Temporairement désactivé
+// Import direct de la page d'accueil (nouvelle version sans composants problématiques)
+import HomePage from './app/NewHomePage';
 
 // Lazy load des autres pages pour éviter les erreurs de chargement initial
 const LoginPage = lazy(() => import('./app/auth/login/page'));
@@ -75,54 +75,25 @@ export default function FullApp() {
         <BrowserRouter>
           <Suspense fallback={<LoadingFallback />}>
             <Routes>
-                {/* Public routes */}
-                <Route path="/" element={
-                  <div style={{
-                    minHeight: '100vh',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                    color: 'white',
-                    fontFamily: 'Arial, sans-serif',
-                    textAlign: 'center',
-                    padding: '20px'
-                  }}>
-                    <div>
-                      <h1 style={{ fontSize: '3rem', marginBottom: '1rem' }}>🎮 GameZone</h1>
-                      <p style={{ fontSize: '1.5rem', marginBottom: '2rem' }}>Bienvenue !</p>
-                      <a href="/auth/login" style={{
-                        display: 'inline-block',
-                        background: 'white',
-                        color: '#667eea',
-                        padding: '15px 30px',
-                        borderRadius: '10px',
-                        textDecoration: 'none',
-                        fontWeight: 'bold',
-                        marginRight: '10px'
-                      }}>
-                        Se connecter
-                      </a>
-                      <a href="/auth/register" style={{
-                        display: 'inline-block',
-                        background: 'rgba(255,255,255,0.2)',
-                        color: 'white',
-                        padding: '15px 30px',
-                        borderRadius: '10px',
-                        textDecoration: 'none',
-                        fontWeight: 'bold'
-                      }}>
-                        S'inscrire
-                      </a>
-                    </div>
-                  </div>
-                } />
-                <Route path="/auth/login" element={<LoginPage />} />
-                <Route path="/auth/register" element={<RegisterPage />} />
+              {/* Public routes */}
+              <Route path="/" element={<HomePage />} />
+              <Route path="/auth/login" element={<LoginPage />} />
+              <Route path="/auth/register" element={<RegisterPage />} />
 
-                {/* Player routes */}
-                <Route path="/player/dashboard" element={<PlayerDashboard />} />
-                <Route path="/player/profile" element={<PlayerProfile />} />
+              {/* Player routes */}
+              <Route path="/player/dashboard" element={<PlayerDashboard />} />
+              <Route path="/player/profile" element={<PlayerProfile />} />
+              <Route path="/player/shop" element={<PlayerShop />} />
+              <Route path="/player/rewards" element={<PlayerRewards />} />
+              <Route path="/player/leaderboard" element={<PlayerLeaderboard />} />
+              <Route path="/player/progression" element={<PlayerProgression />} />
+              <Route path="/player/gallery" element={<PlayerGallery />} />
+              <Route path="/player/my-session" element={<PlayerMySession />} />
+              <Route path="/player/my-reservations" element={<PlayerMyReservations />} />
+              <Route path="/player/my-invoices" element={<PlayerMyInvoices />} />
+              <Route path="/player/my-purchases" element={<PlayerMyPurchases />} />
+              <Route path="/player/gamification" element={<PlayerGamification />} />
+              <Route path="/player/convert-points" element={<PlayerConvertPoints />} />
                 <Route path="/player/shop" element={<PlayerShop />} />
                 <Route path="/player/rewards" element={<PlayerRewards />} />
                 <Route path="/player/leaderboard" element={<PlayerLeaderboard />} />
