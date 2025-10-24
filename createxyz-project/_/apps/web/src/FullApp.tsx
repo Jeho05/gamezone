@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ChakraProvider } from '@chakra-ui/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
+import { lazy, Suspense } from 'react';
 
 // Import direct de la page d'accueil MINIMALE (sans composants complexes)
 import HomePage from './app/page-minimal';
@@ -72,7 +73,7 @@ export default function FullApp() {
   return (
     <ChakraProvider>
       <QueryClientProvider client={queryClient}>
-        <BrowserRouter basename="/gamezone">
+        <BrowserRouter basename="/">
           <Suspense fallback={<LoadingFallback />}>
             <Routes>
               {/* Public routes */}
