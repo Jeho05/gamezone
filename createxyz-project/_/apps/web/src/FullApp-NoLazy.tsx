@@ -25,6 +25,8 @@ import AdminLevels from './app/admin/levels/page';
 import AdminBonuses from './app/admin/bonuses/page';
 import AdminSessions from './app/admin/sessions/page';
 import AdminInvoiceScanner from './app/admin/invoice-scanner/page';
+import LoginPage from './app/auth/login/page';
+import RegisterPage from './app/auth/register/page';
 
 // Import global styles
 import './app/global.css';
@@ -201,11 +203,11 @@ export default function FullApp() {
     },
     {
       path: "/auth/login",
-      element: <ComingSoonPage title="Connexion" />,
+      element: <LoginPage />,
     },
     {
       path: "/auth/register",
-      element: <ComingSoonPage title="Inscription" />,
+      element: <RegisterPage />,
     },
     {
       path: "*",
