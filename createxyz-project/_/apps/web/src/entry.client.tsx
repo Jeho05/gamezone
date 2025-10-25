@@ -1,6 +1,16 @@
 import { createRoot } from 'react-dom/client';
 import FullApp from './FullApp-NoLazy';
 
+// Global error handling
+window.addEventListener('error', (event) => {
+  console.error('🚨 Global error caught:', event.error);
+  console.error('Error stack:', event.error?.stack);
+});
+
+window.addEventListener('unhandledrejection', (event) => {
+  console.error('🚨 Unhandled promise rejection:', event.reason);
+});
+
 // Initialiser l'application
 console.log('🚀 Starting GameZone app...');
 console.log('Environment:', process.env.NODE_ENV);
