@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { RouterProvider, createBrowserRouter } from 'react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
 import { ErrorBoundary } from './components/ErrorBoundary';
@@ -89,31 +89,40 @@ function ComingSoonPage({ title }: { title: string }) {
 export default function FullApp() {
   console.log('✅ FullApp-NoLazy rendering...');
   
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: (
+        <ErrorBoundary componentName="HomePage">
+          <HomePage />
+        </ErrorBoundary>
+      ),
+    },
+    {
+      path: "/auth/login",
+      element: <ComingSoonPage title="Connexion" />,
+    },
+    {
+      path: "/auth/register",
+      element: <ComingSoonPage title="Inscription" />,
+    },
+    {
+      path: "/player/*",
+      element: <ComingSoonPage title="Espace Joueur" />,
+    },
+    {
+      path: "/admin/*",
+      element: <ComingSoonPage title="Espace Admin" />,
+    },
+    {
+      path: "*",
+      element: <NotFoundPage />,
+    },
+  ]);
+  
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter basename="/">
-        <Routes>
-          {/* Page d'accueil SEULE */}
-          <Route path="/" element={
-            <ErrorBoundary componentName="HomePage">
-              <HomePage />
-            </ErrorBoundary>
-          } />
-          
-          {/* Auth pages - Coming Soon */}
-          <Route path="/auth/login" element={<ComingSoonPage title="Connexion" />} />
-          <Route path="/auth/register" element={<ComingSoonPage title="Inscription" />} />
-          
-          {/* Player pages - Coming Soon */}
-          <Route path="/player/*" element={<ComingSoonPage title="Espace Joueur" />} />
-          
-          {/* Admin pages - Coming Soon */}
-          <Route path="/admin/*" element={<ComingSoonPage title="Espace Admin" />} />
-          
-          {/* 404 pour tout le reste */}
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
-      </BrowserRouter>
+      <RouterProvider router={router} />
       <Toaster position="top-right" />
     </QueryClientProvider>
   );
