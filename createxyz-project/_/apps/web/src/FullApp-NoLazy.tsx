@@ -2,6 +2,7 @@ import { Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 // Import DIRECT de la vraie page d'accueil avec tous les effets
 import HomePage from './app/page';
@@ -93,7 +94,11 @@ export default function FullApp() {
       <BrowserRouter basename="/">
         <Routes>
           {/* Page d'accueil SEULE */}
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={
+            <ErrorBoundary componentName="HomePage">
+              <HomePage />
+            </ErrorBoundary>
+          } />
           
           {/* Auth pages - Coming Soon */}
           <Route path="/auth/login" element={<ComingSoonPage title="Connexion" />} />
