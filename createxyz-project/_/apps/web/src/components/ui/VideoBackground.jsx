@@ -8,26 +8,38 @@ export default function VideoBackground({
   className = ''
 }) {
   const videoRef = useRef(null);
-  const [showVideo, setShowVideo] = useState(true);
+  const [showVideo, setShowVideo] = useState(false); // Start with false
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const smallScreen = window.matchMedia('(max-width: 640px)');
-    const update = () => {
-      setShowVideo(!(reduceMotion.matches || smallScreen.matches));
-    };
-    update();
-    reduceMotion.addEventListener('change', update);
-    smallScreen.addEventListener('change', update);
-    return () => {
-      reduceMotion.removeEventListener('change', update);
-      smallScreen.removeEventListener('change', update);
-    };
+    try {
+      if (typeof window === 'undefined') return;
+      
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const smallScreen = window.matchMedia('(max-width: 640px)');
+      const update = () => {
+        setShowVideo(!(reduceMotion.matches || smallScreen.matches));
+      };
+      update();
+      reduceMotion.addEventListener('change', update);
+      smallScreen.addEventListener('change', update);
+      return () => {
+        reduceMotion.removeEventListener('change', update);
+        smallScreen.removeEventListener('change', update);
+      };
+    } catch (err) {
+      console.error('VideoBackground setup error:', err);
+      setError(true);
+    }
   }, []);
 
   useEffect(() => {
-    if (showVideo && videoRef.current) {
-      videoRef.current.playbackRate = 0.75;
+    try {
+      if (showVideo && videoRef.current) {
+        videoRef.current.playbackRate = 0.75;
+      }
+    } catch (err) {
+      console.error('Video playback error:', err);
     }
   }, [showVideo]);
 
@@ -35,8 +47,11 @@ export default function VideoBackground({
     <div className={`relative ${className}`}>
       {/* Decorative Background Layer (clipped) */}
       <div className="absolute inset-0 overflow-hidden">
+        {/* Fallback gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-900 via-black to-pink-900" />
+        
         {/* Video Background */}
-        {showVideo && (
+        {showVideo && !error && (
           <video
             ref={videoRef}
             autoPlay
@@ -45,6 +60,10 @@ export default function VideoBackground({
             playsInline
             preload="metadata"
             className="absolute top-0 left-0 w-full h-full object-cover"
+            onError={() => {
+              console.warn('Video failed to load, using fallback');
+              setError(true);
+            }}
           >
             <source src={videoSrc} type="video/mp4" />
           </video>
