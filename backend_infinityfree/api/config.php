@@ -33,6 +33,11 @@ if (!strpos($_SERVER['REQUEST_URI'] ?? '', 'test.php')) {
     Logger::logRequest();
 }
 
+// Auto-install database if tables don't exist (Railway first run)
+if (file_exists(__DIR__ . '/auto_install.php')) {
+    require_once __DIR__ . '/auto_install.php';
+}
+
 // Handle OPTIONS immediately before any other processing
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     $origin = $_SERVER['HTTP_ORIGIN'] ?? 'http://localhost:4000';
