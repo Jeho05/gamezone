@@ -51,10 +51,23 @@ if (session_status() === PHP_SESSION_NONE) {
   
   // Harden cookies: HttpOnly, SameSite (configurable), and Secure in prod
   ini_set('session.cookie_httponly', '1');
-  // Use parsed env values directly instead of getenv() to avoid system override
-  $sameSite = $envVars['SESSION_SAMESITE'] ?? getenv('SESSION_SAMESITE') ?: 'Lax';
+  
+  // CRITICAL: Force None for cross-site cookies (Railway production)
+  // Check if we're on Railway (production) or localhost (dev)
+  $isProduction = isset($_SERVER['RAILWAY_ENVIRONMENT']) || 
+                  (isset($_SERVER['HTTP_HOST']) && strpos($_SERVER['HTTP_HOST'], 'railway.app') !== false);
+  
+  if ($isProduction) {
+    // Railway production: MUST use None for cross-site
+    $sameSite = 'None';
+    $secure = '1';
+  } else {
+    // Local dev: use env vars or defaults
+    $sameSite = $envVars['SESSION_SAMESITE'] ?? getenv('SESSION_SAMESITE') ?: 'Lax';
+    $secure = ($envVars['SESSION_SECURE'] ?? getenv('SESSION_SECURE')) === '1' ? '1' : '0';
+  }
+  
   ini_set('session.cookie_samesite', $sameSite);
-  $secure = ($envVars['SESSION_SECURE'] ?? getenv('SESSION_SECURE')) === '1' ? '1' : '0';
   ini_set('session.cookie_secure', $secure);
   
   // Augmenter la durée de vie de la session (24 heures par défaut)
