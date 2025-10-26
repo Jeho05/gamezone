@@ -1,0 +1,3 @@
+VERSION 2.0 - Force rebuild to fix PHP ternary syntax error
+Deployed: 2025-10-26
+Fixed files: test-session.php, config.php

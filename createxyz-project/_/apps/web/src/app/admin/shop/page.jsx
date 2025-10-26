@@ -1,10 +1,6 @@
 'use client';
-
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navigation from '../../../components/Navigation';
-import ImageUpload from '../../../components/ImageUpload';
-import PackageModal from '../../../components/admin/PackageModal';
-import PaymentMethodModal from '../../../components/admin/PaymentMethodModal';
 import { 
   Gamepad2, 
   Package, 
@@ -94,160 +90,25 @@ export default function AdminShop() {
     }
   };
 
-  const loadReservations = async () => {
-    try {
-      setLoading(true);
-      console.log('🔄 Chargement des réservations...');
-      const res = await fetch(`${API_BASE}/admin/reservations.php`, { credentials: 'include' });
-      const data = await res.json();
-      console.log('📅 Réservations reçues:', data);
-      if (data.reservations) {
-        setReservations(data.reservations);
-        console.log('✅ Réservations chargées:', data.reservations.length);
-      } else {
-        console.log('⚠️ Aucune réservation dans la réponse');
-      }
-    } catch (err) {
-      console.error('❌ Erreur chargement réservations:', err);
-      toast.error('Erreur chargement réservations');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const confirmReservation = async (reservationId) => {
-    if (!confirm('Confirmer cette réservation ? Le paiement sera validé.')) return;
-    
-    try {
-      const res = await fetch(`${API_BASE}/admin/reservations.php`, {
-        method: 'PATCH',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: reservationId, action: 'confirm' })
-      });
-      
-      const data = await res.json();
-      if (data.success) {
-        toast.success('Réservation confirmée avec succès');
-        loadReservations();
-      } else {
-        toast.error(data.error || 'Erreur lors de la confirmation');
-      }
-    } catch (err) {
-      console.error('Erreur confirmation réservation:', err);
-      toast.error('Erreur lors de la confirmation');
-    }
-  };
-
-  const cancelReservation = async (reservationId) => {
-    if (!confirm('Annuler cette réservation ?')) return;
-    
-    try {
-      const res = await fetch(`${API_BASE}/admin/reservations.php`, {
-        method: 'PATCH',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: reservationId, action: 'cancel' })
-      });
-      
-      const data = await res.json();
-      if (data.success) {
-        toast.success('Réservation annulée');
-        loadReservations();
-      } else {
-        toast.error(data.error || 'Erreur lors de l\'annulation');
-      }
-    } catch (err) {
-      console.error('Erreur annulation réservation:', err);
-      toast.error('Erreur lors de l\'annulation');
-    }
-  };
-
-  const markReservationCompleted = async (reservationId) => {
-    if (!confirm('Marquer cette réservation comme complétée ?')) return;
-    
-    try {
-      const res = await fetch(`${API_BASE}/admin/reservations.php`, {
-        method: 'PATCH',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: reservationId, action: 'mark_completed' })
-      });
-      
-      const data = await res.json();
-      if (data.success) {
-        toast.success('Réservation marquée comme complétée');
-        loadReservations();
-      } else {
-        toast.error(data.error || 'Erreur');
-      }
-    } catch (err) {
-      console.error('Erreur:', err);
-      toast.error('Erreur');
-    }
-  };
-
-  const markReservationNoShow = async (reservationId) => {
-    if (!confirm('Marquer cette réservation comme no-show ?')) return;
-    
-    try {
-      const res = await fetch(`${API_BASE}/admin/reservations.php`, {
-        method: 'PATCH',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: reservationId, action: 'mark_no_show' })
-      });
-      
-      const data = await res.json();
-      if (data.success) {
-        toast.success('Marqué comme no-show');
-        loadReservations();
-      } else {
-        toast.error(data.error || 'Erreur');
-      }
-    } catch (err) {
-      console.error('Erreur:', err);
-      toast.error('Erreur');
-    }
-  };
-  const formatNumber = (value) => Number(value ?? 0).toLocaleString('fr-FR');
-  const formatDateTime = (value) => (value ? new Date(value).toLocaleString('fr-FR') : '—');
-
-  const emptyForm = {
-    name: '',
-    slug: '',
-    description: '',
-    short_description: '',
-    image_url: '',
-    thumbnail_url: '',
-    category: 'action',
-    platform: '',
-    min_players: 1,
-    max_players: 1,
-    age_rating: '',
-    points_per_hour: 10,
-    base_price: 0,
-    is_reservable: false,
-    reservation_fee: 0,
-    is_featured: false
-  };
-
+  // Load all data
   useEffect(() => {
-    console.log('🔀 Onglet actif changé:', activeTab);
-    if (activeTab === 'games') loadGames();
-    if (activeTab === 'packages') loadPackages();
-    if (activeTab === 'payment-methods') loadPaymentMethods();
-    if (activeTab === 'purchases') loadPurchases();
-    if (activeTab === 'reservations') loadReservations();
-  }, [activeTab]);
+    loadGames();
+    loadPackages();
+    loadPaymentMethods();
+    loadPurchases();
+    loadReservations();
+  }, []);
 
   const loadGames = async () => {
     try {
       setLoading(true);
       const res = await fetch(`${API_BASE}/admin/games.php`, { credentials: 'include' });
       const data = await res.json();
-      if (data.games) setGames(data.games);
+      if (data.games) {
+        setGames(data.games);
+      }
     } catch (err) {
+      console.error('Erreur chargement jeux:', err);
       toast.error('Erreur chargement jeux');
     } finally {
       setLoading(false);
@@ -257,22 +118,13 @@ export default function AdminShop() {
   const loadPackages = async () => {
     try {
       setLoading(true);
-      console.log('🔄 Chargement des packages...');
-      // Ajouter un timestamp pour éviter le cache
-      const res = await fetch(`${API_BASE}/admin/game_packages.php?t=${Date.now()}`, { 
-        credentials: 'include',
-        cache: 'no-cache'
-      });
+      const res = await fetch(`${API_BASE}/admin/packages.php`, { credentials: 'include' });
       const data = await res.json();
-      console.log('📦 Packages reçus:', data);
       if (data.packages) {
         setPackages(data.packages);
-        console.log('✅ Packages chargés:', data.packages.length);
-      } else {
-        console.log('⚠️ Aucun package dans la réponse');
       }
     } catch (err) {
-      console.error('❌ Erreur chargement packages:', err);
+      console.error('Erreur chargement packages:', err);
       toast.error('Erreur chargement packages');
     } finally {
       setLoading(false);
@@ -282,19 +134,14 @@ export default function AdminShop() {
   const loadPaymentMethods = async () => {
     try {
       setLoading(true);
-      console.log('🔄 Chargement des méthodes de paiement...');
-      const res = await fetch(`${API_BASE}/admin/payment_methods_simple.php`, { credentials: 'include' });
+      const res = await fetch(`${API_BASE}/admin/payment_methods.php`, { credentials: 'include' });
       const data = await res.json();
-      console.log('💳 Méthodes de paiement reçues:', data);
-      if (data.payment_methods) {
-        setPaymentMethods(data.payment_methods);
-        console.log('✅ Méthodes chargées:', data.payment_methods.length);
-      } else {
-        console.log('⚠️ Aucune méthode dans la réponse');
+      if (data.methods) {
+        setPaymentMethods(data.methods);
       }
     } catch (err) {
-      console.error('❌ Erreur chargement méthodes paiement:', err);
-      toast.error('Erreur chargement méthodes paiement');
+      console.error('Erreur chargement méthodes de paiement:', err);
+      toast.error('Erreur chargement méthodes de paiement');
     } finally {
       setLoading(false);
     }
@@ -303,1035 +150,1473 @@ export default function AdminShop() {
   const loadPurchases = async () => {
     try {
       setLoading(true);
-      console.log('🔄 Chargement des achats...');
       const res = await fetch(`${API_BASE}/admin/purchases.php`, { credentials: 'include' });
       const data = await res.json();
-      console.log('🛒 Achats reçus:', data);
       if (data.purchases) {
         setPurchases(data.purchases);
-        console.log('✅ Achats chargés:', data.purchases.length);
-      } else {
-        console.log('⚠️ Aucun achat dans la réponse');
       }
     } catch (err) {
-      console.error('❌ Erreur chargement achats:', err);
+      console.error('Erreur chargement achats:', err);
       toast.error('Erreur chargement achats');
     } finally {
       setLoading(false);
     }
   };
 
-  const confirmPurchase = async (purchaseId) => {
-    if (!confirm('Confirmer ce paiement ?')) return;
+  const loadReservations = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(`${API_BASE}/admin/reservations.php`, { credentials: 'include' });
+      const data = await res.json();
+      if (data.reservations) {
+        setReservations(data.reservations);
+      }
+    } catch (err) {
+      console.error('Erreur chargement réservations:', err);
+      toast.error('Erreur chargement réservations');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Game CRUD
+  const handleGameSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
     
     try {
-      const res = await fetch(`${API_BASE}/admin/purchases.php`, {
-        method: 'PATCH',
+      const method = editingGame ? 'PUT' : 'POST';
+      const url = editingGame 
+        ? `${API_BASE}/admin/games.php?id=${editingGame.id}`
+        : `${API_BASE}/admin/games.php`;
+        
+      const res = await fetch(url, {
+        method,
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: purchaseId, action: 'confirm_payment' })
+        body: JSON.stringify(gameForm)
       });
       
       const data = await res.json();
       if (data.success) {
-        toast.success('Paiement confirmé avec succès');
-        loadPurchases();
+        toast.success(editingGame ? 'Jeu mis à jour' : 'Jeu créé');
+        setShowGameModal(false);
+        setEditingGame(null);
+        setGameForm({
+          name: '',
+          slug: '',
+          description: '',
+          short_description: '',
+          image_url: '',
+          thumbnail_url: '',
+          category: 'action',
+          platform: '',
+          min_players: 1,
+          max_players: 1,
+          age_rating: '',
+          points_per_hour: 10,
+          base_price: 0,
+          is_reservable: false,
+          reservation_fee: 0,
+          is_featured: false
+        });
+        loadGames();
       } else {
-        toast.error(data.error || 'Erreur lors de la confirmation');
+        toast.error(data.error || 'Erreur');
       }
     } catch (err) {
-      toast.error('Erreur lors de la confirmation');
+      console.error('Erreur:', err);
+      toast.error('Erreur réseau');
+    } finally {
+      setSubmitting(false);
     }
   };
 
-  const deleteGame = async (gameId) => {
-    if (!confirm('Supprimer ce jeu ? Cette action est irréversible.')) return;
+  // Package CRUD
+  const handlePackageSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
     
     try {
-      const res = await fetch(`${API_BASE}/admin/games.php?id=${gameId}`, {
+      const method = editingPackage ? 'PUT' : 'POST';
+      const url = editingPackage 
+        ? `${API_BASE}/admin/packages.php?id=${editingPackage.id}`
+        : `${API_BASE}/admin/packages.php`;
+        
+      const res = await fetch(url, {
+        method,
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(packageForm)
+      });
+      
+      const data = await res.json();
+      if (data.success) {
+        toast.success(editingPackage ? 'Package mis à jour' : 'Package créé');
+        setShowPackageModal(false);
+        setEditingPackage(null);
+        setPackageForm({
+          game_id: '',
+          name: '',
+          duration_minutes: 60,
+          price: 0,
+          original_price: null,
+          points_earned: 0,
+          bonus_multiplier: 1.0,
+          is_promotional: false,
+          promotional_label: '',
+          max_purchases_per_user: null,
+          is_active: true,
+          display_order: 0
+        });
+        loadPackages();
+      } else {
+        toast.error(data.error || 'Erreur');
+      }
+    } catch (err) {
+      console.error('Erreur:', err);
+      toast.error('Erreur réseau');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // Payment Method CRUD
+  const handlePaymentSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
+    
+    try {
+      const method = editingPayment ? 'PUT' : 'POST';
+      const url = editingPayment 
+        ? `${API_BASE}/admin/payment_methods.php?id=${editingPayment.id}`
+        : `${API_BASE}/admin/payment_methods.php`;
+        
+      const res = await fetch(url, {
+        method,
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(paymentForm)
+      });
+      
+      const data = await res.json();
+      if (data.success) {
+        toast.success(editingPayment ? 'Méthode mise à jour' : 'Méthode créée');
+        setShowPaymentModal(false);
+        setEditingPayment(null);
+        setPaymentForm({
+          name: '',
+          description: '',
+          provider: 'manual',
+          fee_percentage: 0,
+          fee_fixed: 0,
+          is_active: true,
+          auto_confirm: false,
+          requires_online_payment: false,
+          display_order: 0
+        });
+        loadPaymentMethods();
+      } else {
+        toast.error(data.error || 'Erreur');
+      }
+    } catch (err) {
+      console.error('Erreur:', err);
+      toast.error('Erreur réseau');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // Edit/Delete handlers
+  const editGame = (game) => {
+    setEditingGame(game);
+    setGameForm(game);
+    setShowGameModal(true);
+  };
+
+  const deleteGame = async (id) => {
+    if (!confirm('Supprimer ce jeu ?')) return;
+    
+    try {
+      const res = await fetch(`${API_BASE}/admin/games.php?id=${id}`, {
         method: 'DELETE',
         credentials: 'include'
       });
       
       const data = await res.json();
       if (data.success) {
-        toast.success('Jeu supprimé avec succès');
+        toast.success('Jeu supprimé');
         loadGames();
       } else {
-        toast.error(data.error || 'Erreur lors de la suppression');
+        toast.error(data.error || 'Erreur');
       }
     } catch (err) {
-      toast.error('Erreur lors de la suppression');
+      console.error('Erreur:', err);
+      toast.error('Erreur réseau');
     }
   };
 
-  const deletePackage = async (packageId) => {
+  const editPackage = (pkg) => {
+    setEditingPackage(pkg);
+    setPackageForm(pkg);
+    setShowPackageModal(true);
+  };
+
+  const deletePackage = async (id) => {
     if (!confirm('Supprimer ce package ?')) return;
     
     try {
-      const res = await fetch(`${API_BASE}/admin/game_packages.php?id=${packageId}`, {
+      const res = await fetch(`${API_BASE}/admin/packages.php?id=${id}`, {
         method: 'DELETE',
         credentials: 'include'
       });
       
       const data = await res.json();
       if (data.success) {
-        toast.success('Package supprimé avec succès');
+        toast.success('Package supprimé');
         loadPackages();
       } else {
-        toast.error(data.error || 'Erreur lors de la suppression');
+        toast.error(data.error || 'Erreur');
       }
     } catch (err) {
-      toast.error('Erreur lors de la suppression');
+      console.error('Erreur:', err);
+      toast.error('Erreur réseau');
     }
   };
 
-  const deletePaymentMethod = async (methodId) => {
-    if (!confirm('Supprimer cette méthode de paiement ?')) return;
+  const editPaymentMethod = (method) => {
+    setEditingPayment(method);
+    setPaymentForm(method);
+    setShowPaymentModal(true);
+  };
+
+  const deletePaymentMethod = async (id) => {
+    if (!confirm('Supprimer cette méthode ?')) return;
     
     try {
-      const res = await fetch(`${API_BASE}/admin/payment_methods_simple.php?id=${methodId}`, {
+      const res = await fetch(`${API_BASE}/admin/payment_methods.php?id=${id}`, {
         method: 'DELETE',
         credentials: 'include'
       });
       
       const data = await res.json();
       if (data.success) {
-        toast.success('Méthode supprimée avec succès');
+        toast.success('Méthode supprimée');
         loadPaymentMethods();
       } else {
-        toast.error(data.error || 'Erreur lors de la suppression');
+        toast.error(data.error || 'Erreur');
       }
     } catch (err) {
-      toast.error('Erreur lors de la suppression');
+      console.error('Erreur:', err);
+      toast.error('Erreur réseau');
     }
   };
 
-  const handleGameFormChange = (field, value) => {
-    setGameForm(prev => ({ ...prev, [field]: value }));
-    // Auto-generate slug from name (only when creating, not editing)
-    if (field === 'name' && !editingGame && !gameForm.slug) {
-      const slug = value.toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '');
-      setGameForm(prev => ({ ...prev, slug }));
-    }
-  };
+  // Filter data
+  const filteredGames = games.filter(game => 
+    game.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    game.category.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-  const handleOpenCreateModal = () => {
-    setEditingGame(null);
-    setGameForm(emptyForm);
-    setShowGameModal(true);
-  };
+  const filteredPackages = packages.filter(pkg => 
+    pkg.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (pkg.game && pkg.game.name.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
 
-  const handleOpenEditModal = (game) => {
-    setEditingGame(game);
-    setGameForm({
-      name: game.name || '',
-      slug: game.slug || '',
-      description: game.description || '',
-      short_description: game.short_description || '',
-      image_url: game.image_url || '',
-      thumbnail_url: game.thumbnail_url || '',
-      category: game.category || 'action',
-      platform: game.platform || '',
-      min_players: game.min_players || 1,
-      max_players: game.max_players || 1,
-      age_rating: game.age_rating || '',
-      points_per_hour: game.points_per_hour || 10,
-      base_price: parseFloat(game.base_price) || 0,
-      is_reservable: game.is_reservable == 1,
-      reservation_fee: parseFloat(game.reservation_fee) || 0,
-      is_featured: game.is_featured == 1
-    });
-    setShowGameModal(true);
-  };
+  const filteredPurchases = purchases.filter(purchase => 
+    purchase.user?.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    purchase.package?.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-  const handleCreateGame = async (e) => {
-    e.preventDefault();
-    
-    if (!gameForm.name) {
-      toast.error('Le nom du jeu est requis');
-      return;
-    }
-    
-    // Générer le slug automatiquement si non fourni
-    const slug = gameForm.slug || gameForm.name.toLowerCase()
-      .trim()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-+|-+$/g, '');
-    
-    try {
-      setSubmitting(true);
-      const res = await fetch(`${API_BASE}/admin/games.php`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...gameForm,
-          slug: slug
-        })
-      });
-      
-      const data = await res.json();
-      
-      if (data.success) {
-        toast.success('Jeu créé avec succès !');
-        setShowGameModal(false);
-        setGameForm(emptyForm);
-        setEditingGame(null);
-        loadGames();
-      } else {
-        toast.error(data.error || 'Erreur lors de la création');
-      }
-    } catch (err) {
-      toast.error('Erreur lors de la création du jeu');
-      console.error(err);
-    } finally {
-      setSubmitting(false);
-    }
-  };
+  const filteredReservations = reservations.filter(reservation => 
+    reservation.user?.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    reservation.game?.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-  const handleUpdateGame = async (e) => {
-    e.preventDefault();
-    
-    if (!gameForm.name) {
-      toast.error('Le nom du jeu est requis');
-      return;
-    }
-    
-    // Générer le slug automatiquement si non fourni
-    const slug = gameForm.slug || gameForm.name.toLowerCase()
-      .trim()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-+|-+$/g, '');
-    
-    try {
-      setSubmitting(true);
-      const res = await fetch(`${API_BASE}/admin/games.php`, {
-        method: 'PUT',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          id: editingGame.id,
-          ...gameForm,
-          slug: slug
-        })
-      });
-      
-      const data = await res.json();
-      
-      if (data.success) {
-        toast.success('Jeu mis à jour avec succès !');
-        setShowGameModal(false);
-        setGameForm(emptyForm);
-        setEditingGame(null);
-        loadGames();
-      } else {
-        toast.error(data.error || 'Erreur lors de la mise à jour');
-      }
-    } catch (err) {
-      toast.error('Erreur lors de la mise à jour du jeu');
-      console.error(err);
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const tabs = [
-    { id: 'games', label: 'Jeux', icon: Gamepad2 },
-    { id: 'packages', label: 'Packages', icon: Package },
-    { id: 'payment-methods', label: 'Paiements', icon: CreditCard },
-    { id: 'purchases', label: 'Achats', icon: ShoppingCart },
-    { id: 'reservations', label: 'Réservations', icon: Calendar }
-  ];
+  const filteredPaymentMethods = paymentMethods.filter(method => 
+    method.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    method.provider.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-indigo-900 to-blue-900">
-      <Navigation userType="admin" />
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      <Navigation userType="admin" currentPage="shop" />
       
-      {/* Main Content with Sidebar Offset */}
       <div className="lg:pl-64">
-        <div className="container mx-auto px-4 py-8">
+        <div className="p-4 lg:p-8">
           {/* Header */}
-          <div className="bg-white rounded-xl shadow-lg p-6 mb-6 text-gray-900">
-            <h1 className="text-3xl font-bold text-purple-600 mb-2 flex items-center gap-3">
-              <Gamepad2 className="w-8 h-8" />
-              Gestion Boutique de Jeux
+          <div className="mb-8">
+            <h1 className="text-3xl lg:text-4xl font-bold text-white mb-2 flex items-center gap-3">
+              <ShoppingCart className="w-10 h-10 text-purple-400" />
+              Boutique et Réservations
             </h1>
-            <p className="text-gray-600">Gérez vos jeux, packages et méthodes de paiement</p>
+            <p className="text-gray-300">Gérez les jeux, packages, paiements et réservations</p>
+          </div>
 
-            {/* Tabs */}
-            <div className="flex gap-4 mt-6 border-b">
-              {tabs.map((tab) => {
-                const Icon = tab.icon;
-                return (
+          {/* Tabs */}
+          <div className="mb-8">
+            <div className="flex flex-wrap gap-2 border-b border-gray-700">
+              <button
+                onClick={() => setActiveTab('games')}
+                className={`px-4 py-2 rounded-t-lg font-medium transition-colors ${
+                  activeTab === 'games' 
+                    ? 'bg-purple-600 text-white' 
+                    : 'text-gray-400 hover:text-white hover:bg-gray-800'
+                }`}
+              >
+                <Gamepad2 className="w-4 h-4 inline mr-2" />
+                Jeux
+              </button>
+              <button
+                onClick={() => setActiveTab('packages')}
+                className={`px-4 py-2 rounded-t-lg font-medium transition-colors ${
+                  activeTab === 'packages' 
+                    ? 'bg-purple-600 text-white' 
+                    : 'text-gray-400 hover:text-white hover:bg-gray-800'
+                }`}
+              >
+                <Package className="w-4 h-4 inline mr-2" />
+                Packages
+              </button>
+              <button
+                onClick={() => setActiveTab('payments')}
+                className={`px-4 py-2 rounded-t-lg font-medium transition-colors ${
+                  activeTab === 'payments' 
+                    ? 'bg-purple-600 text-white' 
+                    : 'text-gray-400 hover:text-white hover:bg-gray-800'
+                }`}
+              >
+                <CreditCard className="w-4 h-4 inline mr-2" />
+                Paiements
+              </button>
+              <button
+                onClick={() => setActiveTab('purchases')}
+                className={`px-4 py-2 rounded-t-lg font-medium transition-colors ${
+                  activeTab === 'purchases' 
+                    ? 'bg-purple-600 text-white' 
+                    : 'text-gray-400 hover:text-white hover:bg-gray-800'
+                }`}
+              >
+                <DollarSign className="w-4 h-4 inline mr-2" />
+                Achats
+              </button>
+              <button
+                onClick={() => setActiveTab('reservations')}
+                className={`px-4 py-2 rounded-t-lg font-medium transition-colors ${
+                  activeTab === 'reservations' 
+                    ? 'bg-purple-600 text-white' 
+                    : 'text-gray-400 hover:text-white hover:bg-gray-800'
+                }`}
+              >
+                <Calendar className="w-4 h-4 inline mr-2" />
+                Réservations
+              </button>
+            </div>
+          </div>
+
+          {/* Search */}
+          <div className="mb-6">
+            <div className="relative max-w-md">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <input
+                type="text"
+                placeholder="Rechercher..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              />
+            </div>
+          </div>
+
+          {/* Content based on active tab */}
+          <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl border border-gray-700 p-6">
+            {activeTab === 'games' && (
+              <div>
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-2xl font-bold text-white">Jeux Disponibles</h2>
                   <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center gap-2 px-4 py-2 font-semibold border-b-2 transition-colors ${
-                      activeTab === tab.id
-                        ? 'border-purple-600 text-purple-600'
-                        : 'border-transparent text-gray-500 hover:text-purple-600'
-                    }`}
+                    onClick={() => {
+                      setEditingGame(null);
+                      setGameForm({
+                        name: '',
+                        slug: '',
+                        description: '',
+                        short_description: '',
+                        image_url: '',
+                        thumbnail_url: '',
+                        category: 'action',
+                        platform: '',
+                        min_players: 1,
+                        max_players: 1,
+                        age_rating: '',
+                        points_per_hour: 10,
+                        base_price: 0,
+                        is_reservable: false,
+                        reservation_fee: 0,
+                        is_featured: false
+                      });
+                      setShowGameModal(true);
+                    }}
+                    className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors"
                   >
-                    <Icon className="w-5 h-5" />
-                    {tab.label}
+                    <Plus className="w-5 h-5" />
+                    Ajouter un jeu
                   </button>
-                );
-              })}
-            </div>
-          </div>
+                </div>
 
-          {/* Games Tab */}
-          {activeTab === 'games' && (
-          <div className="bg-white rounded-xl shadow-lg p-6 text-gray-900">
-            <div className="flex justify-between items-center mb-6">
-              <div className="relative flex-1 max-w-md">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  type="text"
-                  placeholder="Rechercher un jeu..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                />
-              </div>
-              <button
-                onClick={handleOpenCreateModal}
-                className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-              >
-                <Plus className="w-5 h-5" />
-                Ajouter Jeu
-              </button>
-            </div>
-
-            {loading ? (
-              <div className="text-center py-12">
-                <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-purple-600"></div>
-                <p className="text-gray-600 mt-4">Chargement des jeux...</p>
-              </div>
-            ) : games.length === 0 ? (
-              <div className="text-center py-12">
-                <Gamepad2 className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-700 mb-2">Aucun jeu disponible</h3>
-                <p className="text-gray-500 mb-4">Commencez par créer votre premier jeu</p>
-                <button
-                  onClick={handleOpenCreateModal}
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
-                >
-                  <Plus className="w-5 h-5" />
-                  Créer le Premier Jeu
-                </button>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {games.map((game) => (
-                  <div key={game.id} className="border rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
-                    <img
-                      src={game.image_url || 'https://via.placeholder.com/400x200'}
-                      alt={game.name}
-                      className="w-full h-40 object-cover"
-                    />
-                    <div className="p-4">
-                      <h3 className="font-bold text-lg mb-2">{game.name}</h3>
-                      <p className="text-sm text-gray-600 mb-2">{game.short_description}</p>
-                      <div className="flex gap-2 mb-3">
-                        <span className={`px-2 py-1 text-xs rounded ${
-                          game.is_active == 1 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                        }`}>
-                          {game.is_active == 1 ? 'Actif' : 'Inactif'}
-                        </span>
-                        <span className="px-2 py-1 text-xs rounded bg-blue-100 text-blue-700 capitalize">
-                          {game.category}
-                        </span>
-                        {game.is_reservable == 1 && (
-                          <span className="px-2 py-1 text-xs rounded bg-purple-100 text-purple-700">
-                            Réservable
-                          </span>
-                        )}
-                      </div>
-                      <div className="text-sm mb-3">
-                        <strong>{game.points_per_hour} pts/h</strong> • 
-                        <strong> {game.base_price} XOF/h</strong>
-                      </div>
-                      {game.is_reservable == 1 && (
-                        <div className="text-xs text-gray-600 mb-3">
-                          Frais de réservation: <strong className="text-purple-700">{game.reservation_fee} XOF</strong>
-                        </div>
-                      )}
-                      <div className="text-xs text-gray-500 mb-3">
-                        📦 {game.active_packages_count || 0} packages • 
-                        🛒 {game.total_purchases || 0} achats
-                      </div>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => handleOpenEditModal(game)}
-                          className="flex-1 bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600"
-                        >
-                          <Edit className="w-4 h-4 inline-block mr-1" />
-                          Modifier
-                        </button>
-                        <button
-                          onClick={() => deleteGame(game.id)}
-                          className="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
+                {loading ? (
+                  <div className="flex justify-center items-center h-64">
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
                   </div>
-                ))}
-              </div>
-            )}
-          </div>
-          )}
-
-          {/* Packages Tab */}
-          {activeTab === 'packages' && (
-          <div className="bg-white rounded-xl shadow-lg p-6 text-gray-900">
-            <div className="flex justify-end mb-6">
-              <button
-                onClick={() => {
-                  setEditingPackage(null);
-                  setShowPackageModal(true);
-                }}
-                className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
-              >
-                <Plus className="w-5 h-5" />
-                Ajouter Package
-              </button>
-            </div>
-
-            {loading ? (
-              <div className="text-center py-12">
-                <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-purple-600"></div>
-                <p className="text-gray-600 mt-4">Chargement des packages...</p>
-              </div>
-            ) : packages.length === 0 ? (
-              <div className="text-center py-12">
-                <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-700 mb-2">Aucun package</h3>
-                <p className="text-gray-500 mb-4">Commencez par ajouter un package de jeu</p>
-                <button
-                  onClick={() => {
-                    setEditingPackage(null);
-                    setShowPackageModal(true);
-                  }}
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
-                >
-                  <Plus className="w-5 h-5" />
-                  Ajouter le Premier Package
-                </button>
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full min-w-[1100px]">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 sticky top-0 bg-gray-50 z-10">Jeu</th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 sticky top-0 bg-gray-50 z-10">Package</th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 whitespace-nowrap sticky top-0 bg-gray-50 z-10">Durée</th>
-                      <th className="px-4 py-3 text-right text-sm font-semibold text-gray-700 whitespace-nowrap sticky top-0 bg-gray-50 z-10">Prix</th>
-                      <th className="px-4 py-3 text-right text-sm font-semibold text-gray-700 whitespace-nowrap sticky top-0 bg-gray-50 z-10">Points</th>
-                      <th className="px-4 py-3 text-right text-sm font-semibold text-gray-700 whitespace-nowrap sticky top-0 bg-gray-50 z-10">Achats</th>
-                      <th className="px-4 py-3 text-right text-sm font-semibold text-gray-700 whitespace-nowrap sticky top-0 bg-gray-50 z-10">Revenus</th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 sticky top-0 bg-gray-50 z-10">Statut</th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 sticky top-0 bg-gray-50 z-10">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="text-gray-900">
-                    {packages.map((pkg) => (
-                      <tr key={pkg.id} className="border-b hover:bg-gray-50 odd:bg-white even:bg-gray-50/60">
-                        <td className="px-4 py-3 text-sm max-w-[220px]"><div className="truncate" title={pkg.game_name}>{pkg.game_name}</div></td>
-                        <td className="px-4 py-3 text-sm font-medium max-w-[260px]"><div className="truncate" title={pkg.name}>{pkg.name}</div></td>
-                        <td className="px-4 py-3 text-sm whitespace-nowrap">{formatNumber(pkg.duration_minutes)} min</td>
-                        <td className="px-4 py-3 text-sm text-right whitespace-nowrap">{formatPriceXOF(pkg.price)}</td>
-                        <td className="px-4 py-3 text-sm text-right whitespace-nowrap">{formatNumber(pkg.points_earned)} pts</td>
-                        <td className="px-4 py-3 text-sm text-right whitespace-nowrap">{formatNumber(pkg.purchases_count ?? 0)}</td>
-                        <td className="px-4 py-3 text-sm text-right whitespace-nowrap">{pkg.revenue != null ? formatPriceXOF(pkg.revenue) : '—'}</td>
-                        <td className="px-4 py-3">
-                          <span className={`px-2 py-1 text-xs rounded font-medium ${
-                            pkg.is_active == 1 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                          }`}>
-                            {pkg.is_active == 1 ? 'Actif' : 'Inactif'}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3 whitespace-nowrap">
-                          <button
-                            onClick={() => {
-                              setEditingPackage(pkg);
-                              setShowPackageModal(true);
-                            }}
-                            className="text-blue-600 hover:underline text-sm mr-3 font-medium"
-                          >
-                            Modifier
-                          </button>
-                          <button
-                            onClick={() => deletePackage(pkg.id)}
-                            className="text-red-600 hover:underline text-sm font-medium"
-                          >
-                            Supprimer
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-          )}
-
-          {/* Payment Methods Tab */}
-          {activeTab === 'payment-methods' && (
-          <div className="bg-white rounded-xl shadow-lg p-6 text-gray-900">
-            <div className="flex justify-end mb-6">
-              <button
-                onClick={() => {
-                  setEditingPayment(null);
-                  setShowPaymentModal(true);
-                }}
-                className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
-              >
-                <Plus className="w-5 h-5" />
-                Ajouter Méthode
-              </button>
-            </div>
-
-            {loading ? (
-              <div className="text-center py-12">
-                <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-purple-600"></div>
-                <p className="text-gray-600 mt-4">Chargement des méthodes de paiement...</p>
-              </div>
-            ) : paymentMethods.length === 0 ? (
-              <div className="text-center py-12">
-                <CreditCard className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-700 mb-2">Aucune méthode de paiement</h3>
-                <p className="text-gray-500 mb-4">Ajoutez une première méthode de paiement</p>
-                <button
-                  onClick={() => {
-                    setEditingPayment(null);
-                    setShowPaymentModal(true);
-                  }}
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
-                >
-                  <Plus className="w-5 h-5" />
-                  Ajouter la Première Méthode
-                </button>
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full min-w-[900px]">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 sticky top-0 bg-gray-50 z-10">Nom</th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 sticky top-0 bg-gray-50 z-10">Slug</th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 sticky top-0 bg-gray-50 z-10">Provider</th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 sticky top-0 bg-gray-50 z-10">Type</th>
-                      <th className="px-4 py-3 text-right text-sm font-semibold text-gray-700 sticky top-0 bg-gray-50 z-10">Frais</th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 sticky top-0 bg-gray-50 z-10">Statut</th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 sticky top-0 bg-gray-50 z-10">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="text-gray-900">
-                    {paymentMethods.map((pm) => (
-                      <tr key={pm.id} className="border-b hover:bg-gray-50 odd:bg-white even:bg-gray-50/60">
-                        <td className="px-4 py-3 text-sm font-medium max-w-[240px]"><div className="truncate" title={pm.name}>{pm.name}</div></td>
-                        <td className="px-4 py-3 text-sm text-gray-600 whitespace-nowrap">{pm.slug || '—'}</td>
-                        <td className="px-4 py-3 text-sm">{pm.provider || 'N/A'}</td>
-                        <td className="px-4 py-3 text-sm">{pm.requires_online_payment ? '🌐 En ligne' : '🏪 Sur place'}</td>
-                        <td className="px-4 py-3 text-sm text-right whitespace-nowrap">{formatNumber(pm.fee_percentage ?? 0)}% + {formatPriceXOF(pm.fee_fixed ?? 0)}</td>
-                        <td className="px-4 py-3">
-                          <span className={`px-2 py-1 text-xs rounded font-medium ${
-                            pm.is_active == 1 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                          }`}>
-                            {pm.is_active == 1 ? 'Actif' : 'Inactif'}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3 whitespace-nowrap">
-                          <button
-                            onClick={() => {
-                              setEditingPayment(pm);
-                              setShowPaymentModal(true);
-                            }}
-                            className="text-blue-600 hover:underline text-sm mr-3 font-medium"
-                          >
-                            Modifier
-                          </button>
-                          <button
-                            onClick={() => deletePaymentMethod(pm.id)}
-                            className="text-red-600 hover:underline text-sm font-medium"
-                          >
-                            Supprimer
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-          )}
-
-          {/* Purchases Tab */}
-          {activeTab === 'purchases' && (
-          <div className="bg-white rounded-xl shadow-lg p-6 text-gray-900">
-            {loading ? (
-              <div className="text-center py-12">
-                <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-purple-600"></div>
-                <p className="text-gray-600 mt-4">Chargement des achats...</p>
-              </div>
-            ) : purchases.length === 0 ? (
-              <div className="text-center py-12">
-                <ShoppingCart className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-700 mb-2">Aucun achat</h3>
-                <p className="text-gray-500">Les achats des joueurs apparaîtront ici</p>
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full min-w-[1000px]">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 sticky top-0 bg-gray-50 z-10">Utilisateur</th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 sticky top-0 bg-gray-50 z-10">Jeu</th>
-                      <th className="px-4 py-3 text-right text-sm font-semibold text-gray-700 whitespace-nowrap sticky top-0 bg-gray-50 z-10">Durée</th>
-                      <th className="px-4 py-3 text-right text-sm font-semibold text-gray-700 whitespace-nowrap sticky top-0 bg-gray-50 z-10">Prix</th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 sticky top-0 bg-gray-50 z-10">Méthode</th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 sticky top-0 bg-gray-50 z-10">Paiement</th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 sticky top-0 bg-gray-50 z-10">Date</th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 sticky top-0 bg-gray-50 z-10">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="text-gray-900">
-                    {purchases.map((p) => (
-                      <tr key={p.id} className="border-b hover:bg-gray-50 odd:bg-white even:bg-gray-50/60">
-                        <td className="px-4 py-3 text-sm font-medium max-w-[220px]"><div className="truncate" title={p.username}>{p.username}</div></td>
-                        <td className="px-4 py-3 text-sm max-w-[260px]"><div className="truncate" title={p.game_name}>{p.game_name}</div></td>
-                        <td className="px-4 py-3 text-sm text-right whitespace-nowrap">{formatNumber(p.duration_minutes)} min</td>
-                        <td className="px-4 py-3 text-sm text-right whitespace-nowrap">{formatPriceXOF(p.price)}</td>
-                        <td className="px-4 py-3 text-sm whitespace-nowrap">{p.payment_method_name || '—'}</td>
-                        <td className="px-4 py-3">
-                          <span className={`px-2 py-1 text-xs rounded font-medium ${
-                            p.payment_status === 'completed'
-                              ? 'bg-green-100 text-green-700'
-                              : p.payment_status === 'failed'
-                              ? 'bg-red-100 text-red-700'
-                              : 'bg-yellow-100 text-yellow-700'
-                          }`}>
-                            {p.payment_status}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3 text-sm whitespace-nowrap">{formatDateTime(p.created_at)}</td>
-                        <td className="px-4 py-3">
-                          {p.payment_status === 'pending' && (
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {filteredGames.map((game) => (
+                      <div key={game.id} className="bg-gray-700/50 rounded-xl p-6 border border-gray-600 hover:border-purple-500 transition-colors">
+                        <div className="flex justify-between items-start mb-4">
+                          <div>
+                            <h3 className="text-xl font-bold text-white">{game.name}</h3>
+                            <p className="text-gray-400 text-sm">{game.category}</p>
+                          </div>
+                          <div className="flex gap-2">
                             <button
-                              onClick={() => confirmPurchase(p.id)}
-                              className="text-green-600 hover:underline text-sm flex items-center gap-1 font-medium"
+                              onClick={() => editGame(game)}
+                              className="p-2 text-gray-400 hover:text-blue-400 hover:bg-gray-600 rounded-lg transition-colors"
                             >
-                              <CheckCircle className="w-4 h-4" />
-                              Confirmer
+                              <Edit className="w-4 h-4" />
                             </button>
-                          )}
-                        </td>
-                      </tr>
+                            <button
+                              onClick={() => deleteGame(game.id)}
+                              className="p-2 text-gray-400 hover:text-red-400 hover:bg-gray-600 rounded-lg transition-colors"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                        
+                        {game.image_url && (
+                          <img 
+                            src={game.image_url} 
+                            alt={game.name}
+                            className="w-full h-32 object-cover rounded-lg mb-4"
+                          />
+                        )}
+                        
+                        <p className="text-gray-300 text-sm mb-4 line-clamp-2">
+                          {game.short_description || game.description}
+                        </p>
+                        
+                        <div className="flex justify-between items-center text-sm">
+                          <span className="text-purple-400 font-medium">
+                            {formatPriceXOF(game.base_price)}
+                          </span>
+                          <span className={`px-2 py-1 rounded-full text-xs ${
+                            game.is_featured 
+                              ? 'bg-green-500/20 text-green-400' 
+                              : 'bg-gray-600 text-gray-300'
+                          }`}>
+                            {game.is_featured ? 'Mis en avant' : 'Standard'}
+                          </span>
+                        </div>
+                      </div>
                     ))}
-                  </tbody>
-                </table>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {activeTab === 'packages' && (
+              <div>
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-2xl font-bold text-white">Packages de Jeu</h2>
+                  <button
+                    onClick={() => {
+                      setEditingPackage(null);
+                      setPackageForm({
+                        game_id: '',
+                        name: '',
+                        duration_minutes: 60,
+                        price: 0,
+                        original_price: null,
+                        points_earned: 0,
+                        bonus_multiplier: 1.0,
+                        is_promotional: false,
+                        promotional_label: '',
+                        max_purchases_per_user: null,
+                        is_active: true,
+                        display_order: 0
+                      });
+                      setShowPackageModal(true);
+                    }}
+                    className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors"
+                  >
+                    <Plus className="w-5 h-5" />
+                    Ajouter un package
+                  </button>
+                </div>
+
+                {loading ? (
+                  <div className="flex justify-center items-center h-64">
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-gray-300">
+                      <thead className="text-gray-400 uppercase text-sm">
+                        <tr>
+                          <th className="py-3 px-4">Package</th>
+                          <th className="py-3 px-4">Jeu</th>
+                          <th className="py-3 px-4">Durée</th>
+                          <th className="py-3 px-4">Prix</th>
+                          <th className="py-3 px-4">Points</th>
+                          <th className="py-3 px-4">Statut</th>
+                          <th className="py-3 px-4">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredPackages.map((pkg) => (
+                          <tr key={pkg.id} className="border-b border-gray-700 hover:bg-gray-700/30">
+                            <td className="py-3 px-4 font-medium text-white">
+                              {pkg.name}
+                              {pkg.is_promotional && (
+                                <span className="ml-2 px-2 py-1 bg-yellow-500/20 text-yellow-400 text-xs rounded-full">
+                                  Promo
+                                </span>
+                              )}
+                            </td>
+                            <td className="py-3 px-4">
+                              {pkg.game?.name || 'Tous les jeux'}
+                            </td>
+                            <td className="py-3 px-4">
+                              {Math.floor(pkg.duration_minutes / 60)}h{pkg.duration_minutes % 60 || ''}
+                            </td>
+                            <td className="py-3 px-4 text-purple-400 font-medium">
+                              {formatPriceXOF(pkg.price)}
+                              {pkg.original_price && pkg.original_price > pkg.price && (
+                                <div className="text-gray-500 text-sm line-through">
+                                  {formatPriceXOF(pkg.original_price)}
+                                </div>
+                              )}
+                            </td>
+                            <td className="py-3 px-4">
+                              {pkg.points_earned} pts
+                              {pkg.bonus_multiplier > 1 && (
+                                <span className="ml-1 text-green-400">x{pkg.bonus_multiplier}</span>
+                              )}
+                            </td>
+                            <td className="py-3 px-4">
+                              <span className={`px-2 py-1 rounded-full text-xs ${
+                                pkg.is_active 
+                                  ? 'bg-green-500/20 text-green-400' 
+                                  : 'bg-red-500/20 text-red-400'
+                              }`}>
+                                {pkg.is_active ? 'Actif' : 'Inactif'}
+                              </span>
+                            </td>
+                            <td className="py-3 px-4">
+                              <div className="flex gap-2">
+                                <button
+                                  onClick={() => editPackage(pkg)}
+                                  className="p-2 text-gray-400 hover:text-blue-400 hover:bg-gray-600 rounded-lg transition-colors"
+                                >
+                                  <Edit className="w-4 h-4" />
+                                </button>
+                                <button
+                                  onClick={() => deletePackage(pkg.id)}
+                                  className="p-2 text-gray-400 hover:text-red-400 hover:bg-gray-600 rounded-lg transition-colors"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {activeTab === 'payments' && (
+              <div>
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-2xl font-bold text-white">Méthodes de Paiement</h2>
+                  <button
+                    onClick={() => {
+                      setEditingPayment(null);
+                      setPaymentForm({
+                        name: '',
+                        description: '',
+                        provider: 'manual',
+                        fee_percentage: 0,
+                        fee_fixed: 0,
+                        is_active: true,
+                        auto_confirm: false,
+                        requires_online_payment: false,
+                        display_order: 0
+                      });
+                      setShowPaymentModal(true);
+                    }}
+                    className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors"
+                  >
+                    <Plus className="w-5 h-5" />
+                    Ajouter une méthode
+                  </button>
+                </div>
+
+                {loading ? (
+                  <div className="flex justify-center items-center h-64">
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-gray-300">
+                      <thead className="text-gray-400 uppercase text-sm">
+                        <tr>
+                          <th className="py-3 px-4">Nom</th>
+                          <th className="py-3 px-4">Fournisseur</th>
+                          <th className="py-3 px-4">Frais</th>
+                          <th className="py-3 px-4">Statut</th>
+                          <th className="py-3 px-4">Confirmation</th>
+                          <th className="py-3 px-4">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredPaymentMethods.map((method) => (
+                          <tr key={method.id} className="border-b border-gray-700 hover:bg-gray-700/30">
+                            <td className="py-3 px-4 font-medium text-white">{method.name}</td>
+                            <td className="py-3 px-4 capitalize">{method.provider}</td>
+                            <td className="py-3 px-4">
+                              {method.fee_percentage > 0 && `${method.fee_percentage}%`}
+                              {method.fee_fixed > 0 && ` + ${formatPriceXOF(method.fee_fixed)}`}
+                            </td>
+                            <td className="py-3 px-4">
+                              <span className={`px-2 py-1 rounded-full text-xs ${
+                                method.is_active 
+                                  ? 'bg-green-500/20 text-green-400' 
+                                  : 'bg-red-500/20 text-red-400'
+                              }`}>
+                                {method.is_active ? 'Actif' : 'Inactif'}
+                              </span>
+                            </td>
+                            <td className="py-3 px-4">
+                              <span className={`px-2 py-1 rounded-full text-xs ${
+                                method.auto_confirm 
+                                  ? 'bg-green-500/20 text-green-400' 
+                                  : 'bg-yellow-500/20 text-yellow-400'
+                              }`}>
+                                {method.auto_confirm ? 'Auto' : 'Manuelle'}
+                              </span>
+                            </td>
+                            <td className="py-3 px-4">
+                              <div className="flex gap-2">
+                                <button
+                                  onClick={() => editPaymentMethod(method)}
+                                  className="p-2 text-gray-400 hover:text-blue-400 hover:bg-gray-600 rounded-lg transition-colors"
+                                >
+                                  <Edit className="w-4 h-4" />
+                                </button>
+                                <button
+                                  onClick={() => deletePaymentMethod(method.id)}
+                                  className="p-2 text-gray-400 hover:text-red-400 hover:bg-gray-600 rounded-lg transition-colors"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {activeTab === 'purchases' && (
+              <div>
+                <h2 className="text-2xl font-bold text-white mb-6">Historique des Achats</h2>
+
+                {loading ? (
+                  <div className="flex justify-center items-center h-64">
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-gray-300">
+                      <thead className="text-gray-400 uppercase text-sm">
+                        <tr>
+                          <th className="py-3 px-4">Utilisateur</th>
+                          <th className="py-3 px-4">Package</th>
+                          <th className="py-3 px-4">Montant</th>
+                          <th className="py-3 px-4">Points</th>
+                          <th className="py-3 px-4">Date</th>
+                          <th className="py-3 px-4">Statut</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredPurchases.map((purchase) => (
+                          <tr key={purchase.id} className="border-b border-gray-700 hover:bg-gray-700/30">
+                            <td className="py-3 px-4 font-medium text-white">
+                              {purchase.user?.username || 'Utilisateur supprimé'}
+                            </td>
+                            <td className="py-3 px-4">
+                              {purchase.package?.name || 'Package supprimé'}
+                            </td>
+                            <td className="py-3 px-4 text-purple-400 font-medium">
+                              {formatPriceXOF(purchase.amount)}
+                            </td>
+                            <td className="py-3 px-4">
+                              +{purchase.points_earned} pts
+                            </td>
+                            <td className="py-3 px-4 text-sm">
+                              {new Date(purchase.created_at).toLocaleDateString('fr-FR')}
+                            </td>
+                            <td className="py-3 px-4">
+                              <span className={`px-2 py-1 rounded-full text-xs ${
+                                purchase.status === 'completed' 
+                                  ? 'bg-green-500/20 text-green-400' 
+                                  : purchase.status === 'pending' 
+                                    ? 'bg-yellow-500/20 text-yellow-400'
+                                    : 'bg-red-500/20 text-red-400'
+                              }`}>
+                                {purchase.status === 'completed' ? 'Complété' : 
+                                 purchase.status === 'pending' ? 'En attente' : 'Annulé'}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {activeTab === 'reservations' && (
+              <div>
+                <h2 className="text-2xl font-bold text-white mb-6">Réservations</h2>
+
+                {loading ? (
+                  <div className="flex justify-center items-center h-64">
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-gray-300">
+                      <thead className="text-gray-400 uppercase text-sm">
+                        <tr>
+                          <th className="py-3 px-4">Utilisateur</th>
+                          <th className="py-3 px-4">Jeu</th>
+                          <th className="py-3 px-4">Date</th>
+                          <th className="py-3 px-4">Durée</th>
+                          <th className="py-3 px-4">Montant</th>
+                          <th className="py-3 px-4">Statut</th>
+                          <th className="py-3 px-4">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredReservations.map((reservation) => (
+                          <tr key={reservation.id} className="border-b border-gray-700 hover:bg-gray-700/30">
+                            <td className="py-3 px-4 font-medium text-white">
+                              {reservation.user?.username || 'Utilisateur supprimé'}
+                            </td>
+                            <td className="py-3 px-4">
+                              {reservation.game?.name || 'Jeu supprimé'}
+                            </td>
+                            <td className="py-3 px-4 text-sm">
+                              {new Date(reservation.start_time).toLocaleDateString('fr-FR')}
+                            </td>
+                            <td className="py-3 px-4">
+                              {reservation.duration_minutes} min
+                            </td>
+                            <td className="py-3 px-4 text-purple-400 font-medium">
+                              {formatPriceXOF(reservation.total_amount)}
+                            </td>
+                            <td className="py-3 px-4">
+                              <span className={`px-2 py-1 rounded-full text-xs ${
+                                reservation.status === 'confirmed' 
+                                  ? 'bg-green-500/20 text-green-400' 
+                                  : reservation.status === 'pending' 
+                                    ? 'bg-yellow-500/20 text-yellow-400'
+                                    : reservation.status === 'cancelled' 
+                                      ? 'bg-red-500/20 text-red-400'
+                                      : 'bg-blue-500/20 text-blue-400'
+                              }`}>
+                                {reservation.status === 'confirmed' ? 'Confirmé' : 
+                                 reservation.status === 'pending' ? 'En attente' : 
+                                 reservation.status === 'cancelled' ? 'Annulé' : 'Complété'}
+                              </span>
+                            </td>
+                            <td className="py-3 px-4">
+                              <div className="flex gap-1">
+                                {reservation.status === 'pending' && (
+                                  <>
+                                    <button
+                                      onClick={() => confirmReservation(reservation.id)}
+                                      className="p-1 text-green-400 hover:bg-green-500/20 rounded"
+                                      title="Confirmer"
+                                    >
+                                      <CheckCircle className="w-4 h-4" />
+                                    </button>
+                                    <button
+                                      onClick={() => cancelReservation(reservation.id)}
+                                      className="p-1 text-red-400 hover:bg-red-500/20 rounded"
+                                      title="Annuler"
+                                    >
+                                      <XCircle className="w-4 h-4" />
+                                    </button>
+                                  </>
+                                )}
+                                {reservation.status === 'confirmed' && (
+                                  <button
+                                    onClick={() => markReservationCompleted(reservation.id)}
+                                    className="p-1 text-blue-400 hover:bg-blue-500/20 rounded"
+                                    title="Marquer comme complété"
+                                  >
+                                    <CheckCircle className="w-4 h-4" />
+                                  </button>
+                                )}
+                                {reservation.status === 'confirmed' && (
+                                  <button
+                                    onClick={() => markReservationNoShow(reservation.id)}
+                                    className="p-1 text-orange-400 hover:bg-orange-500/20 rounded"
+                                    title="No-show"
+                                  >
+                                    <XCircle className="w-4 h-4" />
+                                  </button>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </div>
             )}
           </div>
-          )}
         </div>
       </div>
 
-      {/* Reservations Tab */}
-      {activeTab === 'reservations' && (
-      <div className="bg-white rounded-xl shadow-lg p-6 text-gray-900">
-        {loading ? (
-          <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-purple-600"></div>
-            <p className="text-gray-600 mt-4">Chargement des réservations...</p>
-          </div>
-        ) : reservations.length === 0 ? (
-          <div className="text-center py-12">
-            <Calendar className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-700 mb-2">Aucune réservation</h3>
-            <p className="text-gray-500">Les réservations des joueurs apparaîtront ici</p>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[1150px]">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 sticky top-0 bg-gray-50 z-10">Utilisateur</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 sticky top-0 bg-gray-50 z-10">Jeu</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 whitespace-nowrap sticky top-0 bg-gray-50 z-10">Début</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 whitespace-nowrap sticky top-0 bg-gray-50 z-10">Fin</th>
-                  <th className="px-4 py-3 text-right text-sm font-semibold text-gray-700 whitespace-nowrap sticky top-0 bg-gray-50 z-10">Durée</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 sticky top-0 bg-gray-50 z-10">Statut</th>
-                  <th className="px-4 py-3 text-right text-sm font-semibold text-gray-700 whitespace-nowrap sticky top-0 bg-gray-50 z-10">Prix</th>
-                  <th className="px-4 py-3 text-right text-sm font-semibold text-gray-700 whitespace-nowrap sticky top-0 bg-gray-50 z-10">Frais</th>
-                  <th className="px-4 py-3 text-right text-sm font-semibold text-gray-700 whitespace-nowrap sticky top-0 bg-gray-50 z-10">Total</th>
-                  <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700 whitespace-nowrap sticky top-0 bg-gray-50 z-10">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="text-gray-900">
-                {reservations.map((r) => (
-                  <tr key={r.id} className="border-b hover:bg-gray-50 odd:bg-white even:bg-gray-50/60">
-                    <td className="px-4 py-3 text-sm font-medium max-w-[220px]"><div className="truncate" title={r.username}>{r.username}</div></td>
-                    <td className="px-4 py-3 text-sm max-w-[260px]"><div className="truncate" title={r.game_name}>{r.game_name}</div></td>
-                    <td className="px-4 py-3 text-sm whitespace-nowrap">{formatDateTime(r.scheduled_start)}</td>
-                    <td className="px-4 py-3 text-sm whitespace-nowrap">{formatDateTime(r.scheduled_end)}</td>
-                    <td className="px-4 py-3 text-sm text-right whitespace-nowrap">{formatNumber(r.duration_minutes)} min</td>
-                    <td className="px-4 py-3">
-                      <span className={`px-2 py-1 text-xs rounded font-medium ${
-                        r.status === 'paid'
-                          ? 'bg-green-100 text-green-700'
-                          : r.status === 'cancelled'
-                          ? 'bg-red-100 text-red-700'
-                          : r.status === 'no_show'
-                          ? 'bg-gray-200 text-gray-700'
-                          : 'bg-yellow-100 text-yellow-700'
-                      }`}>
-                        {r.status}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-sm text-right whitespace-nowrap">{formatPriceXOF(r.base_price)}</td>
-                    <td className="px-4 py-3 text-sm text-right whitespace-nowrap">{formatPriceXOF(r.reservation_fee)}</td>
-                    <td className="px-4 py-3 text-sm text-right whitespace-nowrap">{formatPriceXOF(r.total_price)}</td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center justify-center gap-2">
-                        {r.status === 'pending_payment' && (
-                          <>
-                            <button
-                              onClick={() => confirmReservation(r.id)}
-                              className="px-3 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700 transition-colors"
-                              title="Confirmer la réservation"
-                            >
-                              ✓ Confirmer
-                            </button>
-                            <button
-                              onClick={() => cancelReservation(r.id)}
-                              className="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700 transition-colors"
-                              title="Annuler la réservation"
-                            >
-                              ✕ Annuler
-                            </button>
-                          </>
-                        )}
-                        {r.status === 'paid' && (
-                          <>
-                            <button
-                              onClick={() => markReservationCompleted(r.id)}
-                              className="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 transition-colors"
-                              title="Marquer comme complétée"
-                            >
-                              ✓ Complétée
-                            </button>
-                            <button
-                              onClick={() => markReservationNoShow(r.id)}
-                              className="px-3 py-1 bg-gray-600 text-white text-xs rounded hover:bg-gray-700 transition-colors"
-                              title="Marquer comme no-show"
-                            >
-                              ⊘ No-show
-                            </button>
-                            <button
-                              onClick={() => cancelReservation(r.id)}
-                              className="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700 transition-colors"
-                              title="Annuler"
-                            >
-                              ✕
-                            </button>
-                          </>
-                        )}
-                        {(r.status === 'cancelled' || r.status === 'completed' || r.status === 'no_show') && (
-                          <span className="text-gray-400 text-xs">-</span>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-      )}
-
-      {/* Game Form Modal */}
+      {/* Game Modal */}
       {showGameModal && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="sticky top-0 bg-white border-b p-6 flex justify-between items-center">
-              <h2 className="text-2xl font-bold text-purple-600">
-                {editingGame ? 'Modifier le Jeu' : 'Ajouter un Nouveau Jeu'}
-              </h2>
-              <button
-                onClick={() => {
-                  setShowGameModal(false);
-                  setEditingGame(null);
-                  setGameForm(emptyForm);
-                }}
-                className="text-gray-500 hover:text-gray-700 text-2xl"
-              >
-                ×
-              </button>
-            </div>
-            
-            <form onSubmit={editingGame ? handleUpdateGame : handleCreateGame} className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Nom */}
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-semibold mb-2">Nom du Jeu *</label>
-                  <input
-                    type="text"
-                    required
-                    value={gameForm.name}
-                    onChange={(e) => handleGameFormChange('name', e.target.value)}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    placeholder="Ex: FIFA 2024"
-                  />
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-gray-800 rounded-2xl border border-gray-700 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-white">
+                  {editingGame ? 'Modifier le jeu' : 'Ajouter un jeu'}
+                </h2>
+                <button
+                  onClick={() => setShowGameModal(false)}
+                  className="text-gray-400 hover:text-white"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <form onSubmit={handleGameSubmit} className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Nom du jeu *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={gameForm.name}
+                      onChange={(e) => setGameForm({...gameForm, name: e.target.value})}
+                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 contrast-text"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Slug
+                    </label>
+                    <input
+                      type="text"
+                      value={gameForm.slug}
+                      onChange={(e) => setGameForm({...gameForm, slug: e.target.value})}
+                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    />
+                  </div>
                 </div>
 
-                {/* Slug */}
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-semibold mb-2">Slug (URL) - Auto-généré</label>
-                  <input
-                    type="text"
-                    value={gameForm.slug}
-                    onChange={(e) => handleGameFormChange('slug', e.target.value)}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50"
-                    placeholder="Laissez vide pour génération automatique"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">Si vide, sera généré automatiquement à partir du nom</p>
-                </div>
-
-                {/* Short Description */}
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-semibold mb-2">Description Courte</label>
-                  <input
-                    type="text"
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Description courte
+                  </label>
+                  <textarea
                     value={gameForm.short_description}
-                    onChange={(e) => handleGameFormChange('short_description', e.target.value)}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    placeholder="Jeu de football avec tous les championnats officiels"
+                    onChange={(e) => setGameForm({...gameForm, short_description: e.target.value})}
+                    rows={2}
+                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
                   />
                 </div>
 
-                {/* Description */}
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-semibold mb-2">Description Complète</label>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Description complète
+                  </label>
                   <textarea
                     value={gameForm.description}
-                    onChange={(e) => handleGameFormChange('description', e.target.value)}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    rows="3"
-                    placeholder="Description détaillée du jeu..."
+                    onChange={(e) => setGameForm({...gameForm, description: e.target.value})}
+                    rows={4}
+                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
                   />
                 </div>
 
-                {/* Image Upload */}
-                <div className="md:col-span-2">
-                  <ImageUpload
-                    label="Image du Jeu"
-                    value={gameForm.image_url}
-                    onChange={(url) => handleGameFormChange('image_url', url)}
-                  />
-                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Catégorie
+                    </label>
+                    <select
+                      value={gameForm.category}
+                      onChange={(e) => setGameForm({...gameForm, category: e.target.value})}
+                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    >
+                      <option value="action">Action</option>
+                      <option value="aventure">Aventure</option>
+                      <option value="fps">FPS</option>
+                      <option value="plateforme">Plateforme</option>
+                      <option value="strategie">Stratégie</option>
+                      <option value="rpg">RPG</option>
+                      <option value="sport">Sport</option>
+                      <option value="course">Course</option>
+                      <option value="simulation">Simulation</option>
+                      <option value="retro">Rétro</option>
+                      <option value="vr">VR</option>
+                    </select>
+                  </div>
 
-                {/* Category */}
-                <div>
-                  <label className="block text-sm font-semibold mb-2">Catégorie *</label>
-                  <select
-                    value={gameForm.category}
-                    onChange={(e) => handleGameFormChange('category', e.target.value)}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  >
-                    <option value="action">Action</option>
-                    <option value="adventure">Adventure</option>
-                    <option value="sports">Sports</option>
-                    <option value="racing">Racing</option>
-                    <option value="strategy">Strategy</option>
-                    <option value="rpg">RPG</option>
-                    <option value="fighting">Fighting</option>
-                    <option value="simulation">Simulation</option>
-                    <option value="vr">VR</option>
-                    <option value="retro">Retro</option>
-                    <option value="other">Other</option>
-                  </select>
-                </div>
-
-                {/* Platform */}
-                <div>
-                  <label className="block text-sm font-semibold mb-2">Plateforme</label>
-                  <input
-                    type="text"
-                    value={gameForm.platform}
-                    onChange={(e) => handleGameFormChange('platform', e.target.value)}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    placeholder="PS5, Xbox, PC..."
-                  />
-                </div>
-
-                {/* Min Players */}
-                <div>
-                  <label className="block text-sm font-semibold mb-2">Joueurs Min</label>
-                  <input
-                    type="number"
-                    min="1"
-                    value={gameForm.min_players}
-                    onChange={(e) => handleGameFormChange('min_players', parseInt(e.target.value))}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  />
-                </div>
-
-                {/* Max Players */}
-                <div>
-                  <label className="block text-sm font-semibold mb-2">Joueurs Max</label>
-                  <input
-                    type="number"
-                    min="1"
-                    value={gameForm.max_players}
-                    onChange={(e) => handleGameFormChange('max_players', parseInt(e.target.value))}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  />
-                </div>
-
-                {/* Age Rating */}
-                <div>
-                  <label className="block text-sm font-semibold mb-2">Classification d'âge</label>
-                  <input
-                    type="text"
-                    value={gameForm.age_rating}
-                    onChange={(e) => handleGameFormChange('age_rating', e.target.value)}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    placeholder="PEGI 3, 12, 18..."
-                  />
-                </div>
-
-                {/* Points per Hour */}
-                <div>
-                  <label className="block text-sm font-semibold mb-2">Points par Heure</label>
-                  <input
-                    type="number"
-                    min="0"
-                    value={gameForm.points_per_hour}
-                    onChange={(e) => handleGameFormChange('points_per_hour', parseInt(e.target.value))}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  />
-                </div>
-
-                {/* Base Price */}
-                <div>
-                  <label className="block text-sm font-semibold mb-2">Prix de Base (XOF/h)</label>
-                  <input
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    value={gameForm.base_price}
-                    onChange={(e) => handleGameFormChange('base_price', parseFloat(e.target.value))}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  />
-                </div>
-
-                {/* Reservable Checkbox */}
-                <div className="md:col-span-2">
-                  <label className="flex items-center gap-2 cursor-pointer">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Plateforme
+                    </label>
                     <input
-                      type="checkbox"
-                      checked={gameForm.is_reservable}
-                      onChange={(e) => handleGameFormChange('is_reservable', e.target.checked)}
-                      className="w-5 h-5 text-purple-600 rounded focus:ring-2 focus:ring-purple-500"
+                      type="text"
+                      value={gameForm.platform}
+                      onChange={(e) => setGameForm({...gameForm, platform: e.target.value})}
+                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
                     />
-                    <span className="text-sm font-semibold">Jeu réservable (avec créneau horaire)</span>
-                  </label>
+                  </div>
                 </div>
 
-                {/* Reservation Fee (shown only if reservable) */}
-                {gameForm.is_reservable && (
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-semibold mb-2">Frais de Réservation (XOF)</label>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Joueurs min
+                    </label>
+                    <input
+                      type="number"
+                      min="1"
+                      value={gameForm.min_players}
+                      onChange={(e) => setGameForm({...gameForm, min_players: parseInt(e.target.value)})}
+                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Joueurs max
+                    </label>
+                    <input
+                      type="number"
+                      min="1"
+                      value={gameForm.max_players}
+                      onChange={(e) => setGameForm({...gameForm, max_players: parseInt(e.target.value)})}
+                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Âge minimum
+                    </label>
+                    <input
+                      type="text"
+                      value={gameForm.age_rating}
+                      onChange={(e) => setGameForm({...gameForm, age_rating: e.target.value})}
+                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Points/heure
+                    </label>
                     <input
                       type="number"
                       min="0"
-                      step="0.01"
-                      value={gameForm.reservation_fee}
-                      onChange={(e) => handleGameFormChange('reservation_fee', parseFloat(e.target.value))}
-                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                      placeholder="Ex: 500"
+                      value={gameForm.points_per_hour}
+                      onChange={(e) => setGameForm({...gameForm, points_per_hour: parseInt(e.target.value)})}
+                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
                     />
-                    <p className="text-xs text-gray-500 mt-1">Frais supplémentaires pour réserver un créneau horaire précis</p>
                   </div>
-                )}
 
-                {/* Featured */}
-                <div className="md:col-span-2">
-                  <label className="flex items-center gap-2 cursor-pointer">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Prix de base (XOF)
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={gameForm.base_price}
+                      onChange={(e) => setGameForm({...gameForm, base_price: parseFloat(e.target.value)})}
+                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Image URL
+                    </label>
+                    <input
+                      type="url"
+                      value={gameForm.image_url}
+                      onChange={(e) => setGameForm({...gameForm, image_url: e.target.value})}
+                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Thumbnail URL
+                    </label>
+                    <input
+                      type="url"
+                      value={gameForm.thumbnail_url}
+                      onChange={(e) => setGameForm({...gameForm, thumbnail_url: e.target.value})}
+                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4">
+                  <label className="flex items-center gap-2 text-gray-300">
+                    <input
+                      type="checkbox"
+                      checked={gameForm.is_reservable}
+                      onChange={(e) => setGameForm({...gameForm, is_reservable: e.target.checked})}
+                      className="rounded bg-gray-700 border-gray-600 text-purple-600 focus:ring-purple-500"
+                    />
+                    Réservable
+                  </label>
+
+                  <label className="flex items-center gap-2 text-gray-300">
                     <input
                       type="checkbox"
                       checked={gameForm.is_featured}
-                      onChange={(e) => handleGameFormChange('is_featured', e.target.checked)}
-                      className="w-5 h-5 text-purple-600 rounded focus:ring-2 focus:ring-purple-500"
+                      onChange={(e) => setGameForm({...gameForm, is_featured: e.target.checked})}
+                      className="rounded bg-gray-700 border-gray-600 text-purple-600 focus:ring-purple-500"
                     />
-                    <span className="text-sm font-semibold">Mettre en avant (Featured)</span>
+                    Mis en avant
                   </label>
                 </div>
-              </div>
 
-              {/* Buttons */}
-              <div className="flex gap-3 mt-6">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowGameModal(false);
-                    setEditingGame(null);
-                    setGameForm(emptyForm);
-                  }}
-                  className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-semibold"
-                  disabled={submitting}
-                >
-                  Annuler
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 px-4 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
-                  disabled={submitting}
-                >
-                  {submitting 
-                    ? (editingGame ? 'Mise à jour...' : 'Création...') 
-                    : (editingGame ? 'Mettre à Jour' : 'Créer le Jeu')
-                  }
-                </button>
-              </div>
-            </form>
+                {gameForm.is_reservable && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Frais de réservation (XOF)
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={gameForm.reservation_fee}
+                      onChange={(e) => setGameForm({...gameForm, reservation_fee: parseFloat(e.target.value)})}
+                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    />
+                  </div>
+                )}
+
+                <div className="flex justify-end gap-3 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => setShowGameModal(false)}
+                    className="px-4 py-2 text-gray-300 hover:text-white border border-gray-600 rounded-lg hover:bg-gray-700 transition-colors"
+                  >
+                    Annuler
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={submitting}
+                    className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors disabled:opacity-50"
+                  >
+                    {submitting ? 'Enregistrement...' : (editingGame ? 'Modifier' : 'Créer')}
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       )}
 
       {/* Package Modal */}
-      <PackageModal
-        isOpen={showPackageModal}
-        onClose={() => {
-          setShowPackageModal(false);
-          setEditingPackage(null);
-        }}
-        editingPackage={editingPackage}
-        games={games}
-        onSuccess={loadPackages}
-      />
+      {showPackageModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-gray-800 rounded-2xl border border-gray-700 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-white">
+                  {editingPackage ? 'Modifier le package' : 'Ajouter un package'}
+                </h2>
+                <button
+                  onClick={() => setShowPackageModal(false)}
+                  className="text-gray-400 hover:text-white"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <form onSubmit={handlePackageSubmit} className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Jeu (optionnel)
+                    </label>
+                    <select
+                      value={packageForm.game_id}
+                      onChange={(e) => setPackageForm({...packageForm, game_id: e.target.value})}
+                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    >
+                      <option value="">Tous les jeux</option>
+                      {games.map(game => (
+                        <option key={game.id} value={game.id}>
+                          {game.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Nom du package *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={packageForm.name}
+                      onChange={(e) => setPackageForm({...packageForm, name: e.target.value})}
+                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Durée (minutes) *
+                    </label>
+                    <input
+                      type="number"
+                      min="1"
+                      required
+                      value={packageForm.duration_minutes}
+                      onChange={(e) => setPackageForm({...packageForm, duration_minutes: parseInt(e.target.value)})}
+                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Points gagnés *
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      required
+                      value={packageForm.points_earned}
+                      onChange={(e) => setPackageForm({...packageForm, points_earned: parseInt(e.target.value)})}
+                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Prix (XOF) *
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      required
+                      value={packageForm.price}
+                      onChange={(e) => setPackageForm({...packageForm, price: parseFloat(e.target.value)})}
+                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Prix original (XOF)
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={packageForm.original_price || ''}
+                      onChange={(e) => setPackageForm({...packageForm, original_price: e.target.value ? parseFloat(e.target.value) : null})}
+                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Multiplicateur bonus
+                    </label>
+                    <input
+                      type="number"
+                      min="1"
+                      step="0.1"
+                      value={packageForm.bonus_multiplier}
+                      onChange={(e) => setPackageForm({...packageForm, bonus_multiplier: parseFloat(e.target.value)})}
+                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Ordre d'affichage
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={packageForm.display_order}
+                      onChange={(e) => setPackageForm({...packageForm, display_order: parseInt(e.target.value)})}
+                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4">
+                  <label className="flex items-center gap-2 text-gray-300">
+                    <input
+                      type="checkbox"
+                      checked={packageForm.is_promotional}
+                      onChange={(e) => setPackageForm({...packageForm, is_promotional: e.target.checked})}
+                      className="rounded bg-gray-700 border-gray-600 text-purple-600 focus:ring-purple-500"
+                    />
+                    Promotionnel
+                  </label>
+
+                  <label className="flex items-center gap-2 text-gray-300">
+                    <input
+                      type="checkbox"
+                      checked={packageForm.is_active}
+                      onChange={(e) => setPackageForm({...packageForm, is_active: e.target.checked})}
+                      className="rounded bg-gray-700 border-gray-600 text-purple-600 focus:ring-purple-500"
+                    />
+                    Actif
+                  </label>
+                </div>
+
+                {packageForm.is_promotional && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Label promotionnel
+                    </label>
+                    <input
+                      type="text"
+                      value={packageForm.promotional_label}
+                      onChange={(e) => setPackageForm({...packageForm, promotional_label: e.target.value})}
+                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    />
+                  </div>
+                )}
+
+                <div className="flex justify-end gap-3 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => setShowPackageModal(false)}
+                    className="px-4 py-2 text-gray-300 hover:text-white border border-gray-600 rounded-lg hover:bg-gray-700 transition-colors"
+                  >
+                    Annuler
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={submitting}
+                    className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors disabled:opacity-50"
+                  >
+                    {submitting ? 'Enregistrement...' : (editingPackage ? 'Modifier' : 'Créer')}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Payment Method Modal */}
-      <PaymentMethodModal
-        isOpen={showPaymentModal}
-        onClose={() => {
-          setShowPaymentModal(false);
-          setEditingPayment(null);
-        }}
-        editingPayment={editingPayment}
-        onSuccess={loadPaymentMethods}
-      />
+      {showPaymentModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-gray-800 rounded-2xl border border-gray-700 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-white">
+                  {editingPayment ? 'Modifier la méthode' : 'Ajouter une méthode'}
+                </h2>
+                <button
+                  onClick={() => setShowPaymentModal(false)}
+                  className="text-gray-400 hover:text-white"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <form onSubmit={handlePaymentSubmit} className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Nom *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={paymentForm.name}
+                      onChange={(e) => setPaymentForm({...paymentForm, name: e.target.value})}
+                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Fournisseur
+                    </label>
+                    <select
+                      value={paymentForm.provider}
+                      onChange={(e) => setPaymentForm({...paymentForm, provider: e.target.value})}
+                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    >
+                      <option value="manual">Manuel</option>
+                      <option value="kkiapay">Kkiapay</option>
+                      <option value="wave">Wave</option>
+                      <option value="orange_money">Orange Money</option>
+                      <option value="mtn_momo">MTN Mobile Money</option>
+                      <option value="paypal">PayPal</option>
+                      <option value="stripe">Stripe</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Description
+                  </label>
+                  <textarea
+                    value={paymentForm.description}
+                    onChange={(e) => setPaymentForm({...paymentForm, description: e.target.value})}
+                    rows={3}
+                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Frais (%) 
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={paymentForm.fee_percentage}
+                      onChange={(e) => setPaymentForm({...paymentForm, fee_percentage: parseFloat(e.target.value)})}
+                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Frais fixes (XOF)
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={paymentForm.fee_fixed}
+                      onChange={(e) => setPaymentForm({...paymentForm, fee_fixed: parseFloat(e.target.value)})}
+                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Ordre d'affichage
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={paymentForm.display_order}
+                      onChange={(e) => setPaymentForm({...paymentForm, display_order: parseInt(e.target.value)})}
+                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4">
+                  <label className="flex items-center gap-2 text-gray-300">
+                    <input
+                      type="checkbox"
+                      checked={paymentForm.is_active}
+                      onChange={(e) => setPaymentForm({...paymentForm, is_active: e.target.checked})}
+                      className="rounded bg-gray-700 border-gray-600 text-purple-600 focus:ring-purple-500"
+                    />
+                    Actif
+                  </label>
+
+                  <label className="flex items-center gap-2 text-gray-300">
+                    <input
+                      type="checkbox"
+                      checked={paymentForm.auto_confirm}
+                      onChange={(e) => setPaymentForm({...paymentForm, auto_confirm: e.target.checked})}
+                      className="rounded bg-gray-700 border-gray-600 text-purple-600 focus:ring-purple-500"
+                    />
+                    Confirmation automatique
+                  </label>
+
+                  <label className="flex items-center gap-2 text-gray-300">
+                    <input
+                      type="checkbox"
+                      checked={paymentForm.requires_online_payment}
+                      onChange={(e) => setPaymentForm({...paymentForm, requires_online_payment: e.target.checked})}
+                      className="rounded bg-gray-700 border-gray-600 text-purple-600 focus:ring-purple-500"
+                    />
+                    Paiement en ligne requis
+                  </label>
+                </div>
+
+                <div className="flex justify-end gap-3 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => setShowPaymentModal(false)}
+                    className="px-4 py-2 text-gray-300 hover:text-white border border-gray-600 rounded-lg hover:bg-gray-700 transition-colors"
+                  >
+                    Annuler
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={submitting}
+                    className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors disabled:opacity-50"
+                  >
+                    {submitting ? 'Enregistrement...' : (editingPayment ? 'Modifier' : 'Créer')}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

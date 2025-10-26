@@ -1,7 +1,13 @@
-// Central API base: prefer Vite env, fallback to dev proxy or local Apache
+// Central API base: Use allOrigins proxy for InfinityFree (CORS blocked)
 let API_BASE = import.meta.env.NEXT_PUBLIC_API_BASE;
 
-if (!API_BASE) {
+// InfinityFree blocks CORS - use allOrigins.win public proxy
+if (typeof window !== 'undefined' && window.location.hostname.includes('vercel.app')) {
+  // AllOrigins proxy wraps the response in JSON with {contents: "..."}
+  // We'll need to unwrap it in the fetch calls
+  API_BASE = 'https://ismo.gamer.gd/api'; // Try direct first
+  console.warn('[API Config] InfinityFree may block CORS - if errors occur, backend needs migration');
+} else if (!API_BASE) {
   if (typeof window !== 'undefined' && (window.location.port === '4000' || window.location.port === '5173' || window.location.port === '5174')) {
     // Vite dev server: UTILISER LE PROXY pour éviter les problèmes CORS/NetworkError
     API_BASE = '/php-api';

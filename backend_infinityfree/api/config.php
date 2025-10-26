@@ -2,6 +2,23 @@
 // api/config.php
 // Database and CORS/session bootstrap
 
+// Load .env.railway FIRST before anything else
+$railwayEnv = __DIR__ . '/.env.railway';
+$envVars = []; // Store parsed values
+if (file_exists($railwayEnv)) {
+    $lines = file($railwayEnv, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        if (strpos(trim($line), '#') === 0) continue;
+        if (strpos($line, '=') !== false) {
+            list($key, $value) = explode('=', $line, 2);
+            $key = trim($key);
+            $value = trim($value);
+            $envVars[$key] = $value;
+            putenv("$key=$value");
+        }
+    }
+}
+
 // Load middleware
 require_once __DIR__ . '/middleware/error_handler.php';
 require_once __DIR__ . '/middleware/logger.php';
@@ -14,6 +31,11 @@ add_security_headers();
 // Log API request (except for test.php to avoid noise)
 if (!strpos($_SERVER['REQUEST_URI'] ?? '', 'test.php')) {
     Logger::logRequest();
+}
+
+// Auto-install database if tables don't exist (Railway first run)
+if (file_exists(__DIR__ . '/auto_install.php')) {
+    require_once __DIR__ . '/auto_install.php';
 }
 
 // Handle OPTIONS immediately before any other processing
@@ -34,13 +56,27 @@ if (session_status() === PHP_SESSION_NONE) {
   
   // Harden cookies: HttpOnly, SameSite (configurable), and Secure in prod
   ini_set('session.cookie_httponly', '1');
-  $sameSite = getenv('SESSION_SAMESITE') ?: 'Lax';
+  
+  // CRITICAL: Force None for cross-site cookies (Railway production)
+  // Check if we're on Railway (production) or localhost (dev)
+  $isProduction = isset($_SERVER['RAILWAY_ENVIRONMENT']) || 
+                  (isset($_SERVER['HTTP_HOST']) && strpos($_SERVER['HTTP_HOST'], 'railway.app') !== false);
+  
+  if ($isProduction) {
+    // Railway production: MUST use None for cross-site
+    $sameSite = 'None';
+    $secure = '1';
+  } else {
+    // Local dev: use env vars or defaults
+    $sameSite = $envVars['SESSION_SAMESITE'] ?? getenv('SESSION_SAMESITE') ?: 'Lax';
+    $secure = ($envVars['SESSION_SECURE'] ?? getenv('SESSION_SECURE')) === '1' ? '1' : '0';
+  }
+  
   ini_set('session.cookie_samesite', $sameSite);
-  $secure = getenv('SESSION_SECURE') === '1' ? '1' : '0';
   ini_set('session.cookie_secure', $secure);
   
   // Augmenter la durée de vie de la session (24 heures par défaut)
-  $sessionLifetime = (int)(getenv('SESSION_LIFETIME') ?: 86400); // 24 heures en secondes
+  $sessionLifetime = (int)($envVars['SESSION_LIFETIME'] ?? getenv('SESSION_LIFETIME') ?: 86400); // 24 heures en secondes
   ini_set('session.gc_maxlifetime', $sessionLifetime);
   ini_set('session.cookie_lifetime', $sessionLifetime);
   
@@ -121,7 +157,7 @@ if (!defined('DB_HOST')) {
     $envName = getenv('MYSQLDATABASE') ?: getenv('DB_NAME');
     $envUser = getenv('MYSQLUSER') ?: getenv('DB_USER');
     $envPass = getenv('MYSQLPASSWORD') ?: getenv('DB_PASS');
-    $envPort = getenv('MYSQLPORT') ?: '3306';
+    $envPort = getenv('MYSQLPORT') ?: getenv('DB_PORT') ?: '3306';
     
     define('DB_HOST', ($envHost !== false && $envHost !== '') ? $envHost : '127.0.0.1');
     define('DB_NAME', ($envName !== false && $envName !== '') ? $envName : 'gamezone');

@@ -14,14 +14,12 @@ WORKDIR /var/www/html
 COPY . /var/www/html/
 
 # Create uploads directory structure with proper permissions
-RUN mkdir -p /var/www/html/../uploads/avatars \
-    && mkdir -p /var/www/html/../uploads/games \
-    && mkdir -p /var/www/html/../uploads/files \
-    && mkdir -p /var/www/html/../uploads/images \
-    && mkdir -p /var/www/html/../uploads/thumbnails
-
-# Set permissions
-RUN chown -R www-data:www-data /var/www/html \
+RUN mkdir -p /var/www/uploads/avatars \
+    && mkdir -p /var/www/uploads/games \
+    && mkdir -p /var/www/uploads/files \
+    && mkdir -p /var/www/uploads/images \
+    && mkdir -p /var/www/uploads/thumbnails \
+    && chown -R www-data:www-data /var/www/html \
     && chown -R www-data:www-data /var/www/uploads \
     && chmod -R 755 /var/www/html \
     && chmod -R 777 /var/www/uploads

@@ -1,0 +1,15 @@
+.git
+.gitignore
+README.md
+*.md
+.env.example
+.htaccess.example
+migrations/
+test/
+examples/
+diagnostic_*.php
+create_*.php
+run_migration.php
+install.php
+# Keep .env.railway for Railway deployment
+!.env.railway
