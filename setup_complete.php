@@ -35,11 +35,12 @@ try {
     }
     
     // Connexion directe à la base - Lire les variables Railway
-    $host = getenv('MYSQLHOST') ?: 'localhost';
-    $port = getenv('MYSQLPORT') ?: '3306';
-    $db = getenv('MYSQLDATABASE') ?: 'railway';
-    $user = getenv('MYSQLUSER') ?: 'root';
-    $pass = getenv('MYSQLPASSWORD') ?: '';
+    // Essayer d'abord les variables Railway natives, puis celles de .env.railway
+    $host = getenv('MYSQLHOST') ?: getenv('DB_HOST') ?: 'mysql.railway.internal';
+    $port = getenv('MYSQLPORT') ?: getenv('DB_PORT') ?: '3306';
+    $db = getenv('MYSQLDATABASE') ?: getenv('DB_NAME') ?: 'railway';
+    $user = getenv('MYSQLUSER') ?: getenv('DB_USER') ?: 'root';
+    $pass = getenv('MYSQLPASSWORD') ?: getenv('DB_PASS') ?: '';
     
     echo "<p class='info'>📡 Connexion à MySQL: $host:$port/$db</p>";
     
