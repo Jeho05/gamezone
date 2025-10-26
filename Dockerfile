@@ -21,16 +21,15 @@ COPY init_all_tables.php /var/www/html/
 # Ensure .env.railway is copied (force copy hidden files)
 COPY backend_infinityfree/api/.env.railway /var/www/html/.env.railway
 
-# Create uploads directory structure with proper permissions
-RUN mkdir -p /var/www/uploads/avatars \
-    && mkdir -p /var/www/uploads/games \
-    && mkdir -p /var/www/uploads/files \
-    && mkdir -p /var/www/uploads/images \
-    && mkdir -p /var/www/uploads/thumbnails \
+# Create uploads directory structure under /var/www/html with proper permissions
+RUN mkdir -p /var/www/html/uploads/avatars \
+    && mkdir -p /var/www/html/uploads/games \
+    && mkdir -p /var/www/html/uploads/files \
+    && mkdir -p /var/www/html/uploads/images \
+    && mkdir -p /var/www/html/uploads/thumbnails \
     && chown -R www-data:www-data /var/www/html \
-    && chown -R www-data:www-data /var/www/uploads \
     && chmod -R 755 /var/www/html \
-    && chmod -R 777 /var/www/uploads
+    && chmod -R 777 /var/www/html/uploads
 
 # Expose port 80
 EXPOSE 80
