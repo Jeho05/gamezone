@@ -7,8 +7,8 @@ try {
     require_once __DIR__ . '/config.php';
     
     echo "2. Session status after config: " . session_status() . " (" . 
-         (session_status() === PHP_SESSION_ACTIVE ? "ACTIVE" : 
-          session_status() === PHP_SESSION_NONE ? "NONE" : "DISABLED") . ")\n";
+         ((session_status() === PHP_SESSION_ACTIVE) ? "ACTIVE" : 
+          (session_status() === PHP_SESSION_NONE) ? "NONE" : "DISABLED") . ")\n";
     
     echo "3. Session config:\n";
     echo "   - cookie_samesite: " . ini_get('session.cookie_samesite') . "\n";
