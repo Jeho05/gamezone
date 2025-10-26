@@ -48,12 +48,40 @@ try {
 
     // Split by semicolon but keep it simple (no complicated procedures in file)
     $statements = array_filter(array_map('trim', explode(';', $sql)));
-    foreach ($statements as $stmt) {
+    $executedCount = 0;
+    $errors = [];
+    
+    foreach ($statements as $index => $stmt) {
         if ($stmt === '' || strpos($stmt, '--') === 0) continue;
-        $pdo->exec($stmt);
+        try {
+            $pdo->exec($stmt);
+            $executedCount++;
+        } catch (PDOException $e) {
+            // Log error but continue to see all errors
+            $errors[] = [
+                'statement_index' => $index,
+                'error' => $e->getMessage(),
+                'statement_preview' => substr($stmt, 0, 100)
+            ];
+        }
     }
 
-    echo json_encode(['message' => 'Installation terminée', 'database' => $DB_NAME_CONN]);
+    if (!empty($errors)) {
+        echo json_encode([
+            'status' => 'partial',
+            'message' => "Installation partielle: {$executedCount} statements exécutés",
+            'database' => $DB_NAME_CONN,
+            'executed' => $executedCount,
+            'errors' => $errors
+        ], JSON_PRETTY_PRINT);
+    } else {
+        echo json_encode([
+            'status' => 'success',
+            'message' => 'Installation terminée',
+            'database' => $DB_NAME_CONN,
+            'executed' => $executedCount
+        ]);
+    }
 } catch (Throwable $e) {
     http_response_code(500);
     echo json_encode(['error' => 'Échec installation', 'details' => $e->getMessage()]);
