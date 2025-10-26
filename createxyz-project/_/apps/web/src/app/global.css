@@ -2,6 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
+/* FOUC Prevention */
+.loading-placeholder {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #0f172a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 1.5rem;
+  z-index: 9999;
+}
+
 .contrast-text {
   color: #e2e8f0 !important; /* text-gray-200 */
 }
