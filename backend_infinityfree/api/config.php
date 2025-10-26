@@ -2,6 +2,19 @@
 // api/config.php
 // Database and CORS/session bootstrap
 
+// Load .env.railway FIRST before anything else
+$railwayEnv = __DIR__ . '/.env.railway';
+if (file_exists($railwayEnv)) {
+    $lines = file($railwayEnv, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        if (strpos(trim($line), '#') === 0) continue;
+        if (strpos($line, '=') !== false) {
+            list($key, $value) = explode('=', $line, 2);
+            putenv(trim($key) . '=' . trim($value));
+        }
+    }
+}
+
 // Load middleware
 require_once __DIR__ . '/middleware/error_handler.php';
 require_once __DIR__ . '/middleware/logger.php';
@@ -116,19 +129,6 @@ if (in_array($origin, $allowedOrigins) ||
 
 // DB config - Support Railway.app and local environments
 if (!defined('DB_HOST')) {
-    // Load .env.railway if exists (Railway deployment)
-    $railwayEnv = __DIR__ . '/.env.railway';
-    if (file_exists($railwayEnv)) {
-        $lines = file($railwayEnv, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-        foreach ($lines as $line) {
-            if (strpos(trim($line), '#') === 0) continue;
-            if (strpos($line, '=') !== false) {
-                list($key, $value) = explode('=', $line, 2);
-                putenv(trim($key) . '=' . trim($value));
-            }
-        }
-    }
-    
     // Railway.app uses MYSQLHOST, MYSQLDATABASE, etc.
     $envHost = getenv('MYSQLHOST') ?: getenv('DB_HOST');
     $envName = getenv('MYSQLDATABASE') ?: getenv('DB_NAME');
