@@ -20,7 +20,7 @@ echo "<h1>🚀 Setup Complet GameZone Backend</h1>";
 try {
     // Charger la configuration centrale (DB, sessions, CORS)
     // Utilise la même logique que toutes les API (get_db())
-    require_once __DIR__ . '/config.php';
+    require_once __DIR__ . '/api/config.php';
 
     // DEBUG: Afficher les fichiers présents
     echo "<p class='info'>📂 Fichiers dans " . __DIR__ . ":</p>";
