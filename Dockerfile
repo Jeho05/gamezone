@@ -1,4 +1,5 @@
-# Dockerfile pour Railway.app - Backend PHP GameZone
+# Dockerfile pour Railway.app - Backend PHP GameZone - VERSION 2.1
+# Force rebuild to fix PHP ternary syntax error
 FROM php:8.2-apache
 
 # Install MySQL extension
