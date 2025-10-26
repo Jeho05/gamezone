@@ -116,12 +116,25 @@ if (in_array($origin, $allowedOrigins) ||
 
 // DB config - Support Railway.app and local environments
 if (!defined('DB_HOST')) {
+    // Load .env.railway if exists (Railway deployment)
+    $railwayEnv = __DIR__ . '/.env.railway';
+    if (file_exists($railwayEnv)) {
+        $lines = file($railwayEnv, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        foreach ($lines as $line) {
+            if (strpos(trim($line), '#') === 0) continue;
+            if (strpos($line, '=') !== false) {
+                list($key, $value) = explode('=', $line, 2);
+                putenv(trim($key) . '=' . trim($value));
+            }
+        }
+    }
+    
     // Railway.app uses MYSQLHOST, MYSQLDATABASE, etc.
     $envHost = getenv('MYSQLHOST') ?: getenv('DB_HOST');
     $envName = getenv('MYSQLDATABASE') ?: getenv('DB_NAME');
     $envUser = getenv('MYSQLUSER') ?: getenv('DB_USER');
     $envPass = getenv('MYSQLPASSWORD') ?: getenv('DB_PASS');
-    $envPort = getenv('MYSQLPORT') ?: '3306';
+    $envPort = getenv('MYSQLPORT') ?: getenv('DB_PORT') ?: '3306';
     
     define('DB_HOST', ($envHost !== false && $envHost !== '') ? $envHost : '127.0.0.1');
     define('DB_NAME', ($envName !== false && $envName !== '') ? $envName : 'gamezone');

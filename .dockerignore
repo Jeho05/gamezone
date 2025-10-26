@@ -11,3 +11,5 @@ diagnostic_*.php
 create_*.php
 run_migration.php
 install.php
+# Keep .env.railway for Railway deployment
+!.env.railway
