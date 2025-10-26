@@ -1,7 +1,11 @@
-// Central API base: prefer Vite env, fallback to dev proxy or local Apache
+// Central API base: Use Vercel proxy in production, direct backend in development
 let API_BASE = import.meta.env.NEXT_PUBLIC_API_BASE;
 
-if (!API_BASE) {
+// In production (Vercel), use the proxy to bypass InfinityFree CORS restrictions
+if (typeof window !== 'undefined' && window.location.hostname.includes('vercel.app')) {
+  API_BASE = '/api/proxy?endpoint=';
+  console.log('[API Config] Using Vercel CORS Proxy');
+} else if (!API_BASE) {
   if (typeof window !== 'undefined' && (window.location.port === '4000' || window.location.port === '5173' || window.location.port === '5174')) {
     // Vite dev server: UTILISER LE PROXY pour éviter les problèmes CORS/NetworkError
     API_BASE = '/php-api';
