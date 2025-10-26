@@ -4,13 +4,17 @@
 
 // Load .env.railway FIRST before anything else
 $railwayEnv = __DIR__ . '/.env.railway';
+$envVars = []; // Store parsed values
 if (file_exists($railwayEnv)) {
     $lines = file($railwayEnv, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     foreach ($lines as $line) {
         if (strpos(trim($line), '#') === 0) continue;
         if (strpos($line, '=') !== false) {
             list($key, $value) = explode('=', $line, 2);
-            putenv(trim($key) . '=' . trim($value));
+            $key = trim($key);
+            $value = trim($value);
+            $envVars[$key] = $value;
+            putenv("$key=$value");
         }
     }
 }
@@ -47,13 +51,14 @@ if (session_status() === PHP_SESSION_NONE) {
   
   // Harden cookies: HttpOnly, SameSite (configurable), and Secure in prod
   ini_set('session.cookie_httponly', '1');
-  $sameSite = getenv('SESSION_SAMESITE') ?: 'Lax';
+  // Use parsed env values directly instead of getenv() to avoid system override
+  $sameSite = $envVars['SESSION_SAMESITE'] ?? getenv('SESSION_SAMESITE') ?: 'Lax';
   ini_set('session.cookie_samesite', $sameSite);
-  $secure = getenv('SESSION_SECURE') === '1' ? '1' : '0';
+  $secure = ($envVars['SESSION_SECURE'] ?? getenv('SESSION_SECURE')) === '1' ? '1' : '0';
   ini_set('session.cookie_secure', $secure);
   
   // Augmenter la durée de vie de la session (24 heures par défaut)
-  $sessionLifetime = (int)(getenv('SESSION_LIFETIME') ?: 86400); // 24 heures en secondes
+  $sessionLifetime = (int)($envVars['SESSION_LIFETIME'] ?? getenv('SESSION_LIFETIME') ?: 86400); // 24 heures en secondes
   ini_set('session.gc_maxlifetime', $sessionLifetime);
   ini_set('session.cookie_lifetime', $sessionLifetime);
   
