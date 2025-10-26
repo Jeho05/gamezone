@@ -14,6 +14,10 @@ WORKDIR /var/www/html
 # Copy backend files from backend_infinityfree/api
 COPY backend_infinityfree/api/ /var/www/html/
 
+# Copy setup scripts from root to /var/www/html/
+COPY setup_complete.php /var/www/html/
+COPY init_all_tables.php /var/www/html/
+
 # Ensure .env.railway is copied (force copy hidden files)
 COPY backend_infinityfree/api/.env.railway /var/www/html/.env.railway
 
