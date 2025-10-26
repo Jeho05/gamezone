@@ -13,9 +13,16 @@ WORKDIR /var/www/html
 # Copy all backend files
 COPY . /var/www/html/
 
-# Set permissions
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html
+# Create uploads directory structure with proper permissions
+RUN mkdir -p /var/www/uploads/avatars \
+    && mkdir -p /var/www/uploads/games \
+    && mkdir -p /var/www/uploads/files \
+    && mkdir -p /var/www/uploads/images \
+    && mkdir -p /var/www/uploads/thumbnails \
+    && chown -R www-data:www-data /var/www/html \
+    && chown -R www-data:www-data /var/www/uploads \
+    && chmod -R 755 /var/www/html \
+    && chmod -R 777 /var/www/uploads
 
 # Expose port 80
 EXPOSE 80
