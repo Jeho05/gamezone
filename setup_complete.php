@@ -18,8 +18,16 @@ echo "pre{background:#0a0a0a;padding:10px;border-radius:5px;}</style></head><bod
 echo "<h1>🚀 Setup Complet GameZone Backend</h1>";
 
 try {
+    // DEBUG: Afficher les fichiers présents
+    echo "<p class='info'>📂 Fichiers dans " . __DIR__ . ":</p>";
+    $files = scandir(__DIR__);
+    echo "<pre>" . implode("\n", array_slice($files, 0, 20)) . "</pre>";
+    
     // Charger .env.railway si présent
     $railwayEnv = __DIR__ . '/.env.railway';
+    echo "<p class='info'>🔍 Recherche .env.railway dans: $railwayEnv</p>";
+    echo "<p class='info'>📄 Fichier existe: " . (file_exists($railwayEnv) ? 'OUI' : 'NON') . "</p>";
+    
     if (file_exists($railwayEnv)) {
         $lines = file($railwayEnv, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
         foreach ($lines as $line) {
@@ -32,6 +40,9 @@ try {
                 $_ENV[$key] = $value;
             }
         }
+        echo "<p class='ok'>✅ .env.railway chargé</p>";
+    } else {
+        echo "<p class='error'>⚠️ .env.railway non trouvé, utilisation variables Railway natives</p>";
     }
     
     // Connexion directe à la base - Lire les variables Railway
@@ -41,6 +52,13 @@ try {
     $db = getenv('MYSQLDATABASE') ?: getenv('DB_NAME') ?: 'railway';
     $user = getenv('MYSQLUSER') ?: getenv('DB_USER') ?: 'root';
     $pass = getenv('MYSQLPASSWORD') ?: getenv('DB_PASS') ?: '';
+    
+    echo "<p class='info'>🔑 Variables env:</p>";
+    echo "<pre>";
+    echo "MYSQLHOST: " . var_export(getenv('MYSQLHOST'), true) . "\n";
+    echo "DB_HOST: " . var_export(getenv('DB_HOST'), true) . "\n";
+    echo "Host utilisé: $host\n";
+    echo "</pre>";
     
     echo "<p class='info'>📡 Connexion à MySQL: $host:$port/$db</p>";
     
