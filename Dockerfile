@@ -13,6 +13,9 @@ WORKDIR /var/www/html
 # Copy backend files from backend_infinityfree/api
 COPY backend_infinityfree/api/ /var/www/html/
 
+# Ensure .env.railway is copied (force copy hidden files)
+COPY backend_infinityfree/api/.env.railway /var/www/html/.env.railway
+
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html
