@@ -18,7 +18,23 @@ echo "pre{background:#0a0a0a;padding:10px;border-radius:5px;}</style></head><bod
 echo "<h1>🚀 Setup Complet GameZone Backend</h1>";
 
 try {
-    // Connexion directe à la base
+    // Charger .env.railway si présent
+    $railwayEnv = __DIR__ . '/.env.railway';
+    if (file_exists($railwayEnv)) {
+        $lines = file($railwayEnv, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        foreach ($lines as $line) {
+            if (strpos(trim($line), '#') === 0) continue;
+            if (strpos($line, '=') !== false) {
+                list($key, $value) = explode('=', $line, 2);
+                $key = trim($key);
+                $value = trim($value);
+                putenv("$key=$value");
+                $_ENV[$key] = $value;
+            }
+        }
+    }
+    
+    // Connexion directe à la base - Lire les variables Railway
     $host = getenv('MYSQLHOST') ?: 'localhost';
     $port = getenv('MYSQLPORT') ?: '3306';
     $db = getenv('MYSQLDATABASE') ?: 'railway';
