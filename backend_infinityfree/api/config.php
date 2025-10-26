@@ -86,53 +86,55 @@ if (session_status() === PHP_SESSION_NONE) {
 // CORS (allow common localhost ports for dev - NEVER use *)
 $origin = $_SERVER['HTTP_ORIGIN'] ?? 'http://localhost:4000';
 
-// Accept any localhost/127.0.0.1 origin in dev mode
-if (strpos($origin, 'http://localhost') === 0 || strpos($origin, 'http://127.0.0.1') === 0) {
+// Liste des origines autorisées
+$allowedOrigins = [
+    'http://localhost:4000',
+    'http://localhost:4001',
+    'http://localhost:3000',
+    'http://127.0.0.1:4000',
+    'http://127.0.0.1:4001',
+    'http://127.0.0.1:3000',
+    'https://gamezoneismo.vercel.app'
+];
+
+// Vérifier si l'origine est autorisée
+if (in_array($origin, $allowedOrigins) || 
+    strpos($origin, 'http://localhost') === 0 || 
+    strpos($origin, 'http://127.0.0.1') === 0 ||
+    strpos($origin, '.vercel.app') !== false) {
     header("Access-Control-Allow-Origin: $origin");
     header('Access-Control-Allow-Credentials: true');
-    header('Access-Control-Allow-Headers: Content-Type, X-Requested-With, Authorization');
+    header('Access-Control-Allow-Headers: Content-Type, X-Requested-With, Authorization, X-CSRF-Token');
     header('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
 } else {
     // Fallback to localhost:4000 for direct access
     header("Access-Control-Allow-Origin: http://localhost:4000");
     header('Access-Control-Allow-Credentials: true');
-    header('Access-Control-Allow-Headers: Content-Type, X-Requested-With, Authorization');
+    header('Access-Control-Allow-Headers: Content-Type, X-Requested-With, Authorization, X-CSRF-Token');
     header('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
 }
 
-// DB config - Charger depuis .env avec parse_ini_file()
+// DB config - Support Railway.app and local environments
 if (!defined('DB_HOST')) {
-    $envFile = __DIR__ . '/.env';
-    $envVars = [];
+    // Railway.app uses MYSQLHOST, MYSQLDATABASE, etc.
+    $envHost = getenv('MYSQLHOST') ?: getenv('DB_HOST');
+    $envName = getenv('MYSQLDATABASE') ?: getenv('DB_NAME');
+    $envUser = getenv('MYSQLUSER') ?: getenv('DB_USER');
+    $envPass = getenv('MYSQLPASSWORD') ?: getenv('DB_PASS');
+    $envPort = getenv('MYSQLPORT') ?: '3306';
     
-    if (file_exists($envFile)) {
-        // Utiliser parse_ini_file qui fonctionne sur InfinityFree
-        $envVars = parse_ini_file($envFile);
-        
-        // Si parse_ini_file échoue, parser manuellement
-        if ($envVars === false) {
-            $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-            foreach ($lines as $line) {
-                if (strpos(trim($line), '#') === 0) continue;
-                if (strpos($line, '=') !== false) {
-                    list($key, $value) = explode('=', $line, 2);
-                    $envVars[trim($key)] = trim($value);
-                }
-            }
-        }
-    }
-    
-    define('DB_HOST', isset($envVars['DB_HOST']) ? $envVars['DB_HOST'] : '127.0.0.1');
-    define('DB_NAME', isset($envVars['DB_NAME']) ? $envVars['DB_NAME'] : 'gamezone');
-    define('DB_USER', isset($envVars['DB_USER']) ? $envVars['DB_USER'] : 'root');
-    define('DB_PASS', isset($envVars['DB_PASS']) ? $envVars['DB_PASS'] : '');
+    define('DB_HOST', ($envHost !== false && $envHost !== '') ? $envHost : '127.0.0.1');
+    define('DB_NAME', ($envName !== false && $envName !== '') ? $envName : 'gamezone');
+    define('DB_USER', ($envUser !== false && $envUser !== '') ? $envUser : 'root');
+    define('DB_PASS', ($envPass !== false && $envPass !== '') ? $envPass : '');
+    define('DB_PORT', $envPort);
 }
 
 function get_db(): PDO {
     static $pdo = null;
     if ($pdo instanceof PDO) return $pdo;
 
-    $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4";
+    $dsn = "mysql:host=" . DB_HOST . ";port=" . DB_PORT . ";dbname=" . DB_NAME . ";charset=utf8mb4";
     $options = [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
@@ -149,6 +151,7 @@ function get_db(): PDO {
             'details' => $e->getMessage(),
             'debug' => [
                 'host' => DB_HOST,
+                'port' => DB_PORT,
                 'database' => DB_NAME,
                 'user' => DB_USER,
                 'pass_length' => strlen(DB_PASS)

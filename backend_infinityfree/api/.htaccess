@@ -7,18 +7,14 @@
 </FilesMatch>
 
 # Environment variables for PHP (accessible via getenv())
-# Note: InfinityFree lit les variables depuis le fichier .env
 <IfModule mod_env.c>
-    SetEnv APP_ENV production
+    SetEnv APP_ENV development
     SetEnv SESSION_SAMESITE Lax
     SetEnv SESSION_SECURE 0
+    SetEnv CRON_SECRET DEV_CHANGE_ME
+    # Base URL of the site, used to build absolute callback URLs
+    SetEnv APP_BASE_URL http://localhost/projet%20ismo
+    # Kkiapay placeholders (backend)
+    SetEnv KKIAPAY_PUBLIC_KEY CHANGE_ME
+    SetEnv KKIAPAY_SANDBOX 1
 </IfModule>
-
-# Disable directory listing
-Options -Indexes
-
-# Protect sensitive files
-<FilesMatch "^(\.env|\.htaccess|\.gitignore)">
-    Order allow,deny
-    Deny from all
-</FilesMatch>

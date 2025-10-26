@@ -1,13 +1,17 @@
 RewriteEngine On
 
-# CORS Headers pour Vercel
+# Force HTTPS - SSL Actif
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# CORS Headers pour Vercel - Configuration Dynamique via PHP
 <IfModule mod_headers.c>
-    # Autoriser les requetes depuis Vercel (VOUS DEVREZ METTRE L'URL EXACTE APRES LE DEPLOIEMENT)
-    # Temporairement on autorise tout pour tester, puis vous mettrez l'URL precise
-    Header set Access-Control-Allow-Origin "*"
-    Header set Access-Control-Allow-Credentials "true"
-    Header set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
-    Header set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With, Accept"
+    # Les headers CORS sont gérés dynamiquement par config.php
+    # Cela permet de supporter à la fois localhost (dev) et Vercel (prod)
+    # URL Vercel: https://gamezoneismo.vercel.app
+    Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS, PATCH"
+    Header always set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With, Accept, X-CSRF-Token"
+    Header always set Access-Control-Max-Age "3600"
 </IfModule>
 
 # Handle preflight OPTIONS requests
