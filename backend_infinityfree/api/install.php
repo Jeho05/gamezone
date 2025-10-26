@@ -42,17 +42,55 @@ try {
         if (stripos($trim, 'CREATE DATABASE') === 0 || stripos($trim, 'USE ') === 0) {
             continue;
         }
+        // Skip comment lines
+        if (strpos($trim, '--') === 0 || $trim === '') {
+            continue;
+        }
         $filtered[] = $line;
     }
     $sql = implode("\n", $filtered);
 
-    // Split by semicolon but keep it simple (no complicated procedures in file)
-    $statements = array_filter(array_map('trim', explode(';', $sql)));
+    // Better SQL parsing: split on semicolons but handle multi-line statements
+    $statements = [];
+    $current = '';
+    $inString = false;
+    $stringChar = '';
+    
+    for ($i = 0; $i < strlen($sql); $i++) {
+        $char = $sql[$i];
+        
+        // Handle string literals
+        if (($char === '"' || $char === "'") && ($i === 0 || $sql[$i-1] !== '\\')) {
+            if (!$inString) {
+                $inString = true;
+                $stringChar = $char;
+            } elseif ($char === $stringChar) {
+                $inString = false;
+            }
+        }
+        
+        // Split on semicolon only if not in string
+        if ($char === ';' && !$inString) {
+            $stmt = trim($current);
+            if ($stmt !== '') {
+                $statements[] = $stmt;
+            }
+            $current = '';
+        } else {
+            $current .= $char;
+        }
+    }
+    
+    // Add last statement if exists
+    $stmt = trim($current);
+    if ($stmt !== '') {
+        $statements[] = $stmt;
+    }
     $executedCount = 0;
     $errors = [];
     
     foreach ($statements as $index => $stmt) {
-        if ($stmt === '' || strpos($stmt, '--') === 0) continue;
+        if ($stmt === '') continue;
         try {
             $pdo->exec($stmt);
             $executedCount++;
@@ -61,7 +99,7 @@ try {
             $errors[] = [
                 'statement_index' => $index,
                 'error' => $e->getMessage(),
-                'statement_preview' => substr($stmt, 0, 100)
+                'statement_preview' => substr($stmt, 0, 150)
             ];
         }
     }
