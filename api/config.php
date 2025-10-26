@@ -102,23 +102,25 @@ if (strpos($origin, 'http://localhost') === 0 || strpos($origin, 'http://127.0.0
 
 // DB config - CONSTANTES pour éviter les problèmes de scope
 if (!defined('DB_HOST')) {
-    // Valeurs par défaut XAMPP
-    $envHost = getenv('DB_HOST');
-    $envName = getenv('DB_NAME');
-    $envUser = getenv('DB_USER');
-    $envPass = getenv('DB_PASS');
-    
+    // Support Railway (MYSQL*) et fallback sur DB_* / XAMPP
+    $envHost = getenv('MYSQLHOST') ?: getenv('DB_HOST');
+    $envName = getenv('MYSQLDATABASE') ?: getenv('DB_NAME');
+    $envUser = getenv('MYSQLUSER') ?: getenv('DB_USER');
+    $envPass = getenv('MYSQLPASSWORD') ?: getenv('DB_PASS');
+    $envPort = getenv('MYSQLPORT') ?: getenv('DB_PORT') ?: '3306';
+
     define('DB_HOST', ($envHost !== false && $envHost !== '') ? $envHost : '127.0.0.1');
     define('DB_NAME', ($envName !== false && $envName !== '') ? $envName : 'gamezone');
     define('DB_USER', ($envUser !== false && $envUser !== '') ? $envUser : 'root');
     define('DB_PASS', ($envPass !== false && $envPass !== '') ? $envPass : '');
+    define('DB_PORT', $envPort);
 }
 
 function get_db(): PDO {
     static $pdo = null;
     if ($pdo instanceof PDO) return $pdo;
 
-    $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4";
+    $dsn = "mysql:host=" . DB_HOST . ";port=" . DB_PORT . ";dbname=" . DB_NAME . ";charset=utf8mb4";
     $options = [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,

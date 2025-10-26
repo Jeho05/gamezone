@@ -11,10 +11,10 @@ RUN a2enmod rewrite headers
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy backend files from backend_infinityfree/api
-COPY backend_infinityfree/api/ /var/www/html/
+# Copy real backend into web root (endpoints at /)
+COPY api/ /var/www/html/
 
-# Copy setup scripts from root to /var/www/html/
+# Copy setup scripts to web root
 COPY setup_complete.php /var/www/html/
 COPY init_all_tables.php /var/www/html/
 
