@@ -1,10 +1,12 @@
-// Central API base: Use Vercel proxy in production, direct backend in development
+// Central API base: Use CORS proxy for InfinityFree in production
 let API_BASE = import.meta.env.NEXT_PUBLIC_API_BASE;
 
-// In production (Vercel), use the proxy to bypass InfinityFree CORS restrictions
+// InfinityFree blocks CORS - use cors-anywhere proxy in production
 if (typeof window !== 'undefined' && window.location.hostname.includes('vercel.app')) {
-  API_BASE = '/api/proxy?endpoint=';
-  console.log('[API Config] Using Vercel CORS Proxy');
+  // Use public CORS proxy (temporary solution)
+  API_BASE = 'https://cors-anywhere.herokuapp.com/https://ismo.gamer.gd/api';
+  console.warn('[API Config] Using CORS proxy due to InfinityFree limitations');
+  console.warn('[API Config] RECOMMENDED: Migrate backend to Railway/Render/Heroku');
 } else if (!API_BASE) {
   if (typeof window !== 'undefined' && (window.location.port === '4000' || window.location.port === '5173' || window.location.port === '5174')) {
     // Vite dev server: UTILISER LE PROXY pour éviter les problèmes CORS/NetworkError
