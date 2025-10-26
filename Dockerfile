@@ -18,9 +18,6 @@ COPY api/ /var/www/html/
 COPY setup_complete.php /var/www/html/
 COPY init_all_tables.php /var/www/html/
 
-# Ensure .env.railway is copied (force copy hidden files)
-COPY backend_infinityfree/api/.env.railway /var/www/html/.env.railway
-
 # Create uploads directory structure under /var/www/html with proper permissions
 RUN mkdir -p /var/www/html/uploads/avatars \
     && mkdir -p /var/www/html/uploads/games \

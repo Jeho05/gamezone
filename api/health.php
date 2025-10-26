@@ -34,7 +34,15 @@ $health['checks']['cache'] = [
 ];
 
 // Check uploads directory
-$uploadsDir = __DIR__ . '/../uploads';
+$uploadsCandidates = [
+    __DIR__ . '/uploads',
+    __DIR__ . '/../uploads'
+];
+$uploadsDir = null;
+foreach ($uploadsCandidates as $c) {
+    if (is_dir($c)) { $uploadsDir = $c; break; }
+}
+if ($uploadsDir === null) { $uploadsDir = __DIR__ . '/uploads'; }
 $uploadsWritable = is_dir($uploadsDir) && is_writable($uploadsDir);
 $health['checks']['uploads'] = [
     'status' => $uploadsWritable ? 'up' : 'down',
