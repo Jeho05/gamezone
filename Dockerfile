@@ -22,6 +22,7 @@ COPY api/ /var/www/html/
 # Copy setup scripts to web root
 COPY setup_complete.php /var/www/html/
 COPY init_all_tables.php /var/www/html/
+COPY install_secure_transactions.php /var/www/html/
 
 # Create uploads directory structure under /var/www/html with proper permissions
 RUN mkdir -p /var/www/html/uploads/avatars \
