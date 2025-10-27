@@ -2,6 +2,11 @@
 # Force rebuild to fix PHP ternary syntax error
 FROM php:8.2-apache
 
+# Default runtime flags (no secrets)
+ENV APP_ENV=production \
+    SESSION_SAMESITE=None \
+    SESSION_SECURE=1
+
 # Install MySQL extension
 RUN docker-php-ext-install mysqli pdo pdo_mysql
 
