@@ -2,7 +2,12 @@
 /**
  * Script d'installation du système de transactions sécurisées
  */
-require_once __DIR__ . '/api/config.php';
+// Support both layouts: production (config.php at web root) and local (api/config.php)
+if (file_exists(__DIR__ . '/config.php')) {
+    require_once __DIR__ . '/config.php';
+} else {
+    require_once __DIR__ . '/api/config.php';
+}
 
 set_time_limit(300); // 5 minutes max
 
@@ -25,7 +30,11 @@ try {
     echo "<div class='step'>";
     echo "<h2>1️⃣ Lecture du fichier de migration</h2>";
     
+    // Migration file path (supports prod copy where api/ is flattened)
     $sqlFile = __DIR__ . '/api/migrations/add_secure_transactions.sql';
+    if (!file_exists($sqlFile)) {
+        $sqlFile = __DIR__ . '/migrations/add_secure_transactions.sql';
+    }
     
     if (!file_exists($sqlFile)) {
         throw new Exception("Fichier de migration introuvable: {$sqlFile}");
@@ -163,7 +172,7 @@ try {
     }
     
     // Vérifier les procédures
-    $stmt = $pdo->query("SHOW PROCEDURE STATUS WHERE Db = 'gamezone'");
+    $stmt = $pdo->query("SHOW PROCEDURE STATUS WHERE Db = DATABASE()");
     $procedures = $stmt->fetchAll();
     $procedureNames = array_column($procedures, 'Name');
     
@@ -177,7 +186,7 @@ try {
     }
     
     // Vérifier l'event
-    $stmt = $pdo->query("SHOW EVENTS WHERE Db = 'gamezone' AND Name = 'cleanup_transactions_event'");
+    $stmt = $pdo->query("SELECT * FROM INFORMATION_SCHEMA.EVENTS WHERE EVENT_SCHEMA = DATABASE() AND EVENT_NAME = 'cleanup_transactions_event'");
     $event = $stmt->fetch();
     
     if ($event) {
