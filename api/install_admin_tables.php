@@ -152,7 +152,7 @@ try {
         auto_confirm_payment TINYINT(1) NOT NULL DEFAULT 0,
         fee_percentage DECIMAL(5,2) NOT NULL DEFAULT 0.00,
         fee_fixed DECIMAL(10,2) NOT NULL DEFAULT 0.00,
-        is_active TINY(1) NOT NULL DEFAULT 1,
+        is_active TINYINT(1) NOT NULL DEFAULT 1,
         display_order INT NOT NULL DEFAULT 0,
         instructions TEXT NULL,
         created_at DATETIME NOT NULL,
