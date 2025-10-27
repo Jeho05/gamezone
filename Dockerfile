@@ -18,6 +18,8 @@ WORKDIR /var/www/html
 
 # Copy real backend into web root (endpoints at /)
 COPY api/ /var/www/html/
+# Also copy to /api to preserve legacy paths (/api/*)
+COPY api/ /var/www/html/api/
 
 # Copy setup scripts to web root
 COPY setup_complete.php /var/www/html/
