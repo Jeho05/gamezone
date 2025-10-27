@@ -27,6 +27,20 @@ try {
     $files = scandir(__DIR__);
     echo "<pre>" . implode("\n", array_slice($files, 0, 20)) . "</pre>";
     
+    // Afficher les variables détectées et les constantes DB résolues
+    echo "<p class='info'>🔎 Variables détectées et valeurs résolues:</p>";
+    echo "<pre>";
+    echo "APP_ENV: " . htmlspecialchars(envval('APP_ENV') ?: '') . "\n";
+    echo "MYSQLHOST: " . var_export(envval('MYSQLHOST'), true) . "\n";
+    echo "MYSQLPORT: " . var_export(envval('MYSQLPORT'), true) . "\n";
+    echo "MYSQLDATABASE: " . var_export(envval('MYSQLDATABASE'), true) . "\n";
+    echo "MYSQLUSER: " . var_export(envval('MYSQLUSER'), true) . "\n";
+    echo "Resolved host: " . DB_HOST . "\n";
+    echo "Resolved port: " . DB_PORT . "\n";
+    echo "Resolved database: " . DB_NAME . "\n";
+    echo "Resolved user: " . DB_USER . "\n";
+    echo "</pre>";
+    
     // Connexion DB via la même fonction que les API
     $pdo = get_db();
     echo "<p class='ok'>✅ Connexion MySQL via config.php réussie</p>";

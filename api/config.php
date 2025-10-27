@@ -8,31 +8,43 @@ require_once __DIR__ . '/middleware/logger.php';
 require_once __DIR__ . '/middleware/security.php';
 require_once __DIR__ . '/middleware/cache.php';
 
-// Load environment from .env files if present (Railway/Local)
-// Tries project root then api directory
-$__envCandidates = [
-  dirname(__DIR__) . '/.env.railway',
-  dirname(__DIR__) . '/.env',
-  __DIR__ . '/.env.railway',
-  __DIR__ . '/.env'
-];
-foreach ($__envCandidates as $__envPath) {
-  if (is_file($__envPath)) {
-    $lines = @file($__envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-    if ($lines !== false) {
-      foreach ($lines as $line) {
-        $line = trim($line);
-        if ($line === '' || $line[0] === '#') continue;
-        if (strpos($line, '=') !== false) {
-          list($k, $v) = explode('=', $line, 2);
-          $k = trim($k);
-          $v = trim($v);
-          putenv("$k=$v");
-          $_ENV[$k] = $v;
+// Helper to read env variables robustly (getenv, $_ENV, $_SERVER)
+function envval(string $key): ?string {
+    $v = getenv($key);
+    if ($v !== false && $v !== '') return $v;
+    if (isset($_ENV[$key]) && $_ENV[$key] !== '') return $_ENV[$key];
+    if (isset($_SERVER[$key]) && $_SERVER[$key] !== '') return $_SERVER[$key];
+    return null;
+}
+
+// Load environment from .env files only in non-production to avoid overriding Railway envs
+$__appEnv = envval('APP_ENV') ?: 'development';
+if ($__appEnv !== 'production') {
+  // Tries project root then api directory
+  $__envCandidates = [
+    dirname(__DIR__) . '/.env.railway',
+    dirname(__DIR__) . '/.env',
+    __DIR__ . '/.env.railway',
+    __DIR__ . '/.env'
+  ];
+  foreach ($__envCandidates as $__envPath) {
+    if (is_file($__envPath)) {
+      $lines = @file($__envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+      if ($lines !== false) {
+        foreach ($lines as $line) {
+          $line = trim($line);
+          if ($line === '' || $line[0] === '#') continue;
+          if (strpos($line, '=') !== false) {
+            list($k, $v) = explode('=', $line, 2);
+            $k = trim($k);
+            $v = trim($v);
+            putenv("$k=$v");
+            $_ENV[$k] = $v;
+          }
         }
       }
+      break; // first found
     }
-    break; // first found
   }
 }
 
@@ -139,35 +151,99 @@ if (in_array($origin, $allowedOrigins)
 
 // DB config - CONSTANTES pour éviter les problèmes de scope
 if (!defined('DB_HOST')) {
-    // Support Railway (MYSQL* and MYSQL_*) et fallback sur DB_* / XAMPP
-    $envHost = getenv('MYSQLHOST') ?: getenv('MYSQL_HOST') ?: getenv('DB_HOST');
-    $envName = getenv('MYSQLDATABASE') ?: getenv('MYSQL_DATABASE') ?: getenv('DB_NAME');
-    $envUser = getenv('MYSQLUSER') ?: getenv('MYSQL_USER') ?: getenv('DB_USER');
-    $envPass = getenv('MYSQLPASSWORD') ?: getenv('MYSQL_PASSWORD') ?: getenv('DB_PASS');
-    $envPort = getenv('MYSQLPORT') ?: getenv('MYSQL_PORT') ?: getenv('DB_PORT') ?: '3306';
+    // Prefer DATABASE_URL-like envs (mysql://user:pass@host:port/dbname)
+    $envHost = $envName = $envUser = $envPass = $envPort = null;
+    $dbUrl = envval('DATABASE_URL') ?: envval('JAWSDB_URL') ?: envval('CLEARDB_DATABASE_URL');
+    if ($dbUrl) {
+        $parts = parse_url($dbUrl);
+        if ($parts !== false) {
+            $envHost = $parts['host'] ?? null;
+            $envPort = isset($parts['port']) ? (string)$parts['port'] : null;
+            $envUser = $parts['user'] ?? null;
+            $envPass = $parts['pass'] ?? null;
+            $path = $parts['path'] ?? '';
+            if ($path && $path[0] === '/') $path = substr($path, 1);
+            $envName = $path ?: null;
+        }
+    }
+    // Otherwise support Railway MYSQL* and MYSQL_* and fallback DB_*
+    if (!$envHost) $envHost = envval('MYSQLHOST') ?: envval('MYSQL_HOST') ?: envval('DB_HOST');
+    if (!$envName) $envName = envval('MYSQLDATABASE') ?: envval('MYSQL_DATABASE') ?: envval('DB_NAME');
+    if (!$envUser) $envUser = envval('MYSQLUSER') ?: envval('MYSQL_USER') ?: envval('DB_USER');
+    if (!$envPass) $envPass = envval('MYSQLPASSWORD') ?: envval('MYSQL_PASSWORD') ?: envval('DB_PASS');
+    if (!$envPort) $envPort = envval('MYSQLPORT') ?: envval('MYSQL_PORT') ?: envval('DB_PORT') ?: '3306';
+
+    // Helper to choose first non-empty value
+    $firstNonEmpty = function($value, $default) {
+        if ($value === null) return $default;
+        if ($value === false) return $default;
+        if (is_string($value) && $value === '') return $default;
+        return $value;
+    };
+
+    // Detect Railway environment
+    $httpHost = $_SERVER['HTTP_HOST'] ?? '';
+    $isRailway = (bool)(envval('RAILWAY_ENVIRONMENT')
+        || strpos($httpHost, 'railway.app') !== false
+        || strpos($httpHost, 'up.railway.app') !== false);
 
     // Production-safe defaults for Railway if host not provided
-    $appEnv = getenv('APP_ENV') ?: 'development';
-    if ($appEnv === 'production') {
-        if ($envHost === false || $envHost === '' || $envHost === '127.0.0.1' || $envHost === 'localhost') {
+    $appEnv = envval('APP_ENV') ?: 'development';
+    if ($appEnv === 'production' || $isRailway) {
+        // If still missing/localhost, try to parse a deployed .env.railway/.env once
+        $needsEnvParse = ($envHost === null || $envHost === false || $envHost === '' || $envHost === '127.0.0.1' || $envHost === 'localhost');
+        if ($needsEnvParse) {
+            $candidates = [
+                dirname(__DIR__) . '/.env.railway',
+                dirname(__DIR__) . '/.env',
+                __DIR__ . '/.env.railway',
+                __DIR__ . '/.env'
+            ];
+            foreach ($candidates as $p) {
+                if (is_file($p)) {
+                    $lines = @file($p, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+                    if ($lines !== false) {
+                        foreach ($lines as $line) {
+                            $line = trim($line);
+                            if ($line === '' || $line[0] === '#') continue;
+                            if (strpos($line, '=') !== false) {
+                                list($k, $v) = explode('=', $line, 2);
+                                $k = trim($k); $v = trim($v);
+                                putenv("$k=$v");
+                                $_ENV[$k] = $v;
+                                $_SERVER[$k] = $v;
+                            }
+                        }
+                    }
+                    break;
+                }
+            }
+            // Re-resolve after parsing
+            $envHost = envval('MYSQLHOST') ?: envval('MYSQL_HOST') ?: envval('DB_HOST') ?: $envHost;
+            $envName = envval('MYSQLDATABASE') ?: envval('MYSQL_DATABASE') ?: envval('DB_NAME') ?: $envName;
+            $envUser = envval('MYSQLUSER') ?: envval('MYSQL_USER') ?: envval('DB_USER') ?: $envUser;
+            $envPass = envval('MYSQLPASSWORD') ?: envval('MYSQL_PASSWORD') ?: envval('DB_PASS') ?: $envPass;
+            $envPort = envval('MYSQLPORT') ?: envval('MYSQL_PORT') ?: envval('DB_PORT') ?: $envPort;
+        }
+        if ($envHost === null || $envHost === false || $envHost === '' || $envHost === '127.0.0.1' || $envHost === 'localhost') {
             $envHost = 'mysql.railway.internal';
         }
-        if ($envName === false || $envName === '') {
+        if ($envName === null || $envName === false || $envName === '') {
             $envName = 'railway';
         }
-        if ($envPort === false || $envPort === '') {
+        if ($envPort === null || $envPort === false || $envPort === '') {
             $envPort = '3306';
         }
-        if ($envUser === false || $envUser === '') {
+        if ($envUser === null || $envUser === false || $envUser === '') {
             $envUser = 'root';
         }
     }
 
-    define('DB_HOST', ($envHost !== false && $envHost !== '') ? $envHost : '127.0.0.1');
-    define('DB_NAME', ($envName !== false && $envName !== '') ? $envName : 'gamezone');
-    define('DB_USER', ($envUser !== false && $envUser !== '') ? $envUser : 'root');
-    define('DB_PASS', ($envPass !== false && $envPass !== '') ? $envPass : '');
-    define('DB_PORT', $envPort);
+    define('DB_HOST', $firstNonEmpty($envHost, '127.0.0.1'));
+    define('DB_NAME', $firstNonEmpty($envName, 'gamezone'));
+    define('DB_USER', $firstNonEmpty($envUser, 'root'));
+    define('DB_PASS', $firstNonEmpty($envPass, ''));
+    define('DB_PORT', $firstNonEmpty($envPort, '3306'));
 }
 
 function get_db(): PDO {
@@ -191,6 +267,7 @@ function get_db(): PDO {
             'details' => $e->getMessage(),
             'debug' => [
                 'host' => DB_HOST,
+                'port' => DB_PORT,
                 'database' => DB_NAME,
                 'user' => DB_USER,
                 'pass_length' => strlen(DB_PASS)
