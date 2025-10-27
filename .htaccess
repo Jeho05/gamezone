@@ -1,6 +1,13 @@
 # CORS handled entirely by PHP (api/config.php)
 # Let PHP handle OPTIONS preflight requests
 
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  # Map legacy /api/* paths to flattened endpoints at /
+  RewriteRule ^api/(.*)$ /$1 [L,QSA]
+</IfModule>
+
 <IfModule mod_deflate.c>
   AddOutputFilterByType DEFLATE text/html text/plain text/css text/javascript application/javascript application/json application/xml image/svg+xml
 </IfModule>

@@ -7,8 +7,8 @@ ENV APP_ENV=production \
     SESSION_SAMESITE=None \
     SESSION_SECURE=1
 
-# Install MySQL extension
-RUN docker-php-ext-install mysqli pdo pdo_mysql
+# Install only required PHP extension (PDO MySQL)
+RUN docker-php-ext-install pdo_mysql
 
 # Enable Apache mod_rewrite for .htaccess
 RUN a2enmod rewrite headers
@@ -24,6 +24,7 @@ COPY setup_complete.php /var/www/html/
 COPY init_all_tables.php /var/www/html/
 COPY api/install_admin_tables.php /var/www/html/
 COPY install_secure_transactions.php /var/www/html/
+COPY .htaccess /var/www/html/.htaccess
 
 # Create uploads directory structure under /var/www/html with proper permissions
 RUN mkdir -p /var/www/html/uploads/avatars \
