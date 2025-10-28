@@ -89,6 +89,13 @@ if (session_status() === PHP_SESSION_NONE) {
   ini_set('session.gc_probability', '1');
   ini_set('session.gc_divisor', '100');
   
+  // Ensure session storage path is set and writable
+  $sessionSavePath = getenv('SESSION_SAVE_PATH') ?: '/var/www/html/sessions';
+  if (!is_dir($sessionSavePath)) {
+    @mkdir($sessionSavePath, 0770, true);
+  }
+  ini_set('session.save_path', $sessionSavePath);
+  
   session_start();
   
   // Régénérer l'ID de session périodiquement pour la sécurité (toutes les 30 minutes)

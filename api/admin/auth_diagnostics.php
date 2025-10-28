@@ -43,10 +43,22 @@ $data = [
     'cookie_name' => $cookieName,
     'cookie_present' => $cookiePresent,
     'cookie_raw_length' => strlen($cookiesRaw),
+    'cookie_value_sample' => $cookiePresent ? (substr($_COOKIE[$cookieName], 0, 8) . '...') : null,
     'cookie_samesite' => ini_get('session.cookie_samesite'),
     'cookie_secure' => ini_get('session.cookie_secure'),
     'cookie_path' => ini_get('session.cookie_path'),
     'cookie_lifetime' => ini_get('session.cookie_lifetime'),
+    'save_handler' => ini_get('session.save_handler'),
+    'save_path' => ini_get('session.save_path'),
+    'session_file_exists' => (function(){
+      $handler = ini_get('session.save_handler');
+      $path = ini_get('session.save_path');
+      if ($handler === 'files' && $path && session_id()) {
+        $file = rtrim($path, '/\\') . DIRECTORY_SEPARATOR . 'sess_' . session_id();
+        return file_exists($file);
+      }
+      return null;
+    })(),
     'user_present' => (bool)$user,
     'user' => $user ? [
       'id' => $user['id'] ?? null,
