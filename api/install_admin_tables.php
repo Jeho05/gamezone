@@ -27,6 +27,10 @@ try {
         updated_at DATETIME NOT NULL
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     echo "users OK\n";
+    // Add deactivation columns for user management
+    try { $c=$pdo->query("SHOW COLUMNS FROM users LIKE 'deactivation_reason'")->fetch(); if(!$c){$pdo->exec("ALTER TABLE users ADD COLUMN deactivation_reason TEXT NULL AFTER status"); echo "users.deactivation_reason added\n";} } catch (Throwable $e) {}
+    try { $c=$pdo->query("SHOW COLUMNS FROM users LIKE 'deactivation_date'")->fetch(); if(!$c){$pdo->exec("ALTER TABLE users ADD COLUMN deactivation_date DATETIME NULL AFTER deactivation_reason"); echo "users.deactivation_date added\n";} } catch (Throwable $e) {}
+    try { $c=$pdo->query("SHOW COLUMNS FROM users LIKE 'deactivated_by'")->fetch(); if(!$c){$pdo->exec("ALTER TABLE users ADD COLUMN deactivated_by INT NULL AFTER deactivation_date"); echo "users.deactivated_by added\n";} } catch (Throwable $e) {}
 
     // Points transactions
     $pdo->exec("CREATE TABLE IF NOT EXISTS points_transactions (
