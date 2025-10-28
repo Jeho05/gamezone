@@ -489,6 +489,17 @@ try {
         INDEX idx_featured (is_featured)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     echo "gallery OK\n";
+    // Extend gallery to match local dump
+    try { $c=$pdo->query("SHOW COLUMNS FROM gallery LIKE 'thumbnail_url'")->fetch(); if(!$c){$pdo->exec("ALTER TABLE gallery ADD COLUMN thumbnail_url VARCHAR(500) NULL AFTER image_url"); echo "gallery.thumbnail_url added\n";} } catch (Throwable $e) {}
+    try { $c=$pdo->query("SHOW COLUMNS FROM gallery LIKE 'event_id'")->fetch(); if(!$c){$pdo->exec("ALTER TABLE gallery ADD COLUMN event_id INT NULL AFTER category"); echo "gallery.event_id added\n";} } catch (Throwable $e) {}
+    try { $c=$pdo->query("SHOW COLUMNS FROM gallery LIKE 'status'")->fetch(); if(!$c){$pdo->exec("ALTER TABLE gallery ADD COLUMN status ENUM('active','archived') NOT NULL DEFAULT 'active' AFTER event_id"); echo "gallery.status added\n";} } catch (Throwable $e) {}
+    try { $c=$pdo->query("SHOW COLUMNS FROM gallery LIKE 'display_order'")->fetch(); if(!$c){$pdo->exec("ALTER TABLE gallery ADD COLUMN display_order INT NOT NULL DEFAULT 0 AFTER status"); echo "gallery.display_order added\n";} } catch (Throwable $e) {}
+    try { $c=$pdo->query("SHOW COLUMNS FROM gallery LIKE 'views'")->fetch(); if(!$c){$pdo->exec("ALTER TABLE gallery ADD COLUMN views INT NOT NULL DEFAULT 0 AFTER display_order"); echo "gallery.views added\n";} } catch (Throwable $e) {}
+    try { $c=$pdo->query("SHOW COLUMNS FROM gallery LIKE 'likes'")->fetch(); if(!$c){$pdo->exec("ALTER TABLE gallery ADD COLUMN likes INT NOT NULL DEFAULT 0 AFTER views"); echo "gallery.likes added\n";} } catch (Throwable $e) {}
+    try { $c=$pdo->query("SHOW COLUMNS FROM gallery LIKE 'created_by'")->fetch(); if(!$c){$pdo->exec("ALTER TABLE gallery ADD COLUMN created_by INT NULL AFTER likes"); echo "gallery.created_by added\n";} } catch (Throwable $e) {}
+    try { $c=$pdo->query("SHOW COLUMNS FROM gallery LIKE 'updated_at'")->fetch(); if(!$c){$pdo->exec("ALTER TABLE gallery ADD COLUMN updated_at DATETIME NULL AFTER created_at"); echo "gallery.updated_at added\n";} } catch (Throwable $e) {}
+    // Fix category to ENUM
+    try { $col=$pdo->query("SHOW COLUMNS FROM gallery LIKE 'category'")->fetch(PDO::FETCH_ASSOC); if($col && stripos($col['Type'],'varchar')!==false){$pdo->exec("ALTER TABLE gallery MODIFY category ENUM('tournament','event','stream','general','vr','retro') NOT NULL DEFAULT 'general'"); echo "gallery.category converted to ENUM\n";} } catch (Throwable $e) {}
 
     // Events (string type expected by admin statistics)
     $pdo->exec("CREATE TABLE IF NOT EXISTS events (
@@ -503,6 +514,12 @@ try {
         INDEX idx_type (type)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     echo "events OK\n";
+    // Fix events.type to ENUM
+    try { $col=$pdo->query("SHOW COLUMNS FROM events LIKE 'type'")->fetch(PDO::FETCH_ASSOC); if($col && stripos($col['Type'],'varchar')!==false){$pdo->exec("ALTER TABLE events MODIFY type ENUM('tournament','event','stream','news') NOT NULL"); echo "events.type converted to ENUM\n";} } catch (Throwable $e) {}
+    // Fix events.title to VARCHAR(200)
+    try { $col=$pdo->query("SHOW COLUMNS FROM events LIKE 'title'")->fetch(PDO::FETCH_ASSOC); if($col && stripos($col['Type'],'varchar(255)')!==false){$pdo->exec("ALTER TABLE events MODIFY title VARCHAR(200) NOT NULL"); echo "events.title resized to 200\n";} } catch (Throwable $e) {}
+    // Fix events.date column type
+    try { $col=$pdo->query("SHOW COLUMNS FROM events LIKE 'date'")->fetch(PDO::FETCH_ASSOC); if(!$col){$pdo->exec("ALTER TABLE events ADD COLUMN date DATE NOT NULL AFTER title"); echo "events.date added\n";} } catch (Throwable $e) {}
 
     // Upgrade events with optional columns from local
     try {
@@ -529,6 +546,25 @@ try {
         INDEX idx_status (status)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     echo "tournaments OK\n";
+    // Extend tournaments to match local dump
+    try { $c=$pdo->query("SHOW COLUMNS FROM tournaments LIKE 'type'")->fetch(); if(!$c){$pdo->exec("ALTER TABLE tournaments ADD COLUMN type ENUM('single_elimination','double_elimination','round_robin','swiss','free_for_all') DEFAULT 'single_elimination' AFTER game_id"); echo "tournaments.type added\n";} } catch (Throwable $e) {}
+    try { $c=$pdo->query("SHOW COLUMNS FROM tournaments LIKE 'max_participants'")->fetch(); if(!$c){$pdo->exec("ALTER TABLE tournaments ADD COLUMN max_participants INT NOT NULL DEFAULT 0 AFTER type"); echo "tournaments.max_participants added\n";} } catch (Throwable $e) {}
+    try { $c=$pdo->query("SHOW COLUMNS FROM tournaments LIKE 'entry_fee'")->fetch(); if(!$c){$pdo->exec("ALTER TABLE tournaments ADD COLUMN entry_fee INT DEFAULT 0 COMMENT 'Coût en points' AFTER max_participants"); echo "tournaments.entry_fee added\n";} } catch (Throwable $e) {}
+    try { $c=$pdo->query("SHOW COLUMNS FROM tournaments LIKE 'prize_pool'")->fetch(); if(!$c){$pdo->exec("ALTER TABLE tournaments ADD COLUMN prize_pool INT DEFAULT 0 AFTER entry_fee"); echo "tournaments.prize_pool added\n";} } catch (Throwable $e) {}
+    try { $c=$pdo->query("SHOW COLUMNS FROM tournaments LIKE 'first_place_prize'")->fetch(); if(!$c){$pdo->exec("ALTER TABLE tournaments ADD COLUMN first_place_prize INT DEFAULT 0 AFTER prize_pool"); echo "tournaments.first_place_prize added\n";} } catch (Throwable $e) {}
+    try { $c=$pdo->query("SHOW COLUMNS FROM tournaments LIKE 'second_place_prize'")->fetch(); if(!$c){$pdo->exec("ALTER TABLE tournaments ADD COLUMN second_place_prize INT DEFAULT 0 AFTER first_place_prize"); echo "tournaments.second_place_prize added\n";} } catch (Throwable $e) {}
+    try { $c=$pdo->query("SHOW COLUMNS FROM tournaments LIKE 'third_place_prize'")->fetch(); if(!$c){$pdo->exec("ALTER TABLE tournaments ADD COLUMN third_place_prize INT DEFAULT 0 AFTER second_place_prize"); echo "tournaments.third_place_prize added\n";} } catch (Throwable $e) {}
+    try { $c=$pdo->query("SHOW COLUMNS FROM tournaments LIKE 'start_date'")->fetch(); if(!$c){$pdo->exec("ALTER TABLE tournaments ADD COLUMN start_date DATETIME NULL AFTER third_place_prize"); echo "tournaments.start_date added\n";} } catch (Throwable $e) {}
+    try { $c=$pdo->query("SHOW COLUMNS FROM tournaments LIKE 'end_date'")->fetch(); if(!$c){$pdo->exec("ALTER TABLE tournaments ADD COLUMN end_date DATETIME NULL AFTER start_date"); echo "tournaments.end_date added\n";} } catch (Throwable $e) {}
+    try { $c=$pdo->query("SHOW COLUMNS FROM tournaments LIKE 'registration_deadline'")->fetch(); if(!$c){$pdo->exec("ALTER TABLE tournaments ADD COLUMN registration_deadline DATETIME NULL AFTER end_date"); echo "tournaments.registration_deadline added\n";} } catch (Throwable $e) {}
+    try { $c=$pdo->query("SHOW COLUMNS FROM tournaments LIKE 'rules'")->fetch(); if(!$c){$pdo->exec("ALTER TABLE tournaments ADD COLUMN rules TEXT NULL AFTER registration_deadline"); echo "tournaments.rules added\n";} } catch (Throwable $e) {}
+    try { $c=$pdo->query("SHOW COLUMNS FROM tournaments LIKE 'stream_url'")->fetch(); if(!$c){$pdo->exec("ALTER TABLE tournaments ADD COLUMN stream_url VARCHAR(500) NULL AFTER image_url"); echo "tournaments.stream_url added\n";} } catch (Throwable $e) {}
+    try { $c=$pdo->query("SHOW COLUMNS FROM tournaments LIKE 'is_featured'")->fetch(); if(!$c){$pdo->exec("ALTER TABLE tournaments ADD COLUMN is_featured TINYINT(1) DEFAULT 0 AFTER status"); echo "tournaments.is_featured added\n";} } catch (Throwable $e) {}
+    try { $c=$pdo->query("SHOW COLUMNS FROM tournaments LIKE 'winner_id'")->fetch(); if(!$c){$pdo->exec("ALTER TABLE tournaments ADD COLUMN winner_id INT NULL AFTER is_featured"); echo "tournaments.winner_id added\n";} } catch (Throwable $e) {}
+    try { $c=$pdo->query("SHOW COLUMNS FROM tournaments LIKE 'created_by'")->fetch(); if(!$c){$pdo->exec("ALTER TABLE tournaments ADD COLUMN created_by INT NULL AFTER winner_id"); echo "tournaments.created_by added\n";} } catch (Throwable $e) {}
+    try { $c=$pdo->query("SHOW COLUMNS FROM tournaments LIKE 'updated_at'")->fetch(); if(!$c){$pdo->exec("ALTER TABLE tournaments ADD COLUMN updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER created_at"); echo "tournaments.updated_at added\n";} } catch (Throwable $e) {}
+    // Fix status column to be ENUM
+    try { $col=$pdo->query("SHOW COLUMNS FROM tournaments LIKE 'status'")->fetch(PDO::FETCH_ASSOC); if($col && stripos($col['Type'],'varchar')!==false){$pdo->exec("ALTER TABLE tournaments MODIFY status ENUM('upcoming','registration_open','registration_closed','ongoing','completed','cancelled') DEFAULT 'upcoming'"); echo "tournaments.status converted to ENUM\n";} } catch (Throwable $e) {}
     $pdo->exec("CREATE TABLE IF NOT EXISTS tournament_matches (
         id INT AUTO_INCREMENT PRIMARY KEY,
         tournament_id INT NOT NULL,
