@@ -112,6 +112,22 @@ try {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     echo "games OK\n";
 
+    // Ensure optional columns exist for reservations
+    try {
+        $col = $pdo->query("SHOW COLUMNS FROM games LIKE 'is_reservable'")->fetch();
+        if (!$col) {
+            $pdo->exec("ALTER TABLE games ADD COLUMN is_reservable TINYINT(1) NOT NULL DEFAULT 0 AFTER base_price");
+            echo "games.is_reservable added\n";
+        }
+    } catch (Throwable $e) { /* ignore */ }
+    try {
+        $col = $pdo->query("SHOW COLUMNS FROM games LIKE 'reservation_fee'")->fetch();
+        if (!$col) {
+            $pdo->exec("ALTER TABLE games ADD COLUMN reservation_fee DECIMAL(10,2) NOT NULL DEFAULT 0.00 AFTER is_reservable");
+            echo "games.reservation_fee added\n";
+        }
+    } catch (Throwable $e) { /* ignore */ }
+
     // Game packages
     $pdo->exec("CREATE TABLE IF NOT EXISTS game_packages (
         id INT AUTO_INCREMENT PRIMARY KEY,
