@@ -456,6 +456,7 @@ try {
     try {
         $cols = [
             ['name' => 'type', 'ddl' => "ADD COLUMN type ENUM('news','event','stream','gallery') NOT NULL AFTER id"],
+            ['name' => 'description', 'ddl' => "ADD COLUMN description TEXT NULL AFTER title"],
             ['name' => 'content', 'ddl' => "ADD COLUMN content LONGTEXT NULL AFTER description"],
             ['name' => 'image_url', 'ddl' => "ADD COLUMN image_url VARCHAR(500) NULL AFTER content"],
             ['name' => 'video_url', 'ddl' => "ADD COLUMN video_url VARCHAR(500) NULL AFTER image_url"],
@@ -475,6 +476,15 @@ try {
                 $pdo->exec("ALTER TABLE content " . $c['ddl']);
                 echo "content." . $c['name'] . " added\n";
             }
+        }
+        // Fix is_published default value to 1
+        $pdo->exec("ALTER TABLE content MODIFY is_published TINYINT(1) NOT NULL DEFAULT 1");
+        echo "content.is_published default fixed\n";
+        // Drop body column if it exists (not in local dump)
+        $hasBody = $pdo->query("SHOW COLUMNS FROM content LIKE 'body'")->fetch();
+        if ($hasBody) {
+            $pdo->exec("ALTER TABLE content DROP COLUMN body");
+            echo "content.body dropped (not in schema)\n";
         }
     } catch (Throwable $e) { /* ignore */ }
 
