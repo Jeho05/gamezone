@@ -48,12 +48,20 @@ if ($__appEnv !== 'production') {
   }
 }
 
+if (!defined('UPLOADS_BASE_PATH')) {
+  $customUploadsPath = envval('UPLOADS_BASE_PATH');
+  if (is_string($customUploadsPath) && $customUploadsPath !== '') {
+    $uploadsBase = rtrim($customUploadsPath, DIRECTORY_SEPARATOR);
+  } else {
+    $uploadsBase = dirname(__DIR__) . '/uploads';
+  }
+  define('UPLOADS_BASE_PATH', $uploadsBase);
+}
+
 function ensureUploadsDirectories(): void {
-  $projectRoot = dirname(__DIR__);
-  $uploadsRoot = $projectRoot . '/uploads';
   $dirs = [
-    $uploadsRoot,
-    $uploadsRoot . '/games',
+    UPLOADS_BASE_PATH,
+    rtrim(UPLOADS_BASE_PATH, DIRECTORY_SEPARATOR) . '/games',
   ];
 
   foreach ($dirs as $dir) {
