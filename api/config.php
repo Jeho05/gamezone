@@ -48,6 +48,29 @@ if ($__appEnv !== 'production') {
   }
 }
 
+function ensureUploadsDirectories(): void {
+  $projectRoot = dirname(__DIR__);
+  $uploadsRoot = $projectRoot . '/uploads';
+  $dirs = [
+    $uploadsRoot,
+    $uploadsRoot . '/games',
+  ];
+
+  foreach ($dirs as $dir) {
+    if (!is_dir($dir)) {
+      @mkdir($dir, 0775, true);
+    }
+    if (is_dir($dir) && !is_writable($dir)) {
+      @chmod($dir, 0775);
+    }
+    if (!is_dir($dir) || !is_writable($dir)) {
+      error_log('Uploads directory not writable: ' . $dir);
+    }
+  }
+}
+
+ensureUploadsDirectories();
+
 // Add security headers
 add_security_headers();
 
