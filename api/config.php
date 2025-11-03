@@ -57,7 +57,8 @@ if (!strpos($_SERVER['REQUEST_URI'] ?? '', 'test.php')) {
 }
 
 // Handle OPTIONS immediately before any other processing
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+$requestMethod = $_SERVER['REQUEST_METHOD'] ?? null;
+if ($requestMethod === 'OPTIONS') {
     $origin = $_SERVER['HTTP_ORIGIN'] ?? 'http://localhost:4000';
     header("Access-Control-Allow-Origin: $origin");
     header('Access-Control-Allow-Credentials: true');

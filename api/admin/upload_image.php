@@ -68,13 +68,40 @@ if ($method === 'POST') {
         // Continuer même si l'optimisation échoue
     }
     
-    // Retourner l'URL de l'image
-    $imageUrl = 'http://' . $_SERVER['HTTP_HOST'] . '/projet%20ismo/uploads/games/' . $newFileName;
-    
+    // Déterminer l'URL de base dynamiquement pour supporter différentes configurations (proxy, HTTPS, etc.)
+    $scheme = 'http';
+    if (!empty($_SERVER['HTTP_X_FORWARDED_PROTO'])) {
+        $scheme = explode(',', $_SERVER['HTTP_X_FORWARDED_PROTO'])[0];
+    } elseif (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off') {
+        $scheme = 'https';
+    }
+
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+
+    // Utiliser REQUEST_URI (contient déjà les encodages comme %20) pour reconstituer le chemin public
+    $requestUri = $_SERVER['REQUEST_URI'] ?? '';
+    $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+    $referencePath = $requestUri !== '' ? $requestUri : $scriptName;
+    $basePath = '';
+    if ($referencePath !== '') {
+        $basePath = dirname($referencePath, 3);
+        if ($basePath === '.' || $basePath === '/' || $basePath === '\\') {
+            $basePath = '';
+        }
+    }
+
+    $relativePath = rtrim($basePath, '/') . '/uploads/games/' . $newFileName;
+    if ($relativePath === '' || $relativePath[0] !== '/') {
+        $relativePath = '/' . ltrim($relativePath, '/');
+    }
+
+    $imageUrl = $scheme . '://' . $host . $relativePath;
+
     json_response([
         'success' => true,
         'message' => 'Image uploadée avec succès',
         'url' => $imageUrl,
+        'relativePath' => $relativePath,
         'filename' => $newFileName,
         'size' => filesize($uploadPath),
         'dimensions' => [
