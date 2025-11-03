@@ -69,7 +69,7 @@ if ($method === 'POST') {
     }
     
     // Retourner l'URL de l'image
-    $imageUrl = 'http://' . $_SERVER['HTTP_HOST'] . '/projet%20ismo/uploads/games/' . $newFileName;
+    $imageUrl = 'http://' . $_SERVER['HTTP_HOST'] . '/EXAMEN/projet%20ismo/uploads/games/' . $newFileName;
     
     json_response([
         'success' => true,
