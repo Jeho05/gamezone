@@ -46,10 +46,38 @@ if ($method === 'POST') {
         json_response(['error' => 'Le fichier n\'est pas une image valide'], 400);
     }
     
-    // Créer le dossier uploads s'il n'existe pas
-    $uploadDir = __DIR__ . '/../../uploads/games/';
-    if (!file_exists($uploadDir)) {
-        mkdir($uploadDir, 0777, true);
+    // Résoudre le dossier uploads (supporte les environnements readonly partiels)
+    $baseUploadsDir = __DIR__ . '/../../uploads';
+    if (!is_dir($baseUploadsDir)) {
+        if (!@mkdir($baseUploadsDir, 0775, true) && !is_dir($baseUploadsDir)) {
+            log_error('Upload image failed: unable to create base uploads directory', [
+                'baseUploadsDir' => $baseUploadsDir,
+                'last_error' => error_get_last()
+            ]);
+            return json_response(['error' => 'Le dossier uploads est inaccessible.'], 500);
+        }
+    }
+
+    $uploadDir = rtrim($baseUploadsDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'games' . DIRECTORY_SEPARATOR;
+    if (!is_dir($uploadDir)) {
+        if (!@mkdir($uploadDir, 0775, true) && !is_dir($uploadDir)) {
+            log_error('Upload image failed: unable to create games directory', [
+                'uploadDir' => $uploadDir,
+                'last_error' => error_get_last()
+            ]);
+            return json_response(['error' => 'Impossible de créer le dossier pour les images.'], 500);
+        }
+    }
+
+    if (!is_writable($uploadDir)) {
+        @chmod($uploadDir, 0775);
+        if (!is_writable($uploadDir)) {
+            log_error('Upload image failed: directory not writable', [
+                'uploadDir' => $uploadDir,
+                'permissions' => substr(sprintf('%o', fileperms($uploadDir)), -4)
+            ]);
+            return json_response(['error' => 'Le dossier d\'upload n\'est pas accessible en écriture.'], 500);
+        }
     }
     
     // Générer un nom de fichier unique
@@ -57,8 +85,38 @@ if ($method === 'POST') {
     $uploadPath = $uploadDir . $newFileName;
     
     // Déplacer le fichier
-    if (!move_uploaded_file($fileTmpName, $uploadPath)) {
-        json_response(['error' => 'Erreur lors de l\'enregistrement du fichier'], 500);
+    if (!is_uploaded_file($fileTmpName)) {
+        log_error('Upload image failed: temporary file not found', [
+            'tmp_name' => $fileTmpName,
+            'file' => $fileName,
+            'error_code' => $fileError
+        ]);
+        return json_response(['error' => 'Le fichier temporaire est invalide.'], 500);
+    }
+
+    $moved = @move_uploaded_file($fileTmpName, $uploadPath);
+    if (!$moved) {
+        // Fallback to rename (certain environnements désactivent move_uploaded_file)
+        $moved = @rename($fileTmpName, $uploadPath);
+    }
+
+    if (!$moved) {
+        $lastError = error_get_last();
+        log_error('Upload image failed: unable to move uploaded file', [
+            'tmp_name' => $fileTmpName,
+            'destination' => $uploadPath,
+            'last_error' => $lastError
+        ]);
+        $response = ['error' => 'Erreur lors de l\'enregistrement du fichier'];
+        $appEnv = getenv('APP_ENV') ?: 'production';
+        if ($appEnv !== 'production') {
+            $response['debug'] = [
+                'destination' => $uploadPath,
+                'tmp_name' => $fileTmpName,
+                'last_error' => $lastError
+            ];
+        }
+        return json_response($response, 500);
     }
     
     // Optimiser l'image (optionnel - redimensionner si trop grande)
@@ -76,15 +134,27 @@ if ($method === 'POST') {
         $scheme = 'https';
     }
 
-    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    // Déterminer l'hôte (support des proxies type Railway/Vercel)
+    $hostHeader = $_SERVER['HTTP_X_FORWARDED_HOST'] ?? $_SERVER['HTTP_HOST'] ?? 'localhost';
+    $host = $hostHeader;
+    if (strpos($host, ':') === false) {
+        if (!empty($_SERVER['HTTP_X_FORWARDED_PORT'])) {
+            $host .= ':' . $_SERVER['HTTP_X_FORWARDED_PORT'];
+        } elseif (!empty($_SERVER['SERVER_PORT']) && !in_array($_SERVER['SERVER_PORT'], ['80', '443'], true)) {
+            $host .= ':' . $_SERVER['SERVER_PORT'];
+        }
+    }
 
-    // Utiliser REQUEST_URI (contient déjà les encodages comme %20) pour reconstituer le chemin public
-    $requestUri = $_SERVER['REQUEST_URI'] ?? '';
+    // Identifier le chemin public avant /api/
     $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
-    $referencePath = $requestUri !== '' ? $requestUri : $scriptName;
     $basePath = '';
-    if ($referencePath !== '') {
-        $basePath = dirname($referencePath, 3);
+    if ($scriptName !== '') {
+        $apiPos = stripos($scriptName, '/api/');
+        if ($apiPos !== false) {
+            $basePath = substr($scriptName, 0, $apiPos);
+        } else {
+            $basePath = dirname(dirname(dirname($scriptName)));
+        }
         if ($basePath === '.' || $basePath === '/' || $basePath === '\\') {
             $basePath = '';
         }
@@ -94,6 +164,9 @@ if ($method === 'POST') {
     if ($relativePath === '' || $relativePath[0] !== '/') {
         $relativePath = '/' . ltrim($relativePath, '/');
     }
+
+    // Normaliser les doubles slashs (sauf après le schéma)
+    $relativePath = preg_replace('#/+#', '/', $relativePath);
 
     $imageUrl = $scheme . '://' . $host . $relativePath;
 
