@@ -2,8 +2,13 @@
 # Force rebuild to fix PHP ternary syntax error
 FROM php:8.2-apache
 
-# Install MySQL extension
-RUN docker-php-ext-install mysqli pdo pdo_mysql
+# Default runtime flags (no secrets)
+ENV APP_ENV=production \
+    SESSION_SAMESITE=None \
+    SESSION_SECURE=1
+
+# Install only required PHP extension (PDO MySQL)
+RUN docker-php-ext-install pdo_mysql
 
 # Enable Apache mod_rewrite for .htaccess
 RUN a2enmod rewrite headers
@@ -11,15 +16,17 @@ RUN a2enmod rewrite headers
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy backend files from backend_infinityfree/api
-COPY backend_infinityfree/api/ /var/www/html/
+# Copy real backend into web root (endpoints at /)
+COPY api/ /var/www/html/
+# Also copy to /api to preserve legacy paths (/api/*)
+COPY api/ /var/www/html/api/
 
-# Copy setup scripts from root to /var/www/html/
+# Copy setup scripts to web root
 COPY setup_complete.php /var/www/html/
 COPY init_all_tables.php /var/www/html/
-
-# Ensure .env.railway is copied (force copy hidden files)
-COPY backend_infinityfree/api/.env.railway /var/www/html/.env.railway
+COPY api/install_admin_tables.php /var/www/html/
+COPY install_secure_transactions.php /var/www/html/
+COPY .htaccess /var/www/html/.htaccess
 
 # Create uploads directory structure under /var/www/html with proper permissions
 RUN mkdir -p /var/www/html/uploads/avatars \

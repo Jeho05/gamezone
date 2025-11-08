@@ -5,7 +5,6 @@
  */
 
 require_once __DIR__ . '/config.php';
-require_once __DIR__ . '/helpers/database.php';
 
 header('Content-Type: application/json');
 
@@ -16,7 +15,14 @@ $health = [
 ];
 
 // Check database connection
-$dbHealthy = check_db_health();
+$dbHealthy = false;
+try {
+    $pdo = get_db();
+    $pdo->query('SELECT 1');
+    $dbHealthy = true;
+} catch (Throwable $e) {
+    $dbHealthy = false;
+}
 $health['checks']['database'] = [
     'status' => $dbHealthy ? 'up' : 'down',
     'message' => $dbHealthy ? 'Database connection successful' : 'Database connection failed'
@@ -34,7 +40,15 @@ $health['checks']['cache'] = [
 ];
 
 // Check uploads directory
-$uploadsDir = __DIR__ . '/../uploads';
+$uploadsCandidates = [
+    __DIR__ . '/uploads',
+    __DIR__ . '/../uploads'
+];
+$uploadsDir = null;
+foreach ($uploadsCandidates as $c) {
+    if (is_dir($c)) { $uploadsDir = $c; break; }
+}
+if ($uploadsDir === null) { $uploadsDir = __DIR__ . '/uploads'; }
 $uploadsWritable = is_dir($uploadsDir) && is_writable($uploadsDir);
 $health['checks']['uploads'] = [
     'status' => $uploadsWritable ? 'up' : 'down',

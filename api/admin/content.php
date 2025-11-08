@@ -81,6 +81,9 @@ if ($method === 'POST') {
         $ts = now();
         $publishedAt = $data['published_at'] ?? $ts;
         
+        // Convert empty strings to null for datetime fields
+        $eventDate = (!empty($data['event_date'])) ? $data['event_date'] : null;
+        
         $stmt = $pdo->prepare('
             INSERT INTO content (
                 type, title, description, content, image_url, video_url,
@@ -98,7 +101,7 @@ if ($method === 'POST') {
             $data['image_url'] ?? null,
             $data['video_url'] ?? null,
             $data['external_link'] ?? null,
-            $data['event_date'] ?? null,
+            $eventDate,
             $data['event_location'] ?? null,
             $data['stream_url'] ?? null,
             $data['is_published'] ?? 1,
@@ -152,7 +155,12 @@ if ($method === 'PUT' || $method === 'PATCH') {
     foreach ($allowedFields as $field) {
         if (isset($data[$field])) {
             $updateFields[] = "$field = ?";
-            $params[] = $data[$field];
+            // Convert empty strings to null for datetime fields
+            if ($field === 'event_date' && $data[$field] === '') {
+                $params[] = null;
+            } else {
+                $params[] = $data[$field];
+            }
         }
     }
     

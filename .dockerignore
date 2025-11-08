@@ -1,15 +1,16 @@
 .git
 .gitignore
 README.md
-*.md
-.env.example
-.htaccess.example
-migrations/
-test/
-examples/
-diagnostic_*.php
-create_*.php
-run_migration.php
-install.php
-# Keep .env.railway for Railway deployment
-!.env.railway
+# Ignore everything by default to keep context tiny
+**
+# Include only what the Dockerfile copies into the image
+!api/
+!api/**
+!setup_complete.php
+!init_all_tables.php
+!install_secure_transactions.php
+!Dockerfile
+!railway.json
+!.htaccess
+# Optional future config
+!nginx.conf

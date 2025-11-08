@@ -3,6 +3,10 @@
 require_once __DIR__ . '/config.php';
 
 function json_response($data, int $status = 200): void {
+    // Flush session data to disk before sending response (prevents lost session writes behind proxies)
+    if (session_status() === PHP_SESSION_ACTIVE) {
+        @session_write_close();
+    }
     header('Content-Type: application/json');
     http_response_code($status);
     echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
