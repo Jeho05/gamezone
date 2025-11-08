@@ -48,6 +48,37 @@ if ($__appEnv !== 'production') {
   }
 }
 
+if (!defined('UPLOADS_BASE_PATH')) {
+  $customUploadsPath = envval('UPLOADS_BASE_PATH');
+  if (is_string($customUploadsPath) && $customUploadsPath !== '') {
+    $uploadsBase = rtrim($customUploadsPath, DIRECTORY_SEPARATOR);
+  } else {
+    $uploadsBase = dirname(__DIR__) . '/uploads';
+  }
+  define('UPLOADS_BASE_PATH', $uploadsBase);
+}
+
+function ensureUploadsDirectories(): void {
+  $dirs = [
+    UPLOADS_BASE_PATH,
+    rtrim(UPLOADS_BASE_PATH, DIRECTORY_SEPARATOR) . '/games',
+  ];
+
+  foreach ($dirs as $dir) {
+    if (!is_dir($dir)) {
+      @mkdir($dir, 0775, true);
+    }
+    if (is_dir($dir) && !is_writable($dir)) {
+      @chmod($dir, 0775);
+    }
+    if (!is_dir($dir) || !is_writable($dir)) {
+      error_log('Uploads directory not writable: ' . $dir);
+    }
+  }
+}
+
+ensureUploadsDirectories();
+
 // Add security headers
 add_security_headers();
 
@@ -57,7 +88,8 @@ if (!strpos($_SERVER['REQUEST_URI'] ?? '', 'test.php')) {
 }
 
 // Handle OPTIONS immediately before any other processing
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+$requestMethod = $_SERVER['REQUEST_METHOD'] ?? null;
+if ($requestMethod === 'OPTIONS') {
     $origin = $_SERVER['HTTP_ORIGIN'] ?? 'http://localhost:4000';
     header("Access-Control-Allow-Origin: $origin");
     header('Access-Control-Allow-Credentials: true');
