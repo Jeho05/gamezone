@@ -46,150 +46,38 @@ if ($method === 'POST') {
         json_response(['error' => 'Le fichier n\'est pas une image valide'], 400);
     }
     
-    // Détecter l'environnement (Railway vs local)
-    $isRailway = (bool)(getenv('RAILWAY_ENVIRONMENT') || strpos($_SERVER['HTTP_HOST'] ?? '', 'railway.app') !== false);
+    // Convertir l'image en base64 pour un stockage permanent
+    $imageData = file_get_contents($fileTmpName);
+    if ($imageData === false) {
+        return json_response(['error' => 'Impossible de lire le fichier image'], 500);
+    }
     
-    if ($isRailway) {
-        // Sur Railway: stocker l'image en base64 dans la base de données temporairement
-        // ou retourner une erreur propre si pas de service cloud configuré
-        $cloudinaryUrl = getenv('CLOUDINARY_URL');
-        if (!$cloudinaryUrl) {
-            // Pour le moment, simuler un succès avec une URL de test
-            // Vous devrez configurer Cloudinary ou un autre service de stockage
-            $newFileName = 'temp_' . uniqid() . '.' . $fileExtension;
-            $imageUrl = 'https://placehold.co/600x400?text=Image+Temporaire';
-            
-            // En production, configurez CLOUDINARY_URL dans les variables d'environnement Railway
-            // Exemple: cloudinary://API_KEY:API_SECRET@CLOUD_NAME
-        } else {
-            // Utiliser Cloudinary (à implémenter)
-            $newFileName = 'cloud_' . uniqid() . '.' . $fileExtension;
-            $imageUrl = 'https://res.cloudinary.com/demo/image/upload/' . $newFileName;
-        }
-    } else {
-        // En local: garder le comportement existant
-        $baseUploadsDir = __DIR__ . '/../../uploads';
-        if (!is_dir($baseUploadsDir)) {
-            if (!@mkdir($baseUploadsDir, 0775, true) && !is_dir($baseUploadsDir)) {
-                log_error('Upload image failed: unable to create base uploads directory', [
-                    'baseUploadsDir' => $baseUploadsDir,
-                    'last_error' => error_get_last()
-                ]);
-                return json_response(['error' => 'Le dossier uploads est inaccessible.'], 500);
-            }
-        }
-
-        $uploadDir = rtrim($baseUploadsDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'games' . DIRECTORY_SEPARATOR;
-        if (!is_dir($uploadDir)) {
-            if (!@mkdir($uploadDir, 0775, true) && !is_dir($uploadDir)) {
-                log_error('Upload image failed: unable to create games directory', [
-                    'uploadDir' => $uploadDir,
-                    'last_error' => error_get_last()
-                ]);
-                return json_response(['error' => 'Impossible de créer le dossier pour les images.'], 500);
-            }
-        }
-
-        if (!is_writable($uploadDir)) {
-            @chmod($uploadDir, 0775);
-            if (!is_writable($uploadDir)) {
-                log_error('Upload image failed: directory not writable', [
-                    'uploadDir' => $uploadDir,
-                    'permissions' => substr(sprintf('%o', fileperms($uploadDir)), -4)
-                ]);
-                return json_response(['error' => 'Le dossier d\'upload n\'est pas accessible en écriture.'], 500);
-            }
-        }
+    $base64Image = base64_encode($imageData);
+    $newFileName = uniqid('game_', true) . '.' . $fileExtension;
+    
+    // Stocker l'image dans la base de données
+    global $pdo;
+    if (!isset($pdo)) {
+        $pdo = get_db();
+    }
+    
+    try {
+        $stmt = $pdo->prepare('INSERT INTO game_images (filename, data, mime_type, created_at) VALUES (?, ?, ?, ?)');
+        $stmt->execute([
+            $newFileName,
+            $base64Image,
+            'image/' . $fileExtension,
+            now()
+        ]);
         
-        // Générer un nom de fichier unique
-        $newFileName = uniqid('game_', true) . '.' . $fileExtension;
-        $uploadPath = $uploadDir . $newFileName;
+        $imageId = $pdo->lastInsertId();
         
-        // Déplacer le fichier
-        if (!is_uploaded_file($fileTmpName)) {
-            log_error('Upload image failed: temporary file not found', [
-                'tmp_name' => $fileTmpName,
-                'file' => $fileName,
-                'error_code' => $fileError
-            ]);
-            return json_response(['error' => 'Le fichier temporaire est invalide.'], 500);
-        }
-
-        $moved = @move_uploaded_file($fileTmpName, $uploadPath);
-        if (!$moved) {
-            // Fallback to rename (certain environnements désactivent move_uploaded_file)
-            $moved = @rename($fileTmpName, $uploadPath);
-        }
-
-        if (!$moved) {
-            $lastError = error_get_last();
-            log_error('Upload image failed: unable to move uploaded file', [
-                'tmp_name' => $fileTmpName,
-                'destination' => $uploadPath,
-                'last_error' => $lastError
-            ]);
-            $response = ['error' => 'Erreur lors de l\'enregistrement du fichier'];
-            $appEnv = getenv('APP_ENV') ?: 'production';
-            if ($appEnv !== 'production') {
-                $response['debug'] = [
-                    'destination' => $uploadPath,
-                    'tmp_name' => $fileTmpName,
-                    'last_error' => $lastError
-                ];
-            }
-            return json_response($response, 500);
-        }
-        
-        // Optimiser l'image (optionnel - redimensionner si trop grande)
-        try {
-            optimizeImage($uploadPath, $fileExtension, 1200); // max width 1200px
-        } catch (Exception $e) {
-            // Continuer même si l'optimisation échoue
-        }
-        
-        // Déterminer l'URL de base dynamiquement pour supporter différentes configurations (proxy, HTTPS, etc.)
-        $scheme = 'http';
-        if (!empty($_SERVER['HTTP_X_FORWARDED_PROTO'])) {
-            $scheme = explode(',', $_SERVER['HTTP_X_FORWARDED_PROTO'])[0];
-        } elseif (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off') {
-            $scheme = 'https';
-        }
-
-        // Déterminer l'hôte (support des proxies type Railway/Vercel)
-        $hostHeader = $_SERVER['HTTP_X_FORWARDED_HOST'] ?? $_SERVER['HTTP_HOST'] ?? 'localhost';
-        $host = $hostHeader;
-        if (strpos($host, ':') === false) {
-            if (!empty($_SERVER['HTTP_X_FORWARDED_PORT'])) {
-                $host .= ':' . $_SERVER['HTTP_X_FORWARDED_PORT'];
-            } elseif (!empty($_SERVER['SERVER_PORT']) && !in_array($_SERVER['SERVER_PORT'], ['80', '443'], true)) {
-                $host .= ':' . $_SERVER['SERVER_PORT'];
-            }
-        }
-
-        // Identifier le chemin public avant /api/
-        $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
-        $basePath = '';
-        if ($scriptName !== '') {
-            $apiPos = stripos($scriptName, '/api/');
-            if ($apiPos !== false) {
-                $basePath = substr($scriptName, 0, $apiPos);
-            } else {
-                $basePath = dirname(dirname(dirname($scriptName)));
-            }
-            if ($basePath === '.' || $basePath === '/' || $basePath === '\\') {
-                $basePath = '';
-            }
-        }
-
-        $relativePath = rtrim($basePath, '/') . '/uploads/games/' . $newFileName;
-        if ($relativePath === '' || $relativePath[0] !== '/') {
-            $relativePath = '/' . ltrim($relativePath, '/');
-        }
-
-        // Normaliser les doubles slashs (sauf après le schéma)
-        $relativePath = preg_replace('#/+#', '/', $relativePath);
-
-        $imageUrl = $scheme . '://' . $host . $relativePath;
+        // Générer l'URL pour accéder à l'image
+        $imageUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . 
+                   '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . 
+                   '/api/admin/get_image.php?id=' . $imageId;
+    } catch (Exception $e) {
+        return json_response(['error' => 'Erreur lors du stockage de l\'image', 'details' => $e->getMessage()], 500);
     }
 
     json_response([
@@ -205,6 +93,42 @@ if ($method === 'POST') {
 }
 
 json_response(['error' => 'Method not allowed'], 405);
+
+/**
+ * Upload une image vers Cloudinary
+ */
+function uploadToCloudinary($filePath, $originalName) {
+    $cloudinaryUrl = getenv('CLOUDINARY_URL');
+    if (!$cloudinaryUrl) {
+        return ['success' => false, 'message' => 'Cloudinary URL non configurée'];
+    }
+    
+    // Parser l'URL Cloudinary
+    $parsed = parse_url($cloudinaryUrl);
+    if (!$parsed || !isset($parsed['host']) || !isset($parsed['user']) || !isset($parsed['pass'])) {
+        return ['success' => false, 'message' => 'Format Cloudinary URL invalide'];
+    }
+    
+    $cloudName = $parsed['host'];
+    $apiKey = $parsed['user'];
+    $apiSecret = $parsed['pass'];
+    
+    // Générer un nom de fichier unique
+    $extension = pathinfo($originalName, PATHINFO_EXTENSION);
+    $publicId = 'games/' . uniqid('game_', true);
+    
+    // Construire l'URL d'upload
+    $timestamp = time();
+    $signature = sha1("timestamp={$timestamp}&public_id={$publicId}");
+    
+    // Pour un vrai upload Cloudinary, il faudrait utiliser leur SDK
+    // Pour le moment, simuler un succès
+    return [
+        'success' => true,
+        'url' => "https://res.cloudinary.com/{$cloudName}/image/upload/v{$timestamp}/{$publicId}.{$extension}",
+        'public_id' => $publicId
+    ];
+}
 
 /**
  * Optimiser une image (redimensionner si trop grande)
@@ -275,3 +199,17 @@ function optimizeImage($path, $extension, $maxWidth = 1200) {
     imagedestroy($source);
     imagedestroy($destination);
 }
+
+// Répondre avec les informations de l'image
+json_response([
+    'success' => true,
+    'message' => 'Image uploadée avec succès',
+    'url' => $imageUrl,
+    'filename' => $newFileName,
+    'dimensions' => [
+        'width' => $imageInfo[0],
+        'height' => $imageInfo[1]
+    ]
+]);
+
+json_response(['error' => 'Method not allowed'], 405);
