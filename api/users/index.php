@@ -37,11 +37,63 @@ if ($method === 'GET') {
     }
     $whereSql = $where ? ('WHERE ' . implode(' AND ', $where)) : '';
 
+    // Déterminer dynamiquement les colonnes disponibles
     try {
-        $stmt = $pdo->prepare("SELECT SQL_CALC_FOUND_ROWS id, username, email, role, avatar_url, points, level, status, join_date, last_active FROM users $whereSql ORDER BY id DESC LIMIT $limit OFFSET $offset");
+        $columnsStmt = $pdo->query('SHOW COLUMNS FROM users');
+        $existingColumns = array_map(static fn($row) => $row['Field'], $columnsStmt->fetchAll(PDO::FETCH_ASSOC));
+    } catch (PDOException $e) {
+        $existingColumns = [];
+    }
+
+    $selectParts = [
+        'id',
+        'username',
+        'email',
+        'role'
+    ];
+
+    $selectParts[] = in_array('avatar_url', $existingColumns, true)
+        ? 'avatar_url'
+        : 'NULL AS avatar_url';
+    $selectParts[] = in_array('points', $existingColumns, true)
+        ? 'points'
+        : '0 AS points';
+    $selectParts[] = in_array('level', $existingColumns, true)
+        ? 'level'
+        : "NULL AS level";
+    $selectParts[] = in_array('status', $existingColumns, true)
+        ? 'status'
+        : "'active' AS status";
+    $selectParts[] = in_array('join_date', $existingColumns, true)
+        ? 'join_date'
+        : 'NULL AS join_date';
+    $selectParts[] = in_array('last_active', $existingColumns, true)
+        ? 'last_active'
+        : 'NULL AS last_active';
+
+    $selectSql = 'SQL_CALC_FOUND_ROWS ' . implode(', ', $selectParts);
+
+    try {
+        $stmt = $pdo->prepare("SELECT $selectSql FROM users $whereSql ORDER BY id DESC LIMIT $limit OFFSET $offset");
         $stmt->execute($params);
-        $items = $stmt->fetchAll();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $total = (int)$pdo->query('SELECT FOUND_ROWS()')->fetchColumn();
+
+        $items = array_map(static function (array $row): array {
+            return [
+                'id' => (int)($row['id'] ?? 0),
+                'username' => $row['username'] ?? '',
+                'email' => $row['email'] ?? '',
+                'role' => $row['role'] ?? 'player',
+                'avatar_url' => $row['avatar_url'] ?? null,
+                'points' => isset($row['points']) ? (int)$row['points'] : 0,
+                'level' => $row['level'] ?? 'Gamer',
+                'status' => $row['status'] ?? 'active',
+                'join_date' => $row['join_date'] ?? null,
+                'last_active' => $row['last_active'] ?? null,
+            ];
+        }, $rows);
+
         json_response(['items' => $items, 'total' => $total, 'limit' => $limit, 'offset' => $offset]);
     } catch (PDOException $e) {
         http_response_code(500);
