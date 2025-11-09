@@ -124,6 +124,16 @@ $mimeType = 'image/' . ($fileExtension === 'jpg' ? 'jpeg' : $fileExtension);
 
 try {
     $pdo = get_db();
+    // S'assurer que la colonne peut stocker de longues data URLs
+    try {
+        $columnStmt = $pdo->query("SHOW COLUMNS FROM users LIKE 'avatar_url'");
+        $columnInfo = $columnStmt ? $columnStmt->fetch(PDO::FETCH_ASSOC) : null;
+        if ($columnInfo && stripos((string)($columnInfo['Type'] ?? ''), 'text') === false) {
+            $pdo->exec('ALTER TABLE users MODIFY avatar_url LONGTEXT NULL');
+        }
+    } catch (PDOException $alterError) {
+        // ignorer si nous n'avons pas les droits mais continuer l'upload
+    }
     
     // Stocker directement dans users en data URL (plus simple)
     $dataUrl = "data:$mimeType;base64," . $base64Image;
@@ -135,7 +145,11 @@ try {
         echo json_encode(['error' => 'Échec UPDATE SQL', 'pdo_error' => $stmt->errorInfo()]);
         exit;
     }
-    
+
+    if (session_status() === PHP_SESSION_ACTIVE && isset($_SESSION['user'])) {
+        $_SESSION['user']['avatar_url'] = $dataUrl;
+    }
+
     echo json_encode([
         'success' => true,
         'message' => 'Avatar enregistré',
