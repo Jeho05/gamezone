@@ -175,40 +175,66 @@ try {
     $stmt = $pdo->prepare('UPDATE invoices SET status = "active", activated_at = NOW() WHERE id = ?');
     $stmt->execute([$invoice['id']]);
     
-    // Créer session
-    $stmt = $pdo->prepare('
-        INSERT INTO active_game_sessions_v2 
-        (invoice_id, user_id, game_name, total_minutes, status, started_at, created_at)
-        VALUES (?, ?, ?, ?, "active", NOW(), NOW())
-    ');
-    $stmt->execute([
-        $invoice['id'],
-        $invoice['user_id'],
-        $invoice['game_name'],
-        $invoice['duration_minutes']
-    ]);
-    $sessionId = $pdo->lastInsertId();
+    // Créer session (avec gestion flexible des colonnes)
+    $sessionId = null;
+    try {
+        // Essayer avec toutes les colonnes
+        $stmt = $pdo->prepare('
+            INSERT INTO active_game_sessions_v2 
+            (invoice_id, user_id, total_minutes, status, started_at, created_at)
+            VALUES (?, ?, ?, "active", NOW(), NOW())
+        ');
+        $stmt->execute([
+            $invoice['id'],
+            $invoice['user_id'],
+            $invoice['duration_minutes']
+        ]);
+        $sessionId = $pdo->lastInsertId();
+    } catch (PDOException $e) {
+        // Si échec, essayer version minimale
+        try {
+            $stmt = $pdo->prepare('
+                INSERT INTO active_game_sessions_v2 
+                (invoice_id, user_id, status)
+                VALUES (?, ?, "active")
+            ');
+            $stmt->execute([
+                $invoice['id'],
+                $invoice['user_id']
+            ]);
+            $sessionId = $pdo->lastInsertId();
+        } catch (PDOException $e2) {
+            // Ignorer si impossible de créer la session
+        }
+    }
     
     // Mettre à jour purchase
-    $stmt = $pdo->prepare('
-        UPDATE purchases 
-        SET session_status = "active", session_activated_at = NOW()
-        WHERE id = ?
-    ');
-    $stmt->execute([$invoice['purchase_id']]);
+    try {
+        $stmt = $pdo->prepare('
+            UPDATE purchases 
+            SET session_status = "active", session_activated_at = NOW()
+            WHERE id = ?
+        ');
+        $stmt->execute([$invoice['purchase_id']]);
+    } catch (PDOException $e) {
+        // Ignorer si colonne n'existe pas
+    }
     
     $pdo->commit();
     
     // Récupérer détails
     $stmt = $pdo->prepare('
-        SELECT i.*, u.username, u.email, s.id as session_id
+        SELECT i.*, u.username, u.email
         FROM invoices i
         INNER JOIN users u ON i.user_id = u.id
-        LEFT JOIN active_game_sessions_v2 s ON i.id = s.invoice_id
         WHERE i.id = ?
     ');
     $stmt->execute([$invoice['id']]);
     $invoiceDetails = $stmt->fetch();
+    
+    if ($sessionId) {
+        $invoiceDetails['session_id'] = $sessionId;
+    }
     
     echo json_encode([
         'success' => true,

@@ -7,7 +7,17 @@ $method = $_SERVER['REQUEST_METHOD'];
 
 if ($method === 'GET') {
     // Admin only for listing users
-    require_auth('admin');
+    try {
+        $user = require_auth();
+        if (!is_admin($user)) {
+            http_response_code(403);
+            json_response(['error' => 'Accès refusé - Admin uniquement'], 403);
+        }
+    } catch (Exception $e) {
+        http_response_code(401);
+        json_response(['error' => 'Non authentifié', 'details' => $e->getMessage()], 401);
+    }
+    
     // List users with optional filters
     $q = trim($_GET['q'] ?? '');
     $status = $_GET['status'] ?? '';
@@ -27,11 +37,16 @@ if ($method === 'GET') {
     }
     $whereSql = $where ? ('WHERE ' . implode(' AND ', $where)) : '';
 
-    $stmt = $pdo->prepare("SELECT SQL_CALC_FOUND_ROWS id, username, email, role, avatar_url, points, level, status, join_date, last_active FROM users $whereSql ORDER BY id DESC LIMIT $limit OFFSET $offset");
-    $stmt->execute($params);
-    $items = $stmt->fetchAll();
-    $total = (int)$pdo->query('SELECT FOUND_ROWS()')->fetchColumn();
-    json_response(['items' => $items, 'total' => $total, 'limit' => $limit, 'offset' => $offset]);
+    try {
+        $stmt = $pdo->prepare("SELECT SQL_CALC_FOUND_ROWS id, username, email, role, avatar_url, points, level, status, join_date, last_active FROM users $whereSql ORDER BY id DESC LIMIT $limit OFFSET $offset");
+        $stmt->execute($params);
+        $items = $stmt->fetchAll();
+        $total = (int)$pdo->query('SELECT FOUND_ROWS()')->fetchColumn();
+        json_response(['items' => $items, 'total' => $total, 'limit' => $limit, 'offset' => $offset]);
+    } catch (PDOException $e) {
+        http_response_code(500);
+        json_response(['error' => 'Erreur base de données', 'details' => $e->getMessage()], 500);
+    }
 }
 
 // POST create user (admin only)
