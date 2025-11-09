@@ -177,12 +177,13 @@ try {
     
     // Créer session (avec gestion flexible des colonnes)
     $sessionId = null;
+    $sessionPayload = null;
     try {
-        // Essayer avec toutes les colonnes
+        // Essayer avec toutes les colonnes (session en statut "ready")
         $stmt = $pdo->prepare('
             INSERT INTO active_game_sessions_v2 
-            (invoice_id, user_id, total_minutes, status, started_at, created_at)
-            VALUES (?, ?, ?, "active", NOW(), NOW())
+            (invoice_id, user_id, total_minutes, status, created_at, updated_at)
+            VALUES (?, ?, ?, "ready", NOW(), NOW())
         ');
         $stmt->execute([
             $invoice['id'],
@@ -191,12 +192,12 @@ try {
         ]);
         $sessionId = $pdo->lastInsertId();
     } catch (PDOException $e) {
-        // Si échec, essayer version minimale
+        // Si échec, essayer version minimale (ready)
         try {
             $stmt = $pdo->prepare('
                 INSERT INTO active_game_sessions_v2 
                 (invoice_id, user_id, status)
-                VALUES (?, ?, "active")
+                VALUES (?, ?, "ready")
             ');
             $stmt->execute([
                 $invoice['id'],
@@ -205,6 +206,47 @@ try {
             $sessionId = $pdo->lastInsertId();
         } catch (PDOException $e2) {
             // Ignorer si impossible de créer la session
+        }
+    }
+    
+    // Tenter de démarrer automatiquement la session si créée
+    if ($sessionId) {
+        try {
+            // Essayer la procédure stockée
+            $stmt = $pdo->prepare('CALL start_session(?, ?, @result)');
+            $stmt->execute([$sessionId, $user['id']]);
+            $stmt->closeCursor();
+            $result = $pdo->query('SELECT @result as result')->fetch();
+            $procSuccess = ($result['result'] ?? '') === 'success';
+        } catch (Throwable $proceduralError) {
+            $procSuccess = false;
+        }
+
+        if (empty($procSuccess)) {
+            try {
+                $now = date('Y-m-d H:i:s');
+                $stmt = $pdo->prepare('
+                    UPDATE active_game_sessions_v2 SET
+                        status = "active",
+                        started_at = ?,
+                        last_heartbeat = ?,
+                        last_countdown_update = ?,
+                        updated_at = ?
+                    WHERE id = ?
+                ');
+                $stmt->execute([$now, $now, $now, $now, $sessionId]);
+            } catch (PDOException $fallbackError) {
+                // Si impossible de démarrer, laisser la session en ready
+            }
+        }
+
+        // Préparer détails session à retourner
+        try {
+            $stmt = $pdo->prepare('SELECT * FROM active_game_sessions_v2 WHERE id = ?');
+            $stmt->execute([$sessionId]);
+            $sessionPayload = $stmt->fetch();
+        } catch (PDOException $sessionFetchError) {
+            $sessionPayload = null;
         }
     }
     
@@ -235,11 +277,12 @@ try {
     if ($sessionId) {
         $invoiceDetails['session_id'] = $sessionId;
     }
-    
+
     echo json_encode([
         'success' => true,
         'message' => 'Facture activée avec succès',
         'invoice' => $invoiceDetails,
+        'session' => $sessionPayload,
         'next_action' => 'session_started'
     ]);
     
