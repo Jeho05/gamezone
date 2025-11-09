@@ -69,14 +69,29 @@ try {
         $rawCode = strtoupper(substr(md5($purchaseId . time()), 0, 16));
         $validationCode = substr($rawCode, 0, 4) . '-' . substr($rawCode, 4, 4) . '-' . substr($rawCode, 8, 4) . '-' . substr($rawCode, 12, 4);
         
+        // Générer les données QR code
+        $qrData = json_encode([
+            'invoice_number' => $invoiceNumber,
+            'validation_code' => $validationCode,
+            'user_id' => $user['id'],
+            'game' => $purchase['game_name'],
+            'package' => $purchase['package_name'],
+            'amount' => $purchase['price'],
+            'duration' => $purchase['duration_minutes']
+        ]);
+        $qrHash = hash('sha256', $qrData);
+        
         // Date d'expiration : 2 mois après la création
         $expiresAt = date('Y-m-d H:i:s', strtotime('+2 months'));
         
         $stmt = $pdo->prepare('
             INSERT INTO invoices (
                 purchase_id, user_id, invoice_number, validation_code,
-                status, expires_at, created_at, updated_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                qr_code_data, qr_code_hash,
+                amount, currency, duration_minutes,
+                game_name, package_name,
+                status, issued_at, expires_at, created_at, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ');
         
         $stmt->execute([
@@ -84,7 +99,15 @@ try {
             $user['id'],
             $invoiceNumber,
             $validationCode,
+            $qrData,
+            $qrHash,
+            $purchase['price'],
+            'XOF',
+            $purchase['duration_minutes'],
+            $purchase['game_name'],
+            $purchase['package_name'],
             'pending',
+            $ts,
             $expiresAt,
             $ts,
             $ts
