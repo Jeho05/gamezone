@@ -196,5 +196,98 @@ function log_message(string $level, string $message, array $context = []): void 
     }
 }
 
+/**
+ * Optimiser une image d'avatar (redimensionner et compresser)
+ */
+function optimizeImageForAvatar($path, $extension, $maxSize = 400) {
+    $imageInfo = getimagesize($path);
+    if (!$imageInfo) {
+        return file_get_contents($path);
+    }
+    
+    $width = $imageInfo[0];
+    $height = $imageInfo[1];
+    
+    // Si l'image est déjà assez petite, retourner le contenu original
+    if ($width <= $maxSize && $height <= $maxSize) {
+        return file_get_contents($path);
+    }
+    
+    // Créer l'image source
+    $source = null;
+    switch ($extension) {
+        case 'jpg':
+        case 'jpeg':
+            $source = @imagecreatefromjpeg($path);
+            break;
+        case 'png':
+            $source = @imagecreatefrompng($path);
+            break;
+        case 'gif':
+            $source = @imagecreatefromgif($path);
+            break;
+        case 'webp':
+            $source = @imagecreatefromwebp($path);
+            break;
+    }
+    
+    if (!$source) {
+        return file_get_contents($path);
+    }
+    
+    // Créer l'image de destination (carré)
+    $destination = imagecreatetruecolor($maxSize, $maxSize);
+    
+    // Préserver la transparence pour PNG et GIF
+    if ($extension === 'png' || $extension === 'gif') {
+        imagealphablending($destination, false);
+        imagesavealpha($destination, true);
+        $transparent = imagecolorallocatealpha($destination, 0, 0, 0, 127);
+        imagefill($destination, 0, 0, $transparent);
+    }
+    
+    // Calculer le crop pour centrer l'image
+    $aspectRatio = $width / $height;
+    if ($aspectRatio > 1) {
+        $srcW = $height;
+        $srcH = $height;
+        $srcX = ($width - $height) / 2;
+        $srcY = 0;
+    } else {
+        $srcW = $width;
+        $srcH = $width;
+        $srcX = 0;
+        $srcY = ($height - $width) / 2;
+    }
+    
+    // Redimensionner et recadrer
+    imagecopyresampled($destination, $source, 0, 0, $srcX, $srcY, $maxSize, $maxSize, $srcW, $srcH);
+    
+    // Capturer l'image optimisée
+    ob_start();
+    switch ($extension) {
+        case 'jpg':
+        case 'jpeg':
+            imagejpeg($destination, null, 85);
+            break;
+        case 'png':
+            imagepng($destination, null, 8);
+            break;
+        case 'gif':
+            imagegif($destination);
+            break;
+        case 'webp':
+            imagewebp($destination, null, 85);
+            break;
+    }
+    $imageData = ob_get_clean();
+    
+    // Libérer la mémoire
+    imagedestroy($source);
+    imagedestroy($destination);
+    
+    return $imageData;
+}
+
 // Ensure tables for safety in dev (commented out to avoid errors on every request)
 // Call this manually if needed: ensure_tables_exist();
