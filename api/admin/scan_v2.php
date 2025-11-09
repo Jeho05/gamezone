@@ -155,17 +155,21 @@ try {
         exit;
     }
     
-    // Logger scan
-    $stmt = $pdo->prepare('
-        INSERT INTO invoice_scans (invoice_id, scanned_by_user_id, ip_address, user_agent)
-        VALUES (?, ?, ?, ?)
-    ');
-    $stmt->execute([
-        $invoice['id'],
-        $user['id'],
-        $_SERVER['REMOTE_ADDR'],
-        $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown'
-    ]);
+    // Logger scan (optionnel - ignorer si table n'existe pas)
+    try {
+        $stmt = $pdo->prepare('
+            INSERT INTO invoice_scans (invoice_id, admin_user_id, ip_address, user_agent, scanned_at)
+            VALUES (?, ?, ?, ?, NOW())
+        ');
+        $stmt->execute([
+            $invoice['id'],
+            $user['id'],
+            $_SERVER['REMOTE_ADDR'],
+            $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown'
+        ]);
+    } catch (PDOException $e) {
+        // Ignorer si la table n'existe pas
+    }
     
     // Activer facture
     $stmt = $pdo->prepare('UPDATE invoices SET status = "active", activated_at = NOW() WHERE id = ?');
