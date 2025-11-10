@@ -167,6 +167,20 @@ try {
         exit;
     }
     
+    // CRITIQUE: Vérifier que la facture a une durée valide
+    if (empty($invoice['duration_minutes']) || $invoice['duration_minutes'] <= 0) {
+        $pdo->rollBack();
+        error_log("[scan_v2] ERREUR: Invoice {$invoice['id']} n'a pas de duration_minutes valide: " . ($invoice['duration_minutes'] ?? 'NULL'));
+        echo json_encode([
+            'success' => false,
+            'error' => 'invalid_duration',
+            'message' => 'Cette facture n\'a pas de durée valide. Contactez un administrateur.',
+            'duration_minutes' => $invoice['duration_minutes'] ?? null,
+            'debug_info' => 'Invoice ID: ' . $invoice['id']
+        ]);
+        exit;
+    }
+    
     // Logger scan (optionnel - ignorer si table n'existe pas)
     try {
         $stmt = $pdo->prepare('
