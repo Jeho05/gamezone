@@ -39,11 +39,30 @@ try {
         $current = new DateTime($now);
         $diff = $current->diff($start);
         $elapsedMinutes = ($diff->days * 24 * 60) + ($diff->h * 60) + $diff->i;
+        
+        // Log pour debug
+        error_log(sprintf(
+            '[heartbeat] Session %d: started_at=%s, now=%s, elapsed=%d min',
+            $session['id'],
+            $session['started_at'],
+            $now,
+            $elapsedMinutes
+        ));
     }
     
     // Ne pas dépasser le total
     $usedMinutes = min($elapsedMinutes, $session['total_minutes']);
     $remainingMinutes = $session['total_minutes'] - $usedMinutes;
+    
+    // Log calcul final
+    error_log(sprintf(
+        '[heartbeat] Session %d: total=%d, elapsed=%d, used=%d, remaining=%d',
+        $session['id'],
+        $session['total_minutes'],
+        $elapsedMinutes,
+        $usedMinutes,
+        $remainingMinutes
+    ));
     
     // Mettre à jour la session
     $stmt = $pdo->prepare('

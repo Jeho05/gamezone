@@ -225,6 +225,17 @@ try {
         $stmt->execute([$sessionId]);
         $sessionPayload = $stmt->fetch();
         
+        // Log pour debug
+        error_log(sprintf(
+            '[scan_v2] Session created: id=%d, invoice_id=%d, total=%d, used=%d, remaining=%d, status=%s',
+            $sessionId,
+            $invoice['id'],
+            $sessionPayload['total_minutes'] ?? 0,
+            $sessionPayload['used_minutes'] ?? 0,
+            $sessionPayload['remaining_minutes'] ?? 0,
+            $sessionPayload['status'] ?? 'unknown'
+        ));
+        
     } catch (PDOException $e) {
         // Si échec de création, rollback complet
         $pdo->rollBack();

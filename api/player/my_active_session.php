@@ -42,6 +42,17 @@ try {
         $session['level'] = (int)($session['level'] ?? 1);
         $session['points'] = (int)($session['points'] ?? 0);
         
+        // Log pour debug (à retirer en production)
+        error_log(sprintf(
+            '[my_active_session] User %d - Session %d: total=%d, used=%d, remaining=%d, status=%s',
+            $user['id'],
+            $session['id'],
+            $session['total_minutes'],
+            $session['used_minutes'],
+            $session['remaining_minutes'],
+            $session['status']
+        ));
+        
         json_response([
             'success' => true,
             'session' => $session
