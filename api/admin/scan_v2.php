@@ -227,13 +227,14 @@ try {
         
         // Log pour debug
         error_log(sprintf(
-            '[scan_v2] Session created: id=%d, invoice_id=%d, total=%d, used=%d, remaining=%d, status=%s',
+            '[scan_v2] Session created: id=%d, invoice_id=%d, total=%d, used=%d, remaining=%d, status=%s, invoice_duration=%d',
             $sessionId,
             $invoice['id'],
             $sessionPayload['total_minutes'] ?? 0,
             $sessionPayload['used_minutes'] ?? 0,
             $sessionPayload['remaining_minutes'] ?? 0,
-            $sessionPayload['status'] ?? 'unknown'
+            $sessionPayload['status'] ?? 'unknown',
+            $invoice['duration_minutes'] ?? 0
         ));
         
     } catch (PDOException $e) {

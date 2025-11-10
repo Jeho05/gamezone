@@ -35,10 +35,15 @@ try {
     
     if ($session) {
         // Garantir les valeurs numériques
-        $session['remaining_minutes'] = (int)($session['remaining_minutes'] ?? 0);
-        $session['progress_percent'] = (float)($session['progress_percent'] ?? 0);
         $session['total_minutes'] = (int)($session['total_minutes'] ?? 0);
         $session['used_minutes'] = (int)($session['used_minutes'] ?? 0);
+        
+        // Recalculer remaining_minutes au cas où la colonne VIRTUAL aurait un problème
+        $session['remaining_minutes'] = max(0, $session['total_minutes'] - $session['used_minutes']);
+        
+        $session['progress_percent'] = $session['total_minutes'] > 0 
+            ? (float)round(($session['used_minutes'] / $session['total_minutes']) * 100, 1)
+            : 0.0;
         $session['level'] = (int)($session['level'] ?? 1);
         $session['points'] = (int)($session['points'] ?? 0);
         
