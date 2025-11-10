@@ -227,9 +227,9 @@ try {
             $invoice['game_id'],
             $invoice['duration_minutes'],
             $now,  // ready_at
-            $now,  // started_at
-            $now,  // last_heartbeat
-            $now,  // last_countdown_update
+            null,  // started_at - sera défini au PREMIER heartbeat (quand le joueur charge vraiment la page)
+            null,  // last_heartbeat
+            null,  // last_countdown_update
             $expiresAt
         ]);
         $sessionId = $pdo->lastInsertId();

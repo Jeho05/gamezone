@@ -32,7 +32,27 @@ try {
         ]);
     }
     
-    // Calculer les minutes utilisées
+    // Si c'est le premier heartbeat et started_at est NULL, on démarre MAINTENANT
+    if (empty($session['started_at']) || $session['started_at'] === null) {
+        $stmt = $pdo->prepare('
+            UPDATE active_game_sessions_v2 
+            SET started_at = ?, last_heartbeat = ?, updated_at = ?
+            WHERE id = ?
+        ');
+        $stmt->execute([$now, $now, $now, $session['id']]);
+        
+        error_log("[heartbeat] Session {$session['id']}: Démarrage RÉEL du chronomètre à $now");
+        
+        json_response([
+            'success' => true,
+            'remaining_minutes' => $session['total_minutes'],
+            'used_minutes' => 0,
+            'status' => 'active',
+            'message' => 'Chronomètre démarré'
+        ]);
+    }
+    
+    // Calculer les minutes utilisées DEPUIS LE VRAI DÉMARRAGE
     $elapsedMinutes = 0;
     if ($session['started_at'] && $session['status'] === 'active') {
         $start = new DateTime($session['started_at']);
