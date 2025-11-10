@@ -122,9 +122,9 @@ if (strlen($code) === 16) {
 try {
     $pdo->beginTransaction();
     
-    // Récupérer facture avec game_id
+    // Récupérer facture avec game_id ET payment_status
     $stmt = $pdo->prepare('
-        SELECT i.*, p.id as purchase_id, p.game_id
+        SELECT i.*, p.id as purchase_id, p.game_id, p.payment_status
         FROM invoices i
         INNER JOIN purchases p ON i.purchase_id = p.id
         WHERE (i.validation_code = ? OR i.validation_code = ?)
@@ -143,7 +143,7 @@ try {
         exit;
     }
     
-    // Vérifier statut
+    // Vérifier statut facture
     if ($invoice['status'] !== 'pending') {
         $pdo->rollBack();
         echo json_encode([
@@ -151,6 +151,18 @@ try {
             'error' => 'already_active',
             'message' => 'Facture déjà activée ou utilisée',
             'current_status' => $invoice['status']
+        ]);
+        exit;
+    }
+    
+    // CRITIQUE: Vérifier que le paiement a été confirmé
+    if ($invoice['payment_status'] !== 'confirmed' && $invoice['payment_status'] !== 'completed') {
+        $pdo->rollBack();
+        echo json_encode([
+            'success' => false,
+            'error' => 'payment_pending',
+            'message' => 'Le paiement n\'a pas encore été confirmé',
+            'payment_status' => $invoice['payment_status']
         ]);
         exit;
     }
@@ -171,19 +183,28 @@ try {
         // Ignorer si la table n'existe pas
     }
     
-    // Activer facture
-    $stmt = $pdo->prepare('UPDATE invoices SET status = "active", activated_at = NOW() WHERE id = ?');
-    $stmt->execute([$invoice['id']]);
+    // Activer facture et enregistrer qui l'a activée
+    $stmt = $pdo->prepare('UPDATE invoices SET status = "active", activated_at = NOW(), activated_by = ? WHERE id = ?');
+    $stmt->execute([$user['id'], $invoice['id']]);
     
-    // Créer session (avec gestion flexible des colonnes)
+    // Créer session DIRECTEMENT en statut 'active' (pas de phase 'ready')
     $sessionId = null;
     $sessionPayload = null;
+    $now = date('Y-m-d H:i:s');
+    
     try {
-        // Essayer avec toutes les colonnes incluant game_id et purchase_id (session en statut "ready")
+        // Calculer expiration (2 heures après le début ou durée totale + 30min marge)
+        $expiresAt = date('Y-m-d H:i:s', strtotime('+' . ($invoice['duration_minutes'] + 30) . ' minutes'));
+        
+        // Créer session directement ACTIVE (sans passer par 'ready')
         $stmt = $pdo->prepare('
             INSERT INTO active_game_sessions_v2 
-            (invoice_id, purchase_id, user_id, game_id, total_minutes, remaining_minutes, status, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, "ready", NOW(), NOW())
+            (invoice_id, purchase_id, user_id, game_id, total_minutes, used_minutes, 
+             status, ready_at, started_at, last_heartbeat, last_countdown_update, 
+             expires_at, auto_countdown, countdown_interval, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, 0, 
+                    "active", ?, ?, ?, ?, 
+                    ?, 1, 60, NOW(), NOW())
         ');
         $stmt->execute([
             $invoice['id'],
@@ -191,82 +212,41 @@ try {
             $invoice['user_id'],
             $invoice['game_id'],
             $invoice['duration_minutes'],
-            $invoice['duration_minutes']
+            $now,  // ready_at
+            $now,  // started_at
+            $now,  // last_heartbeat
+            $now,  // last_countdown_update
+            $expiresAt
         ]);
         $sessionId = $pdo->lastInsertId();
+        
+        // Récupérer la session créée
+        $stmt = $pdo->prepare('SELECT * FROM active_game_sessions_v2 WHERE id = ?');
+        $stmt->execute([$sessionId]);
+        $sessionPayload = $stmt->fetch();
+        
     } catch (PDOException $e) {
-        // Si échec, essayer version minimale (ready)
-        try {
-            // Version minimale avec game_id pour assurer compatibilité vue
-            $stmt = $pdo->prepare('
-                INSERT INTO active_game_sessions_v2 
-                (invoice_id, purchase_id, user_id, game_id, status)
-                VALUES (?, ?, ?, ?, "ready")
-            ');
-            $stmt->execute([
-                $invoice['id'],
-                $invoice['purchase_id'],
-                $invoice['user_id'],
-                $invoice['game_id']
-            ]);
-            $sessionId = $pdo->lastInsertId();
-        } catch (PDOException $e2) {
-            // Ignorer si impossible de créer la session
-        }
+        // Si échec de création, rollback complet
+        $pdo->rollBack();
+        echo json_encode([
+            'success' => false,
+            'error' => 'session_creation_failed',
+            'message' => 'Impossible de créer la session de jeu',
+            'details' => $e->getMessage()
+        ]);
+        exit;
     }
     
-    // Tenter de démarrer automatiquement la session si créée
-    if ($sessionId) {
-        try {
-            // Essayer la procédure stockée
-            $stmt = $pdo->prepare('CALL start_session(?, ?, @result)');
-            $stmt->execute([$sessionId, $user['id']]);
-            $stmt->closeCursor();
-            $result = $pdo->query('SELECT @result as result')->fetch();
-            $procSuccess = ($result['result'] ?? '') === 'success';
-        } catch (Throwable $proceduralError) {
-            $procSuccess = false;
-        }
-
-        if (empty($procSuccess)) {
-            try {
-                $now = date('Y-m-d H:i:s');
-                $stmt = $pdo->prepare('
-                    UPDATE active_game_sessions_v2 SET
-                        status = "active",
-                        started_at = ?,
-                        last_heartbeat = ?,
-                        last_countdown_update = ?,
-                        used_minutes = 0,
-                        updated_at = ?
-                    WHERE id = ?
-                ');
-                $stmt->execute([$now, $now, $now, $now, $sessionId]);
-            } catch (PDOException $fallbackError) {
-                // Si impossible de démarrer, laisser la session en ready
-            }
-        }
-
-        // Préparer détails session à retourner
-        try {
-            $stmt = $pdo->prepare('SELECT * FROM active_game_sessions_v2 WHERE id = ?');
-            $stmt->execute([$sessionId]);
-            $sessionPayload = $stmt->fetch();
-        } catch (PDOException $sessionFetchError) {
-            $sessionPayload = null;
-        }
-    }
-    
-    // Mettre à jour purchase
+    // Mettre à jour purchase: session active
     try {
         $stmt = $pdo->prepare('
             UPDATE purchases 
-            SET session_status = "active", session_activated_at = NOW()
+            SET session_status = "active", updated_at = NOW()
             WHERE id = ?
         ');
         $stmt->execute([$invoice['purchase_id']]);
     } catch (PDOException $e) {
-        // Ignorer si colonne n'existe pas
+        // Colonne optionnelle
     }
     
     $pdo->commit();
@@ -287,9 +267,10 @@ try {
 
     echo json_encode([
         'success' => true,
-        'message' => 'Facture activée avec succès',
+        'message' => 'Facture activée et session démarrée',
         'invoice' => $invoiceDetails,
         'session' => $sessionPayload,
+        'session_status' => $sessionPayload['status'] ?? 'unknown',
         'next_action' => 'session_started'
     ]);
     
