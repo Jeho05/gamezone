@@ -122,9 +122,9 @@ if (strlen($code) === 16) {
 try {
     $pdo->beginTransaction();
     
-    // Récupérer facture
+    // Récupérer facture avec game_id
     $stmt = $pdo->prepare('
-        SELECT i.*, p.id as purchase_id
+        SELECT i.*, p.id as purchase_id, p.game_id
         FROM invoices i
         INNER JOIN purchases p ON i.purchase_id = p.id
         WHERE (i.validation_code = ? OR i.validation_code = ?)
@@ -179,29 +179,35 @@ try {
     $sessionId = null;
     $sessionPayload = null;
     try {
-        // Essayer avec toutes les colonnes (session en statut "ready")
+        // Essayer avec toutes les colonnes incluant game_id et purchase_id (session en statut "ready")
         $stmt = $pdo->prepare('
             INSERT INTO active_game_sessions_v2 
-            (invoice_id, user_id, total_minutes, status, created_at, updated_at)
-            VALUES (?, ?, ?, "ready", NOW(), NOW())
+            (invoice_id, purchase_id, user_id, game_id, total_minutes, remaining_minutes, status, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, "ready", NOW(), NOW())
         ');
         $stmt->execute([
             $invoice['id'],
+            $invoice['purchase_id'],
             $invoice['user_id'],
+            $invoice['game_id'],
+            $invoice['duration_minutes'],
             $invoice['duration_minutes']
         ]);
         $sessionId = $pdo->lastInsertId();
     } catch (PDOException $e) {
         // Si échec, essayer version minimale (ready)
         try {
+            // Version minimale avec game_id pour assurer compatibilité vue
             $stmt = $pdo->prepare('
                 INSERT INTO active_game_sessions_v2 
-                (invoice_id, user_id, status)
-                VALUES (?, ?, "ready")
+                (invoice_id, purchase_id, user_id, game_id, status)
+                VALUES (?, ?, ?, ?, "ready")
             ');
             $stmt->execute([
                 $invoice['id'],
-                $invoice['user_id']
+                $invoice['purchase_id'],
+                $invoice['user_id'],
+                $invoice['game_id']
             ]);
             $sessionId = $pdo->lastInsertId();
         } catch (PDOException $e2) {
@@ -231,6 +237,7 @@ try {
                         started_at = ?,
                         last_heartbeat = ?,
                         last_countdown_update = ?,
+                        used_minutes = 0,
                         updated_at = ?
                     WHERE id = ?
                 ');
