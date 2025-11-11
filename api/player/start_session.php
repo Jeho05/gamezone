@@ -38,10 +38,13 @@ try {
         UPDATE active_game_sessions_v2
         SET started_at = ?,
             last_heartbeat = ?,
+            last_countdown_update = ?,
+            used_minutes = 0,
+            status = "active",
             updated_at = ?
         WHERE id = ?
     ');
-    $stmt->execute([$now, $now, $now, $session['id']]);
+    $stmt->execute([$now, $now, $now, $now, $session['id']]);
     
     error_log(sprintf(
         '[start_session] Session %d démarrée pour user %d à %s',

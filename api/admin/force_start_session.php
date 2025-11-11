@@ -58,10 +58,11 @@ try {
         UPDATE active_game_sessions_v2
         SET started_at = ?,
             last_heartbeat = ?,
+            last_countdown_update = ?,
             updated_at = ?
         WHERE id = ?
     ');
-    $stmt->execute([$now, $now, $now, $sessionId]);
+    $stmt->execute([$now, $now, $now, $now, $sessionId]);
     
     error_log(sprintf(
         '[force_start] Admin %d a démarré la session %d (user %d) à %s',

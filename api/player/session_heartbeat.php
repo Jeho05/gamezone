@@ -95,8 +95,8 @@ try {
     ');
     $stmt->execute([$now, $usedMinutes, $now, $now, $session['id']]);
     
-    // Si le temps est écoulé, marquer comme complétée
-    if ($remainingMinutes <= 0 && $session['status'] === 'active') {
+    // Si le temps est écoulé, marquer comme complétée (seulement si total > 0 et qu'au moins 1 minute s'est écoulée)
+    if ($session['total_minutes'] > 0 && $session['status'] === 'active' && $remainingMinutes <= 0 && $elapsedMinutes > 0) {
         $pdo->beginTransaction();
         
         try {
