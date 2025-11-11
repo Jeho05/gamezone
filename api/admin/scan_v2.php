@@ -207,8 +207,9 @@ try {
     $now = date('Y-m-d H:i:s');
     
     try {
-        // Calculer expiration (2 heures après le début ou durée totale + 30min marge)
-        $expiresAt = date('Y-m-d H:i:s', strtotime('+' . ($invoice['duration_minutes'] + 30) . ' minutes'));
+        // Pour les sessions 'ready', mettre expires_at loin dans le futur
+        // Il sera recalculé correctement lors du démarrage effectif
+        $expiresAt = date('Y-m-d H:i:s', strtotime('+7 days'));
         
         // Créer session en statut READY (le démarrage réel se fera à l'ouverture côté joueur ou via admin)
         $stmt = $pdo->prepare('
