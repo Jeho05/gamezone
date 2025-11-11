@@ -13,12 +13,12 @@ $pdo = get_db();
 try {
     $now = date('Y-m-d H:i:s');
     
-    // Récupérer la session active du joueur qui n'a pas encore démarré
+    // Récupérer la session du joueur qui n'a pas encore démarré (ready ou active)
     $stmt = $pdo->prepare('
         SELECT id, total_minutes, started_at, status
         FROM active_game_sessions_v2
         WHERE user_id = ?
-        AND status = "active"
+        AND status IN ("ready", "active")
         AND started_at IS NULL
         ORDER BY created_at DESC
         LIMIT 1
@@ -41,10 +41,11 @@ try {
             last_countdown_update = ?,
             used_minutes = 0,
             status = "active",
+            expires_at = DATE_ADD(?, INTERVAL total_minutes MINUTE),
             updated_at = ?
         WHERE id = ?
     ');
-    $stmt->execute([$now, $now, $now, $now, $session['id']]);
+    $stmt->execute([$now, $now, $now, $now, $now, $session['id']]);
     
     error_log(sprintf(
         '[start_session] Session %d démarrée pour user %d à %s',

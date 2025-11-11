@@ -24,7 +24,15 @@ if ($method === 'GET') {
                    i.invoice_number, i.validation_code, i.status as invoice_status,
                    u.username, u.email,
                    g.name as game_name,
-                   ROUND((s.used_minutes / s.total_minutes) * 100, 1) as progress_percent
+                   ROUND((s.used_minutes / s.total_minutes) * 100, 1) as progress_percent,
+                   LEAST(s.total_minutes,
+                        CASE WHEN s.started_at IS NULL THEN 0 ELSE TIMESTAMPDIFF(MINUTE, s.started_at, NOW()) END
+                   ) AS server_used_minutes,
+                   GREATEST(0,
+                        s.total_minutes - LEAST(s.total_minutes,
+                            CASE WHEN s.started_at IS NULL THEN 0 ELSE TIMESTAMPDIFF(MINUTE, s.started_at, NOW()) END
+                        )
+                   ) AS server_remaining_minutes
             FROM active_game_sessions_v2 s
             INNER JOIN invoices i ON s.invoice_id = i.id
             INNER JOIN users u ON s.user_id = u.id
@@ -59,7 +67,15 @@ if ($method === 'GET') {
                    i.invoice_number, i.validation_code,
                    u.username, u.email,
                    g.name as game_name,
-                   ROUND((s.used_minutes / s.total_minutes) * 100, 1) as progress_percent
+                   ROUND((s.used_minutes / s.total_minutes) * 100, 1) as progress_percent,
+                   LEAST(s.total_minutes,
+                        CASE WHEN s.started_at IS NULL THEN 0 ELSE TIMESTAMPDIFF(MINUTE, s.started_at, NOW()) END
+                   ) AS server_used_minutes,
+                   GREATEST(0,
+                        s.total_minutes - LEAST(s.total_minutes,
+                            CASE WHEN s.started_at IS NULL THEN 0 ELSE TIMESTAMPDIFF(MINUTE, s.started_at, NOW()) END
+                        )
+                   ) AS server_remaining_minutes
             FROM active_game_sessions_v2 s
             INNER JOIN invoices i ON s.invoice_id = i.id
             INNER JOIN users u ON s.user_id = u.id
@@ -137,13 +153,15 @@ if ($method === 'POST') {
                 $stmt = $pdo->prepare('
                     UPDATE active_game_sessions_v2 SET
                         status = "active",
-                        started_at = ?,
-                        last_heartbeat = ?,
-                        last_countdown_update = ?,
-                        updated_at = ?
+                        started_at = NOW(),
+                        last_heartbeat = NOW(),
+                        last_countdown_update = NOW(),
+                        used_minutes = 0,
+                        expires_at = DATE_ADD(NOW(), INTERVAL total_minutes MINUTE),
+                        updated_at = NOW()
                     WHERE id = ? AND status = "ready"
                 ');
-                $stmt->execute([$ts, $ts, $ts, $ts, $sessionId]);
+                $stmt->execute([$sessionId]);
                 if ($stmt->rowCount() === 0) {
                     $pdo->rollBack();
                     json_response(['error' => 'Impossible de démarrer la session (statut non prêt)'], 400);

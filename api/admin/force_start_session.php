@@ -45,24 +45,41 @@ try {
         ], 400);
     }
     
-    // Vérifier que la session est active
-    if ($session['status'] !== 'active') {
+    // Autoriser démarrage pour 'ready' ou 'active' mais uniquement si started_at est NULL
+    if (!in_array($session['status'], ['ready', 'active'], true)) {
         json_response([
-            'error' => 'Seules les sessions actives peuvent être démarrées',
+            'error' => 'Statut invalide pour démarrer',
             'status' => $session['status']
         ], 400);
     }
     
     // Démarrer le chronomètre MAINTENANT
-    $stmt = $pdo->prepare('
-        UPDATE active_game_sessions_v2
-        SET started_at = ?,
-            last_heartbeat = ?,
-            last_countdown_update = ?,
-            updated_at = ?
-        WHERE id = ?
-    ');
-    $stmt->execute([$now, $now, $now, $now, $sessionId]);
+    if ($session['status'] === 'ready') {
+        $stmt = $pdo->prepare('
+            UPDATE active_game_sessions_v2
+            SET status = "active",
+                started_at = NOW(),
+                last_heartbeat = NOW(),
+                last_countdown_update = NOW(),
+                used_minutes = 0,
+                expires_at = DATE_ADD(NOW(), INTERVAL total_minutes MINUTE),
+                updated_at = NOW()
+            WHERE id = ?
+        ');
+        $stmt->execute([$sessionId]);
+    } else {
+        $stmt = $pdo->prepare('
+            UPDATE active_game_sessions_v2
+            SET started_at = NOW(),
+                last_heartbeat = NOW(),
+                last_countdown_update = NOW(),
+                used_minutes = 0,
+                expires_at = DATE_ADD(NOW(), INTERVAL total_minutes MINUTE),
+                updated_at = NOW()
+            WHERE id = ?
+        ');
+        $stmt->execute([$sessionId]);
+    }
     
     error_log(sprintf(
         '[force_start] Admin %d a démarré la session %d (user %d) à %s',

@@ -18,7 +18,7 @@ try {
     
     // Récupérer toutes les sessions actives
     $stmt = $pdo->prepare('
-        SELECT id, total_minutes, used_minutes, started_at
+        SELECT id, total_minutes, used_minutes, started_at, last_countdown_update
         FROM active_game_sessions_v2
         WHERE status = "active"
         AND started_at IS NOT NULL
@@ -27,15 +27,19 @@ try {
     $sessions = $stmt->fetchAll();
     
     foreach ($sessions as $session) {
-        // Calculer minutes écoulées depuis le début
-        $start = new DateTime($session['started_at']);
+        // Calculer le delta depuis le dernier update (ou depuis le démarrage)
+        $anchor = $session['last_countdown_update'] ?: $session['started_at'];
+        $anchorDt = new DateTime($anchor);
         $current = new DateTime($now);
-        $diff = $current->diff($start);
-        $elapsedMinutes = ($diff->days * 24 * 60) + ($diff->h * 60) + $diff->i;
-        
-        // Ne pas dépasser le total
-        $newUsedMinutes = min($elapsedMinutes, (int)$session['total_minutes']);
-        $remainingMinutes = (int)$session['total_minutes'] - $newUsedMinutes;
+        $diff = $current->diff($anchorDt);
+        $deltaMinutes = ($diff->days * 24 * 60) + ($diff->h * 60) + $diff->i;
+        if ($deltaMinutes < 0) { $deltaMinutes = 0; }
+
+        // Incrémenter used_minutes de ce delta
+        $baseUsed = (int)$session['used_minutes'];
+        $total = (int)$session['total_minutes'];
+        $newUsedMinutes = min($total, $baseUsed + $deltaMinutes);
+        $remainingMinutes = $total - $newUsedMinutes;
         
         // Log
         error_log(sprintf(
@@ -47,7 +51,7 @@ try {
             $remainingMinutes
         ));
         
-        // Mettre à jour used_minutes
+        // Mettre à jour used_minutes de manière incrémentale
         $stmt = $pdo->prepare('
             UPDATE active_game_sessions_v2
             SET used_minutes = ?,
@@ -59,7 +63,7 @@ try {
         $updatedCount++;
         
         // Si temps écoulé, compléter la session
-        if ($remainingMinutes <= 0) {
+        if ($total > 0 && $remainingMinutes <= 0 && $baseUsed < $total) {
             $pdo->beginTransaction();
             
             try {

@@ -210,14 +210,14 @@ try {
         // Calculer expiration (2 heures après le début ou durée totale + 30min marge)
         $expiresAt = date('Y-m-d H:i:s', strtotime('+' . ($invoice['duration_minutes'] + 30) . ' minutes'));
         
-        // Créer session directement ACTIVE (sans passer par 'ready')
+        // Créer session en statut READY (le démarrage réel se fera à l'ouverture côté joueur ou via admin)
         $stmt = $pdo->prepare('
             INSERT INTO active_game_sessions_v2 
             (invoice_id, purchase_id, user_id, game_id, total_minutes, used_minutes, 
              status, ready_at, started_at, last_heartbeat, last_countdown_update, 
              expires_at, auto_countdown, countdown_interval, created_at, updated_at)
             VALUES (?, ?, ?, ?, ?, 0, 
-                    "active", ?, ?, ?, ?, 
+                    "ready", ?, ?, ?, ?, 
                     ?, 1, 60, NOW(), NOW())
         ');
         $stmt->execute([
