@@ -25,8 +25,16 @@ try {
             s.game_image
         FROM session_summary s
         WHERE s.user_id = ? 
-        AND s.status IN ('ready', 'active', 'paused')
-        ORDER BY s.created_at DESC
+        AND s.status IN ('active', 'paused', 'ready')
+        ORDER BY 
+            CASE s.status 
+              WHEN 'active' THEN 1 
+              WHEN 'paused' THEN 2 
+              WHEN 'ready' THEN 3 
+              ELSE 4 
+            END,
+            (s.started_at IS NULL) ASC,
+            s.created_at DESC
         LIMIT 1
     ");
     
