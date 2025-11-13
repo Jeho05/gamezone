@@ -26,11 +26,13 @@ if ($isMultipart) {
     $username = trim($_POST['username'] ?? '');
     $email = trim($_POST['email'] ?? '');
     $password = (string)($_POST['password'] ?? '');
+    $avatarUrl = null; // Géré plus bas avec $_FILES
 } else {
     $input = get_json_input();
     $username = trim($input['username'] ?? '');
     $email = trim($input['email'] ?? '');
     $password = (string)($input['password'] ?? '');
+    $avatarUrl = $input['avatar_url'] ?? null; // Accepter avatar_url depuis JSON
 }
 
 if ($username === '' || !validate_email($email) || strlen($password) < 6) {
@@ -44,9 +46,8 @@ if ($stmt->fetch()) {
     json_response(['error' => 'Email déjà utilisé'], 409);
 }
 
-$avatarUrl = null;
-// Optional avatar upload
-if ($isMultipart && isset($_FILES['profileImage']) && $_FILES['profileImage']['error'] === UPLOAD_ERR_OK) {
+// Optional avatar upload (seulement si multipart et pas déjà défini)
+if ($isMultipart && !$avatarUrl && isset($_FILES['profileImage']) && $_FILES['profileImage']['error'] === UPLOAD_ERR_OK) {
     $file = $_FILES['profileImage'];
     $allowed = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
     $mime = mime_content_type($file['tmp_name']);
