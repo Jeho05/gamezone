@@ -54,6 +54,7 @@ test_*.php
 debug_*.php
 DIAGNOSTIC_*.html
 check_*.php
+!api/shop/check_availability.php
 
 # Documentation temporaire (garder les principaux)
 CORRECTIONS*.md
