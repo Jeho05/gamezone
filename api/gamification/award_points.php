@@ -8,9 +8,21 @@ $user = require_auth();
 $input = get_json_input();
 $actionType = $input['action_type'] ?? '';
 
-$validActions = ['game_played', 'event_attended', 'tournament_participate', 'tournament_win', 
-                 'friend_referred', 'daily_login', 'profile_complete', 'first_purchase', 
-                 'review_written', 'share_social'];
+$validActions = [
+    'game_played',
+    'session_complete',
+    'event_attended',
+    'tournament_participate',
+    'tournament_win',
+    'friend_referred',
+    'referral',
+    'daily_login',
+    'profile_complete',
+    'first_purchase',
+    'achievement',
+    'review_written',
+    'share_social',
+];
 
 if (!in_array($actionType, $validActions, true)) {
     json_response(['error' => 'Type d\'action invalide'], 400);

@@ -291,3 +291,32 @@ function optimizeImageForAvatar($path, $extension, $maxSize = 400) {
 
 // Ensure tables for safety in dev (commented out to avoid errors on every request)
 // Call this manually if needed: ensure_tables_exist();
+
+function send_email(string $to, string $subject, string $body, ?string $fromEmail = null, ?string $fromName = null): bool {
+    if (!validate_email($to)) {
+        return false;
+    }
+
+    $fromEmail = $fromEmail ?: (envval('MAIL_FROM') ?: 'no-reply@example.com');
+    $fromName = $fromName ?: (envval('MAIL_FROM_NAME') ?: 'GameZone');
+
+    $encodedName = function_exists('mb_encode_mimeheader')
+        ? mb_encode_mimeheader($fromName, 'UTF-8')
+        : $fromName;
+
+    $headers = [];
+    $headers[] = 'MIME-Version: 1.0';
+    $headers[] = 'Content-type: text/html; charset=utf-8';
+    $headers[] = 'From: ' . $encodedName . ' <' . $fromEmail . '>';
+    $headers[] = 'Reply-To: ' . $fromEmail;
+
+    $headersStr = implode("\r\n", $headers);
+
+    $result = @mail($to, $subject, $body, $headersStr);
+
+    if (!$result && function_exists('log_error')) {
+        log_error('Email sending failed', ['to' => $to, 'subject' => $subject]);
+    }
+
+    return $result;
+}
