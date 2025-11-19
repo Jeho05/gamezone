@@ -124,18 +124,21 @@ try {
         ');
         $stmt->execute([$purchase['points_earned'], $user['id']]);
         
-        // Enregistrer la transaction de points
-        $stmt = $pdo->prepare('
-            INSERT INTO points_transactions (user_id, change_amount, reason, type, created_at)
-            VALUES (?, ?, ?, ?, ?)
-        ');
-        $stmt->execute([
-            $user['id'],
-            $purchase['points_earned'],
-            "Achat: {$purchase['game_name']} - {$purchase['package_name']}",
-            'game',
-            $ts
-        ]);
+        try {
+            $stmt = $pdo->prepare('
+                INSERT INTO points_transactions (user_id, change_amount, reason, type, created_at)
+                VALUES (?, ?, ?, ?, ?)
+            ');
+            $stmt->execute([
+                $user['id'],
+                $purchase['points_earned'],
+                "Achat: {$purchase['game_name']} - {$purchase['package_name']}",
+                'game',
+                $ts
+            ]);
+        } catch (Exception $e) {
+            error_log('[confirm_my_purchase] Failed to log points transaction: ' . $e->getMessage());
+        }
         
         // Marquer les points comme crédités
         $stmt = $pdo->prepare('
