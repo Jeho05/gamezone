@@ -200,17 +200,21 @@ if ($method === 'PATCH') {
                     $stmt = $pdo->prepare('UPDATE users SET points = points + ?, updated_at = ? WHERE id = ?');
                     $stmt->execute([$purchase['points_earned'], $ts, $purchase['user_id']]);
                     
-                    $stmt = $pdo->prepare('
-                        INSERT INTO points_transactions (user_id, change_amount, reason, type, admin_id, created_at)
-                        VALUES (?, ?, ?, "purchase", ?, ?)
-                    ');
-                    $stmt->execute([
-                        $purchase['user_id'],
-                        $purchase['points_earned'],
-                        "Achat confirmé: {$purchase['game_name']}",
-                        $user['id'],
-                        $ts
-                    ]);
+                    try {
+                        $stmt = $pdo->prepare('
+                            INSERT INTO points_transactions (user_id, change_amount, reason, type, admin_id, created_at)
+                            VALUES (?, ?, ?, "purchase", ?, ?)
+                        ');
+                        $stmt->execute([
+                            $purchase['user_id'],
+                            $purchase['points_earned'],
+                            "Achat confirmé: {$purchase['game_name']}",
+                            $user['id'],
+                            $ts
+                        ]);
+                    } catch (Exception $e) {
+                        error_log('[admin/purchases] Failed to log purchase points transaction: ' . $e->getMessage());
+                    }
                     
                     $stmt = $pdo->prepare('UPDATE purchases SET points_credited = 1 WHERE id = ?');
                     $stmt->execute([$id]);
@@ -271,17 +275,21 @@ if ($method === 'PATCH') {
                     $stmt = $pdo->prepare('UPDATE users SET points = GREATEST(0, points - ?), updated_at = ? WHERE id = ?');
                     $stmt->execute([$pointsToRemove, $ts, $purchase['user_id']]);
                     
-                    $stmt = $pdo->prepare('
-                        INSERT INTO points_transactions (user_id, change_amount, reason, type, admin_id, created_at)
-                        VALUES (?, ?, ?, "refund", ?, ?)
-                    ');
-                    $stmt->execute([
-                        $purchase['user_id'],
-                        -$pointsToRemove,
-                        "Remboursement: {$purchase['game_name']}",
-                        $user['id'],
-                        $ts
-                    ]);
+                    try {
+                        $stmt = $pdo->prepare('
+                            INSERT INTO points_transactions (user_id, change_amount, reason, type, admin_id, created_at)
+                            VALUES (?, ?, ?, "refund", ?, ?)
+                        ');
+                        $stmt->execute([
+                            $purchase['user_id'],
+                            -$pointsToRemove,
+                            "Remboursement: {$purchase['game_name']}",
+                            $user['id'],
+                            $ts
+                        ]);
+                    } catch (Exception $e) {
+                        error_log('[admin/purchases] Failed to log refund points transaction: ' . $e->getMessage());
+                    }
                     
                     $stmt = $pdo->prepare('UPDATE purchases SET points_credited = 0 WHERE id = ?');
                     $stmt->execute([$id]);
