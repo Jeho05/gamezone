@@ -73,8 +73,12 @@ try {
     $now = now();
     $joinDate = date('Y-m-d');
 
-    $stmt = $pdo->prepare('INSERT INTO users (username, email, password_hash, role, avatar_url, points, level, status, join_date, last_active, created_at, updated_at) VALUES (?, ?, ?, "player", ?, 0, NULL, "active", ?, ?, ?, ?)');
-    $stmt->execute([$username, $email, $hash, $avatarUrl, $joinDate, $now, $now, $now]);
+    // Générer un code de récupération unique pour l'utilisateur
+    $recoveryCode = bin2hex(random_bytes(8)); // 16 caractères hex aléatoires
+    $recoveryHash = password_hash($recoveryCode, PASSWORD_BCRYPT);
+
+    $stmt = $pdo->prepare('INSERT INTO users (username, email, password_hash, recovery_code_hash, role, avatar_url, points, level, status, join_date, last_active, created_at, updated_at) VALUES (?, ?, ?, ?, "player", ?, 0, NULL, "active", ?, ?, ?, ?)');
+    $stmt->execute([$username, $email, $hash, $recoveryHash, $avatarUrl, $joinDate, $now, $now, $now]);
     $userId = (int)$pdo->lastInsertId();
 
     $stmt = $pdo->prepare('SELECT * FROM users WHERE id = ?');
@@ -89,6 +93,8 @@ try {
 
     json_response([
         'message' => 'Inscription réussie',
+        // IMPORTANT : le code de récupération est renvoyé en clair une seule fois
+        'recovery_code' => $recoveryCode,
         'user' => [
             'id' => (int)$user['id'],
             'username' => $user['username'],

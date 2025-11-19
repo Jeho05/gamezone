@@ -51,6 +51,15 @@ $body = '<p>Bonjour ' . htmlspecialchars($user['username'] ?? '', ENT_QUOTES, 'U
 $sent = send_email($user['email'], $subject, $body);
 
 if (!$sent) {
+    if (function_exists('log_error')) {
+        log_error('Password reset email sending failed', [
+            'email' => $user['email'] ?? null,
+        ]);
+    } elseif (class_exists('Logger')) {
+        Logger::error('Password reset email sending failed', [
+            'email' => $user['email'] ?? null,
+        ]);
+    }
     json_response(['error' => 'Impossible d\'envoyer l\'email de réinitialisation. Contactez un administrateur.'], 500);
 }
 
