@@ -19,7 +19,8 @@ if ($method === 'GET') {
         $stmt = $pdo->prepare('
             SELECT i.*,
                    g.name as game_name, g.image_url,
-                   s.status as session_status, s.remaining_minutes,
+                   s.status as session_status,
+                   s.remaining_minutes as session_remaining_minutes,
                    s.used_minutes as session_used_minutes,
                    s.started_at as session_started_at,
                    TIMESTAMPDIFF(MINUTE, NOW(), i.expires_at) as minutes_until_expiry
@@ -58,7 +59,8 @@ if ($method === 'GET') {
         $sql = '
             SELECT i.*,
                    g.name as game_name, g.image_url, g.thumbnail_url,
-                   s.status as session_status, s.remaining_minutes,
+                   s.status as session_status,
+                   s.remaining_minutes as session_remaining_minutes,
                    TIMESTAMPDIFF(MINUTE, NOW(), i.expires_at) as minutes_until_expiry,
                    DATEDIFF(i.expires_at, NOW()) as days_until_expiry
             FROM invoices i

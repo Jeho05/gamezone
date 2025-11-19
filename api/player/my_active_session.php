@@ -10,20 +10,23 @@ $user = require_auth();
 $pdo = get_db();
 
 try {
-    // Récupérer la session active du joueur avec toutes les infos (avatar inclus)
+    // Récupérer la session active du joueur directement depuis active_game_sessions_v2
     $stmt = $pdo->prepare("
         SELECT 
-            s.*,
-            s.remaining_minutes,
-            s.progress_percent,
-            s.avatar_url,
-            s.username,
-            s.level,
-            s.points,
-            s.game_name,
-            s.game_slug,
-            s.game_image
-        FROM session_summary s
+            s.*, 
+            i.invoice_number,
+            i.validation_code,
+            u.username,
+            u.avatar_url,
+            u.level,
+            u.points,
+            g.name AS game_name,
+            g.slug AS game_slug,
+            g.image_url AS game_image
+        FROM active_game_sessions_v2 s
+        INNER JOIN invoices i ON s.invoice_id = i.id
+        INNER JOIN users u ON s.user_id = u.id
+        INNER JOIN games g ON s.game_id = g.id
         WHERE s.user_id = ? 
         AND s.status IN ('active', 'paused', 'ready')
         ORDER BY 
