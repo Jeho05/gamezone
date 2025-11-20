@@ -100,12 +100,13 @@ try {
         ]);
         
         // Log dans points_transactions pour traçabilité
+        // Utilise le type 'reward' (supporté par l'ENUM) pour éviter les erreurs SQL
         $stmt = $pdo->prepare('INSERT INTO points_transactions (user_id, change_amount, reason, type, admin_id, created_at) VALUES (?, ?, ?, ?, NULL, ?)');
         $stmt->execute([
             (int)$user['id'],
             $gameTimeAdded,
             "Temps de jeu ajouté via récompense: {$reward['name']} (+{$gameTimeAdded} min)",
-            'game_time_reward',
+            'reward',
             now()
         ]);
     }
