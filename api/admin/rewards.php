@@ -300,7 +300,7 @@ if ($method === 'PUT' || $method === 'PATCH') {
             $pkgFields = [];
             $pkgParams = [];
 
-            if (isset($data['game_id'])) {
+            if (array_key_exists('game_id', $data) && $data['game_id'] !== '' && $data['game_id'] !== null) {
                 $pkgFields[] = 'game_id = ?';
                 $pkgParams[] = (int)$data['game_id'];
             }
