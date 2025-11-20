@@ -115,5 +115,33 @@ try {
     
 } catch (Throwable $e) {
     if ($pdo->inTransaction()) $pdo->rollBack();
-    json_response(['error' => 'Échec de l\'enregistrement de connexion', 'details' => $e->getMessage()], 500);
+
+    $msg = $e->getMessage();
+    $isMissingTable = (
+        strpos($msg, '42S02') !== false ||
+        strpos($msg, '1146') !== false ||
+        stripos($msg, 'login_streaks') !== false ||
+        stripos($msg, 'points_rules') !== false ||
+        stripos($msg, 'user_stats') !== false ||
+        stripos($msg, 'badges') !== false ||
+        stripos($msg, 'user_badges') !== false
+    );
+
+    if ($isMissingTable) {
+        json_response([
+            'message' => 'Connexion enregistrée (gamification partielle)',
+            'current_streak' => 0,
+            'longest_streak' => 0,
+            'points_awarded' => 0,
+            'streak_bonus' => 0,
+            'is_new_streak' => false,
+            'badges_earned' => [],
+            'warning' => 'Système de gamification non initialisé complètement sur ce serveur'
+        ]);
+    }
+
+    json_response([
+        'error' => 'Échec de l\'enregistrement de connexion',
+        'details' => $msg
+    ], 500);
 }
