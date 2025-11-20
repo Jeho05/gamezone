@@ -17,8 +17,10 @@ $pdo = get_db();
 $pdo->beginTransaction();
 
 try {
-    // Load reward avec reward_type et game_time_minutes
-    $stmt = $pdo->prepare('SELECT id, name, cost, available, max_per_user, reward_type, game_time_minutes FROM rewards WHERE id = ? FOR UPDATE');
+    $gamePackage = null;
+
+    // Load reward avec reward_type, temps de jeu et éventuel package de jeu
+    $stmt = $pdo->prepare('SELECT id, name, cost, available, max_per_user, reward_type, game_time_minutes, game_package_id FROM rewards WHERE id = ? FOR UPDATE');
     $stmt->execute([$rewardId]);
     $reward = $stmt->fetch();
     
@@ -39,6 +41,74 @@ try {
         }
     }
 
+    // Si la récompense est liée à un package de jeu, charger le package
+    if ($reward['reward_type'] === 'game_package') {
+        $stmt = $pdo->prepare('
+            SELECT 
+                pkg.id,
+                pkg.game_id,
+                pkg.name,
+                pkg.duration_minutes,
+                pkg.points_earned,
+                pkg.points_cost,
+                pkg.max_purchases_per_user,
+                pkg.is_active,
+                pkg.available_from,
+                pkg.available_until,
+                g.name AS game_name,
+                g.is_active AS game_active
+            FROM game_packages pkg
+            INNER JOIN games g ON pkg.game_id = g.id
+            WHERE pkg.id = ?
+        ');
+        $stmt->execute([$reward['game_package_id'] ?? null]);
+        $gamePackage = $stmt->fetch();
+
+        if (!$gamePackage) {
+            $pdo->rollBack();
+            json_response(['error' => 'Package de jeu associé introuvable'], 404);
+        }
+
+        if ((int)$gamePackage['is_active'] !== 1 || (int)$gamePackage['game_active'] !== 1) {
+            $pdo->rollBack();
+            json_response(['error' => 'Ce package de jeu n\'est plus disponible'], 400);
+        }
+
+        // Vérifier la fenêtre de disponibilité si définie
+        $nowTs = date('Y-m-d H:i:s');
+        if (!empty($gamePackage['available_from']) && $gamePackage['available_from'] > $nowTs) {
+            $pdo->rollBack();
+            json_response(['error' => 'Ce package n\'est pas encore disponible'], 400);
+        }
+        if (!empty($gamePackage['available_until']) && $gamePackage['available_until'] < $nowTs) {
+            $pdo->rollBack();
+            json_response(['error' => 'Ce package n\'est plus disponible'], 400);
+        }
+
+        // Limite d'achats par utilisateur pour ce package
+        if (!empty($gamePackage['max_purchases_per_user'])) {
+            $stmt = $pdo->prepare('
+                SELECT COUNT(*) 
+                FROM purchases 
+                WHERE package_id = ? 
+                  AND user_id = ? 
+                  AND paid_with_points = 1
+                  AND payment_status = "completed"
+            ');
+            $stmt->execute([(int)$gamePackage['id'], (int)$user['id']]);
+            $userPurchases = (int)$stmt->fetchColumn();
+
+            if ($userPurchases >= (int)$gamePackage['max_purchases_per_user']) {
+                $pdo->rollBack();
+                json_response([
+                    'error' => 'Limite d\'achats atteinte pour ce package',
+                    'max_purchases' => (int)$gamePackage['max_purchases_per_user'],
+                    'current_purchases' => $userPurchases
+                ], 400);
+            }
+        }
+    }
+
     // Load user points
     $stmt = $pdo->prepare('SELECT id, points FROM users WHERE id = ? FOR UPDATE');
     $stmt->execute([(int)$user['id']]);
@@ -50,6 +120,12 @@ try {
     }
 
     $cost = (int)$reward['cost'];
+
+    // Pour les packages de jeu, aligner le coût sur le package s'il est défini
+    if ($reward['reward_type'] === 'game_package' && $gamePackage && isset($gamePackage['points_cost']) && (int)$gamePackage['points_cost'] > 0) {
+        $cost = (int)$gamePackage['points_cost'];
+    }
+
     if ((int)$u['points'] < $cost) {
         $pdo->rollBack();
         json_response(['error' => 'Points insuffisants'], 409);
@@ -111,6 +187,58 @@ try {
         ]);
     }
 
+    // Si c'est une récompense de type game_package, créer un achat payé en points
+    $purchaseData = null;
+    if ($reward['reward_type'] === 'game_package' && $gamePackage) {
+        $ts = now();
+
+        $stmt = $pdo->prepare('
+            INSERT INTO purchases (
+                user_id, game_id, package_id,
+                game_name, package_name, duration_minutes,
+                price, currency, points_earned, points_credited,
+                paid_with_points, points_spent,
+                payment_method_id, payment_method_name,
+                payment_status, session_status,
+                created_at, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ');
+
+        $stmt->execute([
+            (int)$user['id'],
+            (int)$gamePackage['game_id'],
+            (int)$gamePackage['id'],
+            $gamePackage['game_name'],
+            $gamePackage['name'],
+            (int)$gamePackage['duration_minutes'],
+            0.00,
+            'POINTS',
+            (int)$gamePackage['points_earned'],
+            0,
+            1,
+            $cost,
+            null,
+            'Points Fidélité',
+            'completed',
+            'pending',
+            $ts,
+            $ts
+        ]);
+
+        $purchaseId = (int)$pdo->lastInsertId();
+
+        // Marquer le rachat comme complété pour ce type de récompense
+        $stmt = $pdo->prepare('UPDATE reward_redemptions SET status = ? WHERE id = ?');
+        $stmt->execute(['completed', $redemptionId]);
+
+        $purchaseData = [
+            'id' => $purchaseId,
+            'game_name' => $gamePackage['game_name'],
+            'package_name' => $gamePackage['name'],
+            'duration_minutes' => (int)$gamePackage['duration_minutes'],
+        ];
+    }
+
     // Mettre à jour la session avec les nouveaux points
     $_SESSION['user']['points'] = (int)$u['points'] - $cost;
 
@@ -124,8 +252,12 @@ try {
         $timeStr .= $mins > 0 ? "{$mins}min" : "";
         $message = "Récompense échangée ! +{$timeStr} de jeu ajoutés";
     }
-    
-    json_response([
+
+    if ($reward['reward_type'] === 'game_package' && $purchaseData) {
+        $message = 'Récompense échangée ! Votre session de jeu est prête.';
+    }
+
+    $response = [
         'success' => true,
         'message' => $message,
         'reward' => [
@@ -137,7 +269,14 @@ try {
         'redemption_id' => $redemptionId,
         'new_balance' => (int)$u['points'] - $cost,
         'game_time_added' => $gameTimeAdded
-    ]);
+    ];
+
+    if ($purchaseData) {
+        $response['purchase'] = $purchaseData;
+        $response['purchase_id'] = $purchaseData['id'];
+    }
+
+    json_response($response);
     
 } catch (Throwable $e) {
     if ($pdo->inTransaction()) {
