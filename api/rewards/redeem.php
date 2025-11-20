@@ -18,6 +18,7 @@ $pdo->beginTransaction();
 
 try {
     $gamePackage = null;
+    $badgesEarned = [];
 
     // Load reward avec reward_type, temps de jeu et éventuel package de jeu
     $stmt = $pdo->prepare('SELECT id, name, cost, available, max_per_user, reward_type, game_time_minutes, game_package_id FROM rewards WHERE id = ? FOR UPDATE');
@@ -38,6 +39,18 @@ try {
         if ($userRedemptions >= $reward['max_per_user']) {
             $pdo->rollBack();
             json_response(['error' => 'Limite de rachats atteinte pour cette récompense'], 409);
+        }
+    }
+
+    // Vérifier le stock global de la récompense si défini
+    if (!empty($reward['stock_quantity'])) {
+        $stmt = $pdo->prepare('SELECT COUNT(*) FROM reward_redemptions WHERE reward_id = ? AND status != "cancelled"');
+        $stmt->execute([$rewardId]);
+        $usedStock = (int)$stmt->fetchColumn();
+
+        if ($usedStock >= (int)$reward['stock_quantity']) {
+            $pdo->rollBack();
+            json_response(['error' => 'Cette récompense est en rupture de stock'], 409);
         }
     }
 
@@ -187,6 +200,65 @@ try {
         ]);
     }
 
+    // Si c'est une récompense de type badge, attribuer automatiquement un badge lié
+    if ($reward['reward_type'] === 'badge') {
+        $stmt = $pdo->prepare('SELECT * FROM badges WHERE name = ? LIMIT 1');
+        $stmt->execute([$reward['name']]);
+        $badge = $stmt->fetch();
+
+        if ($badge) {
+            // Vérifier si l'utilisateur a déjà ce badge
+            $stmt = $pdo->prepare('SELECT COUNT(*) FROM user_badges WHERE user_id = ? AND badge_id = ?');
+            $stmt->execute([(int)$user['id'], (int)$badge['id']]);
+            $hasBadge = (int)$stmt->fetchColumn() > 0;
+
+            if (!$hasBadge) {
+                $ts = now();
+
+                // Attribuer le badge
+                $stmt = $pdo->prepare('INSERT INTO user_badges (user_id, badge_id, earned_at) VALUES (?, ?, ?)');
+                $stmt->execute([(int)$user['id'], (int)$badge['id'], $ts]);
+
+                // Attribuer les points bonus liés au badge s'il y en a
+                $badgePoints = isset($badge['points_reward']) ? (int)$badge['points_reward'] : 0;
+                if ($badgePoints > 0) {
+                    // Créditer les points sur l'utilisateur
+                    $stmt = $pdo->prepare('UPDATE users SET points = points + ?, updated_at = ? WHERE id = ?');
+                    $stmt->execute([$badgePoints, $ts, (int)$user['id']]);
+
+                    // Log de la transaction de points (type bonus)
+                    $stmt = $pdo->prepare('INSERT INTO points_transactions (user_id, change_amount, reason, type, admin_id, created_at) VALUES (?, ?, ?, ?, NULL, ?)');
+                    $stmt->execute([
+                        (int)$user['id'],
+                        $badgePoints,
+                        "Badge débloqué via récompense: {$badge['name']}",
+                        'bonus',
+                        $ts
+                    ]);
+
+                    // Mettre à jour user_stats.total_points_earned
+                    $stmt = $pdo->prepare('INSERT INTO user_stats (user_id, total_points_earned, updated_at) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE total_points_earned = total_points_earned + ?, updated_at = ?');
+                    $stmt->execute([
+                        (int)$user['id'],
+                        $badgePoints,
+                        $ts,
+                        $badgePoints,
+                        $ts
+                    ]);
+                }
+
+                $badgesEarned[] = [
+                    'id' => (int)$badge['id'],
+                    'name' => $badge['name'],
+                    'description' => $badge['description'],
+                    'icon' => $badge['icon'],
+                    'rarity' => $badge['rarity'],
+                    'points_reward' => isset($badge['points_reward']) ? (int)$badge['points_reward'] : 0,
+                ];
+            }
+        }
+    }
+
     // Si c'est une récompense de type game_package, créer un achat payé en points
     $purchaseData = null;
     if ($reward['reward_type'] === 'game_package' && $gamePackage) {
@@ -239,8 +311,13 @@ try {
         ];
     }
 
+    // Recharger le solde après tous les ajustements (badges, etc.)
+    $stmt = $pdo->prepare('SELECT points FROM users WHERE id = ?');
+    $stmt->execute([(int)$user['id']]);
+    $newBalance = (int)$stmt->fetchColumn();
+
     // Mettre à jour la session avec les nouveaux points
-    $_SESSION['user']['points'] = (int)$u['points'] - $cost;
+    $_SESSION['user']['points'] = $newBalance;
 
     $pdo->commit();
     
@@ -249,8 +326,20 @@ try {
         $hours = floor($gameTimeAdded / 60);
         $mins = $gameTimeAdded % 60;
         $timeStr = $hours > 0 ? "{$hours}h" : "";
-        $timeStr .= $mins > 0 ? "{$mins}min" : "";
+        $timeStr .= $mins > 0 ? " {$mins}min" : "";
         $message = "Récompense échangée ! +{$timeStr} de jeu ajoutés";
+    }
+
+    if ($reward['reward_type'] === 'badge' && !empty($badgesEarned)) {
+        $message = 'Badge débloqué !';
+    } elseif ($reward['reward_type'] === 'discount') {
+        $message = 'Récompense échangée ! Votre réduction sera appliquée par l\'équipe sur un prochain achat.';
+    } elseif ($reward['reward_type'] === 'physical') {
+        $message = 'Récompense échangée ! Merci de vous présenter en salle pour récupérer votre cadeau physique.';
+    } elseif ($reward['reward_type'] === 'digital') {
+        $message = 'Récompense échangée ! Votre avantage digital sera communiqué ou appliqué par l\'équipe.';
+    } elseif ($reward['reward_type'] === 'item' || $reward['reward_type'] === 'other') {
+        $message = 'Récompense échangée ! L\'équipe appliquera votre avantage lors de votre prochaine visite.';
     }
 
     if ($reward['reward_type'] === 'game_package' && $purchaseData) {
@@ -267,8 +356,9 @@ try {
             'type' => $reward['reward_type']
         ],
         'redemption_id' => $redemptionId,
-        'new_balance' => (int)$u['points'] - $cost,
-        'game_time_added' => $gameTimeAdded
+        'new_balance' => $newBalance,
+        'game_time_added' => $gameTimeAdded,
+        'badges_earned' => $badgesEarned
     ];
 
     if ($purchaseData) {
