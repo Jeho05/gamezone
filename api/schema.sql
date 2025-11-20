@@ -52,7 +52,10 @@ CREATE TABLE IF NOT EXISTS reward_redemptions (
   reward_id INT NOT NULL,
   user_id INT NOT NULL,
   cost INT NOT NULL,
+  status ENUM('pending','approved','delivered','completed','cancelled') DEFAULT 'pending',
+  notes TEXT NULL,
   created_at DATETIME NOT NULL,
+  updated_at DATETIME NULL,
   CONSTRAINT fk_rr_reward FOREIGN KEY (reward_id) REFERENCES rewards(id) ON DELETE CASCADE,
   CONSTRAINT fk_rr_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

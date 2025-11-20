@@ -47,16 +47,27 @@ while ($row = $stmt->fetch()) {
     $redemptionColumns[] = $row['Field'];
 }
 
-// Ajouter la colonne status si elle n'existe pas
+// Ajouter ou ajuster la colonne status
 if (!in_array('status', $redemptionColumns)) {
     try {
-        $pdo->exec("ALTER TABLE reward_redemptions ADD COLUMN status ENUM('pending', 'approved', 'delivered', 'cancelled') DEFAULT 'pending' AFTER cost");
+        $pdo->exec("ALTER TABLE reward_redemptions ADD COLUMN status ENUM('pending', 'approved', 'delivered', 'completed', 'cancelled') DEFAULT 'pending' AFTER cost");
         echo "   ✓ Colonne 'status' ajoutée\n";
     } catch (Exception $e) {
         echo "   ⚠️  Erreur: " . $e->getMessage() . "\n";
     }
 } else {
-    echo "   ℹ️  Colonne 'status' déjà existante\n";
+    // S'assurer que l'ENUM inclut bien la valeur 'completed' si applicable
+    try {
+        $col = $pdo->query("SHOW COLUMNS FROM reward_redemptions LIKE 'status'")->fetch(PDO::FETCH_ASSOC);
+        if ($col && isset($col['Type']) && stripos($col['Type'], 'enum') !== false && stripos($col['Type'], "'completed'") === false) {
+            $pdo->exec("ALTER TABLE reward_redemptions MODIFY COLUMN status ENUM('pending', 'approved', 'delivered', 'completed', 'cancelled') DEFAULT 'pending'");
+            echo "   ✓ Colonne 'status' mise à jour pour inclure 'completed'\n";
+        } else {
+            echo "   ℹ️  Colonne 'status' déjà existante\n";
+        }
+    } catch (Exception $e) {
+        echo "   ⚠️  Erreur lors de la vérification/mise à jour de 'status': " . $e->getMessage() . "\n";
+    }
 }
 
 // Ajouter la colonne notes si elle n'existe pas

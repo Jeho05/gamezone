@@ -62,6 +62,16 @@ $stmt = $pdo->prepare('SELECT COUNT(*) as total FROM reward_redemptions WHERE us
 $stmt->execute([$userId]);
 $rewardsRedeemed = (int)$stmt->fetchColumn();
 
+// Get available converted game time (in minutes)
+$minutesAvailable = 0;
+try {
+    $stmt = $pdo->prepare('SELECT get_user_converted_minutes(?) as minutes');
+    $stmt->execute([$userId]);
+    $minutesAvailable = (int)$stmt->fetchColumn();
+} catch (Throwable $e) {
+    $minutesAvailable = 0;
+}
+
 // Get recent achievements (badges in last 30 days)
 $stmt = $pdo->prepare('
     SELECT b.name, b.icon, b.rarity, ub.earned_at
@@ -102,7 +112,8 @@ json_response([
         'net_points' => (int)$stats['total_points_earned'] - (int)$stats['total_points_spent'],
         'badges_earned' => $badgesCount,
         'badges_total' => $totalBadges,
-        'rewards_redeemed' => $rewardsRedeemed
+        'rewards_redeemed' => $rewardsRedeemed,
+        'minutes_available' => $minutesAvailable
     ],
     'streak' => [
         'current' => (int)$streak['current_streak'],
