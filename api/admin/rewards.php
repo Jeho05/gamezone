@@ -91,11 +91,38 @@ if ($method === 'POST') {
         ? (int)$data['game_time_minutes']
         : 0;
 
+    // Paramètres spécifiques pour les récompenses de type discount
+    $discountPercentage = (isset($data['discount_percentage']) && $data['discount_percentage'] !== '')
+        ? (int)$data['discount_percentage']
+        : null;
+    $discountGameId = (isset($data['discount_game_id']) && $data['discount_game_id'] !== '')
+        ? (int)$data['discount_game_id']
+        : null;
+
     // Validation de base
     $required = ['name', 'cost'];
     foreach ($required as $field) {
         if (!isset($data[$field]) || $data[$field] === '') {
             json_response(['error' => "Le champ '$field' est requis"], 400);
+        }
+    }
+
+    // Validation spécifique pour les réductions
+    if ($rewardType === 'discount') {
+        if ($discountPercentage === null || $discountPercentage <= 0 || $discountPercentage > 100) {
+            json_response(['error' => 'Pour une récompense de type réduction, le pourcentage doit être compris entre 1 et 100'], 400);
+        }
+
+        if (!$discountGameId) {
+            json_response(['error' => 'Pour une récompense de type réduction, un jeu ciblé est obligatoire'], 400);
+        }
+
+        // Vérifier que le jeu ciblé existe
+        $stmt = $pdo->prepare('SELECT id, name FROM games WHERE id = ?');
+        $stmt->execute([$discountGameId]);
+        $discountGame = $stmt->fetch();
+        if (!$discountGame) {
+            json_response(['error' => 'Jeu ciblé pour la réduction introuvable'], 404);
         }
     }
 
@@ -172,8 +199,9 @@ if ($method === 'POST') {
                 name, description, cost, category, reward_type,
                 game_package_id, game_time_minutes, image_url, stock_quantity, max_per_user,
                 available, is_featured, display_order,
+                discount_percentage, discount_game_id,
                 created_at, updated_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ');
 
         $stmt->execute([
@@ -190,6 +218,8 @@ if ($method === 'POST') {
             $availableFlag,
             $isFeaturedFlag,
             $displayOrder,
+            $discountPercentage,
+            $discountGameId,
             $ts,
             $ts
         ]);
@@ -262,6 +292,16 @@ if ($method === 'PUT' || $method === 'PATCH') {
     if (array_key_exists('game_time_minutes', $data)) {
         $data['game_time_minutes'] = (int)$data['game_time_minutes'];
     }
+    if (array_key_exists('discount_percentage', $data)) {
+        $data['discount_percentage'] = ($data['discount_percentage'] === '' || $data['discount_percentage'] === null)
+            ? null
+            : (int)$data['discount_percentage'];
+    }
+    if (array_key_exists('discount_game_id', $data)) {
+        $data['discount_game_id'] = ($data['discount_game_id'] === '' || $data['discount_game_id'] === null)
+            ? null
+            : (int)$data['discount_game_id'];
+    }
     
     // Construire la requête de mise à jour
     $updateFields = [];
@@ -270,7 +310,8 @@ if ($method === 'PUT' || $method === 'PATCH') {
     $allowedFields = [
         'name', 'description', 'cost', 'category', 'reward_type',
         'image_url', 'stock_quantity', 'max_per_user',
-        'available', 'is_featured', 'display_order', 'game_time_minutes'
+        'available', 'is_featured', 'display_order', 'game_time_minutes',
+        'discount_percentage', 'discount_game_id'
     ];
     
     foreach ($allowedFields as $field) {

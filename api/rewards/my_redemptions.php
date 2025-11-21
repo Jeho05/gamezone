@@ -27,9 +27,13 @@ try {
                r.reward_type,
                r.category,
                r.game_time_minutes,
-               r.game_package_id
+               r.game_package_id,
+               r.discount_percentage,
+               r.discount_game_id,
+               g.name AS discount_game_name
         FROM reward_redemptions rr
         INNER JOIN rewards r ON rr.reward_id = r.id
+        LEFT JOIN games g ON r.discount_game_id = g.id
         WHERE rr.user_id = ?
         ORDER BY rr.created_at DESC
         LIMIT ? OFFSET ?

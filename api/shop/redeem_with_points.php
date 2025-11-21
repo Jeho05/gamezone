@@ -308,15 +308,14 @@ if ($method === 'POST') {
         if ($package['reward_id']) {
             $stmt = $pdo->prepare('
                 INSERT INTO reward_redemptions (
-                    reward_id, user_id, cost, status, created_at
-                ) VALUES (?, ?, ?, ?, ?)
+                    reward_id, user_id, cost, created_at
+                ) VALUES (?, ?, ?, ?)
             ');
-            
+
             $stmt->execute([
                 $package['reward_id'],
                 $user['id'],
                 $package['points_cost'],
-                'completed',
                 $ts
             ]);
         }

@@ -367,6 +367,8 @@ try {
     try { $c=$pdo->query("SHOW COLUMNS FROM rewards LIKE 'is_featured'")->fetch(); if(!$c){$pdo->exec("ALTER TABLE rewards ADD COLUMN is_featured TINYINT(1) NOT NULL DEFAULT 0 AFTER max_per_user"); echo "rewards.is_featured added\n";} } catch (Throwable $e) {}
     try { $c=$pdo->query("SHOW COLUMNS FROM rewards LIKE 'display_order'")->fetch(); if(!$c){$pdo->exec("ALTER TABLE rewards ADD COLUMN display_order INT NOT NULL DEFAULT 0 AFTER is_featured"); echo "rewards.display_order added\n";} } catch (Throwable $e) {}
     try { $c=$pdo->query("SHOW COLUMNS FROM rewards LIKE 'image_url'")->fetch(); if(!$c){$pdo->exec("ALTER TABLE rewards ADD COLUMN image_url VARCHAR(500) NULL AFTER display_order"); echo "rewards.image_url added\n";} } catch (Throwable $e) {}
+    try { $c=$pdo->query("SHOW COLUMNS FROM rewards LIKE 'discount_percentage'")->fetch(); if(!$c){$pdo->exec("ALTER TABLE rewards ADD COLUMN discount_percentage INT NULL AFTER game_time_minutes"); echo "rewards.discount_percentage added\n";} } catch (Throwable $e) {}
+    try { $c=$pdo->query("SHOW COLUMNS FROM rewards LIKE 'discount_game_id'")->fetch(); if(!$c){$pdo->exec("ALTER TABLE rewards ADD COLUMN discount_game_id INT NULL AFTER discount_percentage"); echo "rewards.discount_game_id added\n";} } catch (Throwable $e) {}
 
     // Reward redemptions
     $pdo->exec("CREATE TABLE IF NOT EXISTS reward_redemptions (

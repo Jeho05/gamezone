@@ -59,10 +59,14 @@ if ($method === 'GET') {
             r.reward_type,
             r.category,
             r.game_time_minutes,
-            r.game_package_id
+            r.game_package_id,
+            r.discount_percentage,
+            r.discount_game_id,
+            g.name AS discount_game_name
         FROM reward_redemptions rr
         INNER JOIN users u ON rr.user_id = u.id
         INNER JOIN rewards r ON rr.reward_id = r.id
+        LEFT JOIN games g ON r.discount_game_id = g.id
     ' . $whereSql . ' ORDER BY rr.created_at DESC LIMIT ? OFFSET ?';
 
     $stmt = $pdo->prepare($sql);
