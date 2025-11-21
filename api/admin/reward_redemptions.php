@@ -133,6 +133,7 @@ if ($method === 'PUT' || $method === 'PATCH' || $method === 'POST') {
         json_response([
             'success' => false,
             'error' => 'Erreur lors de la mise à jour de l\'échange',
+            'details' => $e->getMessage(),
         ], 500);
     }
 }

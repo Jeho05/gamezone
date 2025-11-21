@@ -299,9 +299,8 @@ try {
 
         $purchaseId = (int)$pdo->lastInsertId();
 
-        // Marquer le rachat comme complété pour ce type de récompense
-        $stmt = $pdo->prepare('UPDATE reward_redemptions SET status = ? WHERE id = ?');
-        $stmt->execute(['completed', $redemptionId]);
+        // Laisser le statut de reward_redemptions sur sa valeur par défaut (ex: 'pending')
+        // L'admin peut ensuite le faire évoluer via l'interface dédiée.
 
         $purchaseData = [
             'id' => $purchaseId,
