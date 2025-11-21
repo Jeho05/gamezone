@@ -23,9 +23,58 @@ function ensure_rewards_schema_or_error($pdo): void {
 
             json_response([
                 'success' => false,
-                'error' => "Les récompenses ne sont pas encore correctement configurées sur ce serveur",
+                'error' => "Les récompenses ne sont pas encore correctement configurées sur ce serveur (tables manquantes). Veuillez exécuter /api/install_admin_tables.php sur le backend.",
                 'code' => 'REWARDS_SCHEMA_MISSING',
                 'missing_tables' => $missing,
+            ], 500);
+        }
+
+        // Vérifier la présence des colonnes critiques sur rewards et reward_redemptions
+        $missingColumns = [];
+
+        $rewardsColsStmt = $pdo->query('SHOW COLUMNS FROM rewards');
+        $rewardsCols = $rewardsColsStmt ? $rewardsColsStmt->fetchAll(PDO::FETCH_COLUMN) : [];
+        $requiredRewardsCols = [
+            'description',
+            'category',
+            'reward_type',
+            'game_package_id',
+            'game_time_minutes',
+            'stock_quantity',
+            'max_per_user',
+            'is_featured',
+            'display_order',
+            'image_url',
+            'discount_percentage',
+            'discount_game_id',
+        ];
+
+        foreach ($requiredRewardsCols as $col) {
+            if (!in_array($col, $rewardsCols, true)) {
+                $missingColumns[] = 'rewards.' . $col;
+            }
+        }
+
+        $redColsStmt = $pdo->query('SHOW COLUMNS FROM reward_redemptions');
+        $redCols = $redColsStmt ? $redColsStmt->fetchAll(PDO::FETCH_COLUMN) : [];
+        $requiredRedCols = ['status', 'notes', 'updated_at'];
+
+        foreach ($requiredRedCols as $col) {
+            if (!in_array($col, $redCols, true)) {
+                $missingColumns[] = 'reward_redemptions.' . $col;
+            }
+        }
+
+        if (!empty($missingColumns)) {
+            log_error('Colonnes de récompenses manquantes pour api/admin/rewards.php', [
+                'missing_columns' => $missingColumns,
+            ]);
+
+            json_response([
+                'success' => false,
+                'error' => "Les récompenses ne sont pas encore correctement configurées sur ce serveur (colonnes manquantes). Veuillez exécuter /api/install_admin_tables.php sur le backend.",
+                'code' => 'REWARDS_SCHEMA_MISSING',
+                'missing_columns' => $missingColumns,
             ], 500);
         }
     } catch (Throwable $e) {

@@ -28,7 +28,42 @@ if ($method === 'GET') {
 
             json_response([
                 'success' => false,
-                'error' => "Les récompenses ne sont pas encore configurées sur ce serveur",
+                'error' => "Les récompenses ne sont pas encore configurées sur ce serveur (tables manquantes). Veuillez exécuter /api/install_admin_tables.php sur le backend.",
+                'code' => 'REWARDS_SCHEMA_MISSING',
+                'rewards' => [],
+                'items' => [],
+                'count' => 0,
+                'user_points' => (int)($user['points'] ?? 0),
+            ], 200);
+        }
+
+        // Vérifier les colonnes critiques de rewards
+        $colsStmt = $pdo->query('SHOW COLUMNS FROM rewards');
+        $cols = $colsStmt ? $colsStmt->fetchAll(PDO::FETCH_COLUMN) : [];
+        $requiredCols = [
+            'available',
+            'category',
+            'stock_quantity',
+            'max_per_user',
+            'is_featured',
+            'display_order',
+        ];
+
+        $missingCols = [];
+        foreach ($requiredCols as $col) {
+            if (!in_array($col, $cols, true)) {
+                $missingCols[] = 'rewards.' . $col;
+            }
+        }
+
+        if (!empty($missingCols)) {
+            log_error('Colonnes rewards manquantes pour /rewards/index.php', [
+                'missing_columns' => $missingCols,
+            ]);
+
+            json_response([
+                'success' => false,
+                'error' => "Les récompenses ne sont pas encore configurées sur ce serveur (colonnes manquantes). Veuillez exécuter /api/install_admin_tables.php sur le backend.",
                 'code' => 'REWARDS_SCHEMA_MISSING',
                 'rewards' => [],
                 'items' => [],
