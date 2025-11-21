@@ -247,7 +247,7 @@ if ($method === 'POST') {
             $package['name'],
             $package['duration_minutes'],
             0.00, // Prix en argent = 0
-            'POINTS',
+            'PTS',
             $package['points_earned'],
             0, // Points pas encore crédités (crédités après le jeu)
             1, // paid_with_points = true
@@ -283,7 +283,7 @@ if ($method === 'POST') {
                 0.00, // Base price = 0 car payé en points
                 $reservationFee,
                 0.00, // Total = 0 car payé en points
-                'POINTS',
+                'PTS',
                 $ts,
                 $ts
             ]);

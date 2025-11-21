@@ -284,7 +284,7 @@ try {
             $gamePackage['name'],
             (int)$gamePackage['duration_minutes'],
             0.00,
-            'POINTS',
+            'PTS',
             (int)$gamePackage['points_earned'],
             0,
             1,
