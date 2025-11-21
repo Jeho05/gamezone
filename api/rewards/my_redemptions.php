@@ -14,6 +14,30 @@ $limit = max(1, min(100, (int)($_GET['limit'] ?? 50)));
 $offset = ($page - 1) * $limit;
 
 try {
+    $tablesCheck = $pdo->query("SHOW TABLES LIKE 'reward_redemptions'");
+    $hasRedemptionsTable = $tablesCheck && $tablesCheck->rowCount() > 0;
+    $tablesCheck = $pdo->query("SHOW TABLES LIKE 'rewards'");
+    $hasRewardsTable = $tablesCheck && $tablesCheck->rowCount() > 0;
+
+    if (!$hasRedemptionsTable || !$hasRewardsTable) {
+        log_error('Tables de récompenses manquantes pour my_redemptions', [
+            'user_id' => $user['id'] ?? null,
+            'has_reward_redemptions' => $hasRedemptionsTable,
+            'has_rewards' => $hasRewardsTable,
+        ]);
+
+        json_response([
+            'success' => false,
+            'error' => "Les récompenses ne sont pas encore configurées sur ce serveur",
+            'code' => 'REWARDS_SCHEMA_MISSING',
+            'items' => [],
+            'total' => 0,
+            'page' => $page,
+            'limit' => $limit,
+            'page_count' => 1,
+        ], 200);
+    }
+
     // Compter le total
     $countStmt = $pdo->prepare('SELECT COUNT(*) FROM reward_redemptions WHERE user_id = ?');
     $countStmt->execute([(int)$user['id']]);

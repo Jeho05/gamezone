@@ -4,8 +4,46 @@
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../utils.php';
 
+function ensure_rewards_schema_or_error($pdo): void {
+    try {
+        $requiredTables = ['rewards', 'reward_redemptions', 'games', 'game_packages'];
+        $missing = [];
+
+        foreach ($requiredTables as $table) {
+            $check = $pdo->query("SHOW TABLES LIKE '" . $table . "'");
+            if (!$check || $check->rowCount() === 0) {
+                $missing[] = $table;
+            }
+        }
+
+        if (!empty($missing)) {
+            log_error('Tables de récompenses manquantes pour api/admin/rewards.php', [
+                'missing_tables' => $missing,
+            ]);
+
+            json_response([
+                'success' => false,
+                'error' => "Les récompenses ne sont pas encore correctement configurées sur ce serveur",
+                'code' => 'REWARDS_SCHEMA_MISSING',
+                'missing_tables' => $missing,
+            ], 500);
+        }
+    } catch (Throwable $e) {
+        log_error('Erreur lors de la vérification du schéma des récompenses', [
+            'error' => $e->getMessage(),
+        ]);
+
+        json_response([
+            'success' => false,
+            'error' => 'Erreur lors de la vérification du schéma des récompenses',
+            'details' => $e->getMessage(),
+        ], 500);
+    }
+}
+
 $user = require_auth('admin');
 $pdo = get_db();
+ensure_rewards_schema_or_error($pdo);
 $method = $_SERVER['REQUEST_METHOD'];
 
 // ============================================================================

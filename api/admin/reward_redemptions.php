@@ -4,8 +4,46 @@
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../utils.php';
 
+function ensure_reward_redemptions_schema_or_error($pdo): void {
+    try {
+        $requiredTables = ['reward_redemptions', 'rewards', 'users', 'games'];
+        $missing = [];
+
+        foreach ($requiredTables as $table) {
+            $check = $pdo->query("SHOW TABLES LIKE '" . $table . "'");
+            if (!$check || $check->rowCount() === 0) {
+                $missing[] = $table;
+            }
+        }
+
+        if (!empty($missing)) {
+            log_error('Tables manquantes pour api/admin/reward_redemptions.php', [
+                'missing_tables' => $missing,
+            ]);
+
+            json_response([
+                'success' => false,
+                'error' => "Les échanges de récompenses ne sont pas encore correctement configurés sur ce serveur",
+                'code' => 'REWARD_REDEMPTIONS_SCHEMA_MISSING',
+                'missing_tables' => $missing,
+            ], 500);
+        }
+    } catch (Throwable $e) {
+        log_error('Erreur lors de la vérification du schéma reward_redemptions', [
+            'error' => $e->getMessage(),
+        ]);
+
+        json_response([
+            'success' => false,
+            'error' => 'Erreur lors de la vérification du schéma des échanges',
+            'details' => $e->getMessage(),
+        ], 500);
+    }
+}
+
 $admin = require_auth('admin');
 $pdo = get_db();
+ensure_reward_redemptions_schema_or_error($pdo);
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
 if ($method === 'GET') {

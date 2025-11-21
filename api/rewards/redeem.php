@@ -122,6 +122,61 @@ try {
         }
     }
 
+    if ($reward['reward_type'] === 'badge') {
+        // Vérifier que les tables de badges existent
+        try {
+            $hasBadges = $pdo->query("SHOW TABLES LIKE 'badges'");
+            $hasUserBadges = $pdo->query("SHOW TABLES LIKE 'user_badges'");
+
+            $hasBadgesTable = $hasBadges && $hasBadges->rowCount() > 0;
+            $hasUserBadgesTable = $hasUserBadges && $hasUserBadges->rowCount() > 0;
+
+            if (!$hasBadgesTable || !$hasUserBadgesTable) {
+                log_error('Schéma badges incomplet pour rewards/redeem.php', [
+                    'has_badges' => $hasBadgesTable,
+                    'has_user_badges' => $hasUserBadgesTable,
+                ]);
+
+                $pdo->rollBack();
+                json_response([
+                    'success' => false,
+                    'error' => "Le système de badges n'est pas encore correctement configuré sur ce serveur",
+                    'code' => 'BADGES_SCHEMA_MISSING',
+                ], 500);
+            }
+        } catch (Throwable $schemaError) {
+            log_error('Erreur lors de la vérification du schéma badges dans rewards/redeem.php', [
+                'error' => $schemaError->getMessage(),
+            ]);
+
+            $pdo->rollBack();
+            json_response([
+                'success' => false,
+                'error' => "Erreur lors de la vérification du schéma des badges",
+                'details' => $schemaError->getMessage(),
+            ], 500);
+        }
+
+        $stmt = $pdo->prepare('SELECT id FROM badges WHERE name = ? LIMIT 1');
+        $stmt->execute([$reward['name']]);
+        $badgeRow = $stmt->fetch();
+
+        if ($badgeRow) {
+            $stmt = $pdo->prepare('SELECT COUNT(*) FROM user_badges WHERE user_id = ? AND badge_id = ?');
+            $stmt->execute([(int)$user['id'], (int)$badgeRow['id']]);
+            $alreadyHasBadge = (int)$stmt->fetchColumn() > 0;
+
+            if ($alreadyHasBadge) {
+                $pdo->rollBack();
+                json_response([
+                    'success' => false,
+                    'error' => 'Vous possédez déjà ce badge, échange impossible.',
+                    'code' => 'BADGE_ALREADY_OWNED'
+                ], 409);
+            }
+        }
+    }
+
     // Load user points
     $stmt = $pdo->prepare('SELECT id, points FROM users WHERE id = ? FOR UPDATE');
     $stmt->execute([(int)$user['id']]);
