@@ -149,8 +149,8 @@ try {
     $stmt->execute([$cost, now(), (int)$user['id']]);
 
     // Log redemption
-    $stmt = $pdo->prepare('INSERT INTO reward_redemptions (reward_id, user_id, cost, status, created_at) VALUES (?, ?, ?, ?, ?)');
-    $stmt->execute([$rewardId, (int)$user['id'], $cost, 'pending', now()]);
+    $stmt = $pdo->prepare('INSERT INTO reward_redemptions (reward_id, user_id, cost, created_at) VALUES (?, ?, ?, ?)');
+    $stmt->execute([$rewardId, (int)$user['id'], $cost, now()]);
     $redemptionId = $pdo->lastInsertId();
 
     // Log points transaction
